@@ -1,0 +1,4 @@
+Magikarp;9;10;rojo
+Goldeen;23;15;blanquirrojo
+Feebas;11;8;marron
+Luvdisc;27;9;rosa

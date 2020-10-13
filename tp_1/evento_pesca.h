@@ -32,7 +32,6 @@ typedef struct arrecife{
  * crear el arrecife con los pokémon leídos exitosamente. En caso de no
  * encontrar ningún registro con el formato correcto, se debe devolver error.
  * Devuelve un puntero a un arrecife válido o NULL en caso de error.
- * Es importante notar que tanto
  */
 arrecife_t* crear_arrecife(const char* ruta_archivo);
 
@@ -72,6 +71,7 @@ int guardar_datos_acuario(acuario_t* acuario, const char* nombre_archivo);
  * Libera la memoria que fue reservada para el acuario.
  */
 void liberar_acuario(acuario_t* acuario);
+
 
 /*
  * Libera la memoria que fue reservada para el arrecife.
