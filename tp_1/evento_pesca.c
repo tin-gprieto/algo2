@@ -21,7 +21,10 @@ const int ELEMENTOS_ARCH = 4;
 */
 pokemon_t* cargar_pokemones(FILE* archivo, pokemon_t* p_pokemon, int* tope_pokemon){
   pokemon_t aux;
-  int leido = fscanf(archivo, FORMATO_ARCHIVO, aux.especie, &(aux.velocidad), &(aux.peso), aux.color);
+  int leido = fscanf(archivo, FORMATO_ARCHIVO, aux.especie,
+                                               &(aux.velocidad),
+                                               &(aux.peso),
+                                               aux.color);
   if (leido != ELEMENTOS_ARCH){
     printf( ROJO "El arrefice no tiene pokemones!" RESET "\n");
     return NULL;
@@ -37,7 +40,10 @@ pokemon_t* cargar_pokemones(FILE* archivo, pokemon_t* p_pokemon, int* tope_pokem
       se_agrando = false;
     }else{
       p_pokemon=p_aux;
-      leido = fscanf(archivo, FORMATO_ARCHIVO, aux.especie, &(aux.velocidad), &(aux.peso), aux.color);
+      leido = fscanf(archivo, FORMATO_ARCHIVO, aux.especie,
+                                               &(aux.velocidad),
+                                               &(aux.peso),
+                                               aux.color);
     }
   }
   if(!se_agrando)
@@ -114,7 +120,14 @@ return NULL;
 }
 
 int trasladar_pokemon(arrecife_t* arrecife, acuario_t* acuario, bool (*seleccionar_pokemon) (pokemon_t*), int cant_seleccion){
-return 0;
+  /*
+  int transferibles=0;
+  int* pokemones_a_pasar;
+  transferibles=();
+  if(trasferibles => cant_seleccion)
+    return hacer_traspaso();
+  */
+  return ERROR;
 }
 
 void censar_arrecife(arrecife_t* arrecife, void (*mostrar_pokemon)(pokemon_t*)){
