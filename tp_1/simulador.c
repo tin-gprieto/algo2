@@ -136,11 +136,11 @@ void mostrar_funciones(funciones_t funciones){
 bool preguntar_si_traslada(){
   char decision;
   printf("Desea hacer un traslado de pokemones?(%c/%c):", SI, NO);
-  scanf("%c", &decision);
+  scanf(" %c", &decision);
   while((decision != NO) && (decision != SI)){
-    printf( ROJO "Selecciona una respuesta correcta..." RESET);
+    printf( ROJO "Selecciona una respuesta correcta... \n" RESET);
     printf("Desea hacer un traslado?(%c/%c):", SI, NO);
-    scanf("%c", &decision);
+    scanf(" %c", &decision);
   }
   if(decision == SI)
     return true;
@@ -151,12 +151,12 @@ bool preguntar_si_traslada(){
 *Pre:
 *Post:
 */
-int preguntar_un_numero(int maximo, const char* consigna){
+int preguntar_un_numero(int max, int min, const char* consigna){
   int eleccion;
   printf("%s", consigna);
   scanf("%i", &eleccion);
-  while ((eleccion > maximo) || (eleccion < 0)){
-    printf(ROJO "La eleccion es incorrecta..." RESET);
+  while ((eleccion > max) || (eleccion < min)){
+    printf(ROJO "La eleccion fuera de parámetros... \n" RESET);
     printf("%s", consigna);
     scanf("%i", &eleccion);
   }
@@ -168,9 +168,9 @@ int preguntar_un_numero(int maximo, const char* consigna){
 *Post:
 */
 void preguntar_elecciones(funciones_t funciones, arrecife_t* arrecife, int* n_seleccion, int* cant_seleccion, int* n_mostrar){
-  *n_seleccion = preguntar_un_numero(funciones.tope_seleccionar, "Elige el n° de funcion para seleccionar:");
-  *cant_seleccion = preguntar_un_numero((*arrecife).cantidad_pokemon, "Elige la cantidad de pokemones a trasladar:");
-  *n_mostrar = preguntar_un_numero(funciones.tope_mostrar, "Elige el n° de funcion para mostrar:");
+  *n_seleccion = preguntar_un_numero((funciones.tope_seleccionar-1), 0, "Elige el n° de funcion para seleccionar:");
+  *cant_seleccion = preguntar_un_numero((*arrecife).cantidad_pokemon, 1, "Elige la cantidad de pokemones a trasladar:");
+  *n_mostrar = preguntar_un_numero((funciones.tope_mostrar-1), 0,"Elige el n° de funcion para mostrar:");
   system("clear");
   printf("SELECCIONAR CON: %s ; CANTIDAD: %i ; MOSTRAR CON: %s \n", funciones.firma_seleccionar[*n_seleccion],
                                                                     *cant_seleccion,
@@ -181,7 +181,7 @@ void preguntar_elecciones(funciones_t funciones, arrecife_t* arrecife, int* n_se
 *Pre:
 *Post:
 */
-int correr_simulacion(arrecife_t* arrecife, acuario_t* acuario, funciones_t funciones){
+int correr_simulacion(arrecife_t* arrecife, acuario_t* acuario, funciones_t funciones, int* contador){
   int se_traslada=0;
   bool quiere_trasladar=true;
   int n_seleccion=0;
@@ -194,10 +194,11 @@ int correr_simulacion(arrecife_t* arrecife, acuario_t* acuario, funciones_t func
       preguntar_elecciones(funciones, arrecife, &n_seleccion, &cant_seleccion, &n_mostrar);
       se_traslada=trasladar_pokemon(arrecife, acuario, funciones.seleccionar[n_seleccion]  , cant_seleccion);
       if(se_traslada == ERROR){
-        printf( ROJO "Hubo un problema con el traslado n°%i de pokemones" RESET "\n", n_seleccion);
+        printf( ROJO "Hubo un problema con la funcion de traslado n°%i de pokemones" RESET "\n", n_seleccion);
       }else{
+        (*contador)++;
         censar_arrecife(arrecife, funciones.mostrar[n_mostrar]);
-        printf( VERDE "Se trasladó sin problemas" RESET "\n");
+        printf( VERDE "Se trasladó sin problemas. Traslados totales: %i " RESET "\n", *contador);
         quiere_trasladar = preguntar_si_traslada();
       }
   }
@@ -224,6 +225,8 @@ int main (int argc, char* argv[]){
   acuario_t* acuario = NULL;
   int se_guardo=ERROR;
   int estado_simulador=0;
+  int traslados_hechos=0;
+
   funciones_t funciones;
 
   strcpy(ruta_arrecife, argv[1]);
@@ -233,7 +236,7 @@ int main (int argc, char* argv[]){
   printf( VERDE "Se creó exitosamente el arrecife y el acuario dentro del simulador." RESET "\n");
 
   funciones = cargar_funciones();
-  estado_simulador = correr_simulacion(arrecife, acuario, funciones);
+  estado_simulador = correr_simulacion(arrecife, acuario, funciones, &traslados_hechos);
 
   if(estado_simulador != ERROR)
     se_guardo = guardar_datos_acuario(acuario, ruta_acuario);
@@ -245,8 +248,13 @@ int main (int argc, char* argv[]){
     printf( ROJO "No se pudo guardar los datos en el archivo %s" RESET "\n", ruta_acuario);
     return ERROR;
   }
+  if(traslados_hechos == 0){
+    printf( AMARILLO "No se guardó ningún dato en el archivo %s" RESET "\n", ruta_acuario);
+    return 0;
+  }
 
-  printf( VERDE "Se pudo guardar EXITOSAMENTE los datos en el archivo %s" RESET "\n", ruta_acuario);
+  printf( VERDE "Se realizaron %i traslados correctamente " RESET "\n", traslados_hechos);
+  printf( VERDE "Se pudo guardar EXITOSAMENTE los datos en el archivo %s " RESET "\n", ruta_acuario);
 
 return 0;
 }
