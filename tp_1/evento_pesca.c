@@ -35,7 +35,7 @@ pokemon_t* cargar_pokemones(FILE* archivo, pokemon_t* p_pokemon, int* tope_pokem
   while ((leido == ELEMENTOS_ARCH) && (se_agrando)){
     p_pokemon[*tope_pokemon] = aux;
     (*tope_pokemon) ++;
-    p_aux = realloc(p_pokemon, sizeof(pokemon_t)*((size_t)(*tope_pokemon) + 1));
+    p_aux = realloc(p_pokemon, (sizeof(pokemon_t)*((size_t)(*tope_pokemon) + 1)));
     if(p_aux == NULL){
       se_agrando = false;
     }else{
@@ -72,12 +72,9 @@ arrecife_t* crear_espacio_pokemon(FILE* archivo, arrecife_t* p_arrecife){
   (*p_arrecife).pokemon = p_aux;
   return p_arrecife;
 }
-/*
-*Análisis:
-*Pre:
-*Post:
-*/
+
 arrecife_t* crear_arrecife(const char* ruta_archivo){
+
   FILE* archivo_arrecife = fopen(ruta_archivo, "r");
   if(archivo_arrecife == NULL){
     printf(ROJO "No se pudo abrir el archivo %s" RESET "\n", ruta_archivo);
@@ -112,6 +109,7 @@ acuario_t* crear_acuario(){
       printf( ROJO "No se pudo crear un espacio para los pokemones del acuario!" RESET "\n");
       return NULL;
     }else{
+      (*acuario_aux).cantidad_pokemon = 0;
       return acuario_aux;
     }
   }
@@ -119,14 +117,77 @@ acuario_t* crear_acuario(){
 return NULL;
 }
 
+/*
+*Análisis:
+*Pre:
+*Post:
+*/
+bool sacar_del_arrecife(arrecife_t* arrecife, int trasladado){
+  (*arrecife).pokemon[trasladado] = (*arrecife).pokemon[((*arrecife).cantidad_pokemon)-1];
+  (*arrecife).cantidad_pokemon--;
+
+  arrecife_t* arrecife_aux;
+  arrecife_aux = realloc(arrecife, (sizeof(arrecife_t)*((size_t)(*arrecife).cantidad_pokemon)));
+  if(arrecife_aux == NULL){
+    printf( ROJO "No se pudo ajustar el tamaño del" AMARILLO "arrecife" RESET "\n");
+    return false;
+  }
+  return true;
+}
+/*
+*Análisis:
+*Pre:
+*Post:
+*/
+bool modificar_tamanios(arrecife_t* arrecife, acuario_t* acuario, int trasladado){
+  acuario_t* acuario_aux;
+  acuario_aux = realloc(acuario, (sizeof(acuario_t)*((size_t)((*acuario).cantidad_pokemon)) + 1));
+  if(acuario_aux == NULL){
+    printf(ROJO "No se pudo agrandar el espacio para los pokemones en el" AMARILLO "acuario" RESET "\n");
+    return false;
+  }
+  acuario=acuario_aux;
+  return sacar_del_arrecife(arrecife, trasladado);
+}
+
+/*
+*Análisis:
+*Pre:
+*Post:
+*/
+int hacer_traslado(arrecife_t* arrecife, acuario_t* acuario, bool (*seleccionar_pokemon) (pokemon_t*)){
+  int i = 0;
+  bool hay_error = false;
+  while((i < (arrecife->cantidad_pokemon)) && (!hay_error)){
+    if (seleccionar_pokemon(&((*arrecife).pokemon[i]))) {
+      (*acuario).pokemon[(*acuario).cantidad_pokemon]=arrecife->pokemon[i];
+      (*acuario).cantidad_pokemon++;
+      hay_error = modificar_tamanios(arrecife, acuario, i);
+    }
+  }
+  if(hay_error)
+    return ERROR;
+  return 0;
+}
+/*
+*Análisis:
+*Pre:
+*Post:
+*/
+int contar_transferibles(arrecife_t* arrecife, bool (*seleccionar_pokemon) (pokemon_t*)){
+  int contador = 0;
+  for(int i = 0; i < ((*arrecife).cantidad_pokemon); i++){
+    if (seleccionar_pokemon(&((*arrecife).pokemon[i]))) {
+      contador++;
+    }
+  }
+  return contador;
+}
+
 int trasladar_pokemon(arrecife_t* arrecife, acuario_t* acuario, bool (*seleccionar_pokemon) (pokemon_t*), int cant_seleccion){
-  /*
-  int transferibles=0;
-  int* pokemones_a_pasar;
-  transferibles=();
-  if(trasferibles => cant_seleccion)
-    return hacer_traspaso();
-  */
+  int trasladables = contar_transferibles(arrecife, seleccionar_pokemon);
+  if(trasladables >= cant_seleccion)
+    return hacer_traslado(arrecife, acuario, seleccionar_pokemon);
   return ERROR;
 }
 

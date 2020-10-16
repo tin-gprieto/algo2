@@ -6,30 +6,43 @@
 
 #define MAX_RUTA 100
 #define MAX_FUNCIONES 10
+#define MAX_FIRMA 50
 #define RESET "\e[0m"
 #define ROJO "\e[31m"
 #define VERDE "\e[32m"
 #define AMARILLO "\e[33m"
 
 const char AYUDA[MAX_RUTA] = "--help";
+const char SI = 'S';
+const char NO = 'N';
 const int ERROR = -1;
 
 typedef struct funciones_t{
-  void (*mostrar[MAX_FUNCIONES])(pokemon_t*);
   bool (*seleccionar[MAX_FUNCIONES])(pokemon_t*);
-  int tope_funciones;
+  char firma_seleccionar[MAX_FUNCIONES][MAX_FIRMA];
+  int tope_seleccionar;
+  void (*mostrar[MAX_FUNCIONES])(pokemon_t*);
+  char firma_mostrar[MAX_FUNCIONES][MAX_FIRMA];
+  int tope_mostrar;
 } funciones_t;
-
 /*
 *Análisis:
 *Pre:
 *Post:
 */
-void mostrar_pokemon(pokemon_t* pokemon){
-  printf("Pokemón: %s Velocidad: %i km/h Peso: %i kg Color: %s \n", (*pokemon).especie,
-                                                                    (*pokemon).velocidad,
-                                                                    (*pokemon).peso,
-                                                                    (*pokemon).color);
+bool seleccionar_livianos(pokemon_t* pokemon){
+  return ((*pokemon).peso<20);
+}
+/*
+*Análisis:
+*Pre:
+*Post:
+*/
+void mostrar_detallado(pokemon_t* pokemon){
+  printf("Pokemón: %s ; Velocidad: %i km/h ; Peso: %i kg ; Color: %s \n", (*pokemon).especie,
+                                                                          (*pokemon).velocidad,
+                                                                          (*pokemon).peso,
+                                                                          (*pokemon).color);
 }
 /*
 *Análisis: Crea los punteros de arrecife y acuario con su espacio asignado a la memoria dinamica
@@ -58,7 +71,8 @@ int crear_simulacion( arrecife_t** arrecife, acuario_t** acuario, char ruta_arre
 *Post: Información por pantalla
 */
 void imprimir_ayuda(){
-  printf("Ayuda xd \n");
+  printf("El programa debe ejecutarse de la siguiente manera:\n");
+  printf( AMARILLO "  ./evento_pesca <archivo del arrecife> <nombre para guardar el acuario>" RESET "\n");
 }
 
 /*
@@ -66,61 +80,132 @@ void imprimir_ayuda(){
 *Pre:
 *Post:
 */
-void cargar_funciones(funciones_t* funciones){
-
+void cargar_seleccionar(funciones_t* funciones, bool (*funcion_nueva)(pokemon_t*), char nueva_firma[]){
+  (*funciones).seleccionar[(*funciones).tope_seleccionar]=*funcion_nueva;
+  strcpy(((*funciones).firma_seleccionar[(*funciones).tope_seleccionar]), nueva_firma);
+  (*funciones).tope_seleccionar++;
 }
 /*
 *Análisis:
 *Pre:
 *Post:
 */
-void mostrar_funciones(){
-
+void cargar_mostrar(funciones_t* funciones, void (*funcion_nueva)(pokemon_t*), const char nueva_firma[]){
+  (*funciones).mostrar[(*funciones).tope_mostrar]=*funcion_nueva;
+  strcpy((*funciones).firma_mostrar[(*funciones).tope_mostrar] , nueva_firma);
+  (*funciones).tope_mostrar++;
 }
 /*
 *Análisis:
 *Pre:
 *Post:
 */
-void preguntar_si_traslada(bool* traslada){
-
+funciones_t cargar_funciones(){
+  funciones_t funciones;
+  funciones.tope_mostrar=0;
+  funciones.tope_seleccionar=0;
+  cargar_mostrar(&funciones, mostrar_detallado, "mostrar_detallado");
+  cargar_seleccionar(&funciones, seleccionar_livianos, "seleccionar_livianos");
+  return funciones;
 }
 /*
 *Análisis:
 *Pre:
 *Post:
 */
-void preguntar_elecciones(int* n_seleccion, int* cant_seleccion, int* n_mostrar){
-
+void mostrar_funciones_por_tipo(const char* tipo, int tope_funcion, char firma_funciones[MAX_FUNCIONES][MAX_FIRMA]){
+  printf("Funciones para %s los pokemones \n", tipo);
+  for(int i=0; i<tope_funcion; i++){
+    printf(AMARILLO "=> %i:" RESET " %s \n", i, firma_funciones[i]);
+  }
 }
 /*
 *Análisis:
 *Pre:
 *Post:
 */
-void correr_simulacion(arrecife_t* arrecife, acuario_t* acuario, funciones_t funciones){
+void mostrar_funciones(funciones_t funciones){
+  mostrar_funciones_por_tipo("SELECCIONAR", funciones.tope_seleccionar, funciones.firma_seleccionar);
+  mostrar_funciones_por_tipo("MOSTRAR", funciones.tope_mostrar, funciones.firma_mostrar);
+}
+/*
+*Análisis:
+*Pre:
+*Post:
+*/
+bool preguntar_si_traslada(){
+  char decision;
+  printf("Desea hacer un traslado de pokemones?(%c/%c):", SI, NO);
+  scanf("%c", &decision);
+  while((decision != NO) && (decision != SI)){
+    printf( ROJO "Selecciona una respuesta correcta..." RESET);
+    printf("Desea hacer un traslado?(%c/%c):", SI, NO);
+    scanf("%c", &decision);
+  }
+  if(decision == SI)
+    return true;
+  return false;
+}
+/*
+*Análisis:
+*Pre:
+*Post:
+*/
+int preguntar_un_numero(int maximo, const char* consigna){
+  int eleccion;
+  printf("%s", consigna);
+  scanf("%i", &eleccion);
+  while ((eleccion > maximo) || (eleccion < 0)){
+    printf(ROJO "La eleccion es incorrecta..." RESET);
+    printf("%s", consigna);
+    scanf("%i", &eleccion);
+  }
+  return eleccion;
+}
+/*
+*Análisis:
+*Pre:
+*Post:
+*/
+void preguntar_elecciones(funciones_t funciones, arrecife_t* arrecife, int* n_seleccion, int* cant_seleccion, int* n_mostrar){
+  *n_seleccion = preguntar_un_numero(funciones.tope_seleccionar, "Elige el n° de funcion para seleccionar:");
+  *cant_seleccion = preguntar_un_numero((*arrecife).cantidad_pokemon, "Elige la cantidad de pokemones a trasladar:");
+  *n_mostrar = preguntar_un_numero(funciones.tope_mostrar, "Elige el n° de funcion para mostrar:");
+  system("clear");
+  printf("SELECCIONAR CON: %s ; CANTIDAD: %i ; MOSTRAR CON: %s \n", funciones.firma_seleccionar[*n_seleccion],
+                                                                    *cant_seleccion,
+                                                                    funciones.firma_mostrar[*n_mostrar]);
+}
+/*
+*Análisis:
+*Pre:
+*Post:
+*/
+int correr_simulacion(arrecife_t* arrecife, acuario_t* acuario, funciones_t funciones){
   int se_traslada=0;
   bool quiere_trasladar=true;
   int n_seleccion=0;
   int n_mostrar=0;
   int cant_seleccion;
 
-  while(quiere_trasladar){
-    mostrar_funciones();
-    preguntar_si_traslada(&quiere_trasladar);
-    if(quiere_trasladar){
-      preguntar_elecciones(&n_seleccion, &cant_seleccion, &n_mostrar);
-      system("clear");
+  quiere_trasladar = preguntar_si_traslada();
+  while((quiere_trasladar) && (se_traslada!=ERROR)){
+      mostrar_funciones(funciones);
+      preguntar_elecciones(funciones, arrecife, &n_seleccion, &cant_seleccion, &n_mostrar);
       se_traslada=trasladar_pokemon(arrecife, acuario, funciones.seleccionar[n_seleccion]  , cant_seleccion);
       if(se_traslada == ERROR){
         printf( ROJO "Hubo un problema con el traslado n°%i de pokemones" RESET "\n", n_seleccion);
       }else{
-        printf( VERDE "Se trasladó sin problemas" RESET "\n");
         censar_arrecife(arrecife, funciones.mostrar[n_mostrar]);
+        printf( VERDE "Se trasladó sin problemas" RESET "\n");
+        quiere_trasladar = preguntar_si_traslada();
       }
-    }
   }
+  if(se_traslada == ERROR)
+    return ERROR;
+  return 0;
 }
+
 int main (int argc, char* argv[]){
 
   if(argc<3){
@@ -135,30 +220,32 @@ int main (int argc, char* argv[]){
 
   char ruta_arrecife[MAX_RUTA];
   char ruta_acuario[MAX_RUTA];
-  strcpy(ruta_arrecife, argv[1]);
-  strcpy(ruta_acuario, argv[2]);
-
   arrecife_t* arrecife = NULL;
   acuario_t* acuario = NULL;
-
-  if (crear_simulacion(&(arrecife), &(acuario), ruta_arrecife) == ERROR)
-      return ERROR;
-
-  printf( VERDE "Se creó exitosamente el arrecife y el acuario dentro del simulador." RESET "\n");
-
+  int se_guardo=ERROR;
+  int estado_simulador=0;
   funciones_t funciones;
 
-  cargar_funciones(&funciones);
-  correr_simulacion(arrecife, acuario, funciones);
+  strcpy(ruta_arrecife, argv[1]);
+  strcpy(ruta_acuario, argv[2]);
+  if (crear_simulacion(&(arrecife), &(acuario), ruta_arrecife) == ERROR)
+      return ERROR;
+  printf( VERDE "Se creó exitosamente el arrecife y el acuario dentro del simulador." RESET "\n");
 
-  int se_guardo=guardar_datos_acuario(acuario, ruta_acuario);
+  funciones = cargar_funciones();
+  estado_simulador = correr_simulacion(arrecife, acuario, funciones);
+
+  if(estado_simulador != ERROR)
+    se_guardo = guardar_datos_acuario(acuario, ruta_acuario);
+
   liberar_arrecife(arrecife);
   liberar_acuario(acuario);
 
   if (se_guardo==ERROR){
-  printf( ROJO "No se pudo guardar los datos en el archivo %s" RESET "\n", ruta_acuario);
-  return -1;
+    printf( ROJO "No se pudo guardar los datos en el archivo %s" RESET "\n", ruta_acuario);
+    return ERROR;
   }
+
   printf( VERDE "Se pudo guardar EXITOSAMENTE los datos en el archivo %s" RESET "\n", ruta_acuario);
 
 return 0;
