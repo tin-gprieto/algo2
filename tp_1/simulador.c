@@ -11,6 +11,7 @@
 #define ROJO "\e[31m"
 #define VERDE "\e[32m"
 #define AMARILLO "\e[33m"
+#define COLOR "\e[34m"
 
 const char AYUDA[MAX_RUTA] = "--help";
 const char SI = 'S';
@@ -31,7 +32,7 @@ typedef struct funciones_t{
 *Post:
 */
 bool seleccionar_livianos(pokemon_t* pokemon){
-  return ((*pokemon).peso<20);
+  return ((*pokemon).peso<10);
 }
 /*
 *Análisis:
@@ -39,7 +40,7 @@ bool seleccionar_livianos(pokemon_t* pokemon){
 *Post:
 */
 void mostrar_detallado(pokemon_t* pokemon){
-  printf("Pokemón: %s ; Velocidad: %i km/h ; Peso: %i kg ; Color: %s \n", (*pokemon).especie,
+  printf(" %s ; %i km/h ; %i kg ; Color: %s \n", (*pokemon).especie,
                                                                           (*pokemon).velocidad,
                                                                           (*pokemon).peso,
                                                                           (*pokemon).color);
@@ -73,6 +74,8 @@ int crear_simulacion( arrecife_t** arrecife, acuario_t** acuario, char ruta_arre
 void imprimir_ayuda(){
   printf("El programa debe ejecutarse de la siguiente manera:\n");
   printf( AMARILLO "  ./evento_pesca <archivo del arrecife> <nombre para guardar el acuario>" RESET "\n");
+  printf("Si desea utilizar" COLOR " arrecife.txt" RESET " y guardar en" COLOR " acuario.txt" RESET " utilice (Makefile necesario):\n");
+  printf( AMARILLO "   make exe" RESET "\n");
 }
 
 /*
@@ -194,7 +197,7 @@ int correr_simulacion(arrecife_t* arrecife, acuario_t* acuario, funciones_t func
       preguntar_elecciones(funciones, arrecife, &n_seleccion, &cant_seleccion, &n_mostrar);
       se_traslada=trasladar_pokemon(arrecife, acuario, funciones.seleccionar[n_seleccion]  , cant_seleccion);
       if(se_traslada == ERROR){
-        printf( ROJO "Hubo un problema con la funcion de traslado n°%i de pokemones" RESET "\n", n_seleccion);
+        printf( ROJO "Hubo un problema con el traslado" RESET "\n");
       }else{
         (*contador)++;
         censar_arrecife(arrecife, funciones.mostrar[n_mostrar]);
@@ -235,8 +238,15 @@ int main (int argc, char* argv[]){
       return ERROR;
   printf( VERDE "Se creó exitosamente el arrecife y el acuario dentro del simulador." RESET "\n");
 
+  censar_arrecife(arrecife, mostrar_detallado);
+
   funciones = cargar_funciones();
   estado_simulador = correr_simulacion(arrecife, acuario, funciones, &traslados_hechos);
+
+  if(traslados_hechos == 0){
+    printf( AMARILLO "No se guardó ningún dato en el archivo %s" RESET "\n", ruta_acuario);
+    return 0;
+  }
 
   if(estado_simulador != ERROR)
     se_guardo = guardar_datos_acuario(acuario, ruta_acuario);
@@ -247,10 +257,6 @@ int main (int argc, char* argv[]){
   if (se_guardo==ERROR){
     printf( ROJO "No se pudo guardar los datos en el archivo %s" RESET "\n", ruta_acuario);
     return ERROR;
-  }
-  if(traslados_hechos == 0){
-    printf( AMARILLO "No se guardó ningún dato en el archivo %s" RESET "\n", ruta_acuario);
-    return 0;
   }
 
   printf( VERDE "Se realizaron %i traslados correctamente " RESET "\n", traslados_hechos);

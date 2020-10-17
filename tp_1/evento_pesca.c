@@ -122,8 +122,8 @@ return NULL;
 *Pre:
 *Post:
 */
-bool sacar_del_arrecife(arrecife_t* arrecife, int trasladado){
-  (*arrecife).pokemon[trasladado] = (*arrecife).pokemon[((*arrecife).cantidad_pokemon)-1];
+bool sacar_del_arrecife(arrecife_t* arrecife, int pos_pokemon){
+  (*arrecife).pokemon[pos_pokemon] = (*arrecife).pokemon[((*arrecife).cantidad_pokemon)-1];
   (*arrecife).cantidad_pokemon--;
 
   arrecife_t* arrecife_aux;
@@ -132,6 +132,7 @@ bool sacar_del_arrecife(arrecife_t* arrecife, int trasladado){
     printf( ROJO "No se pudo ajustar el tamaño del" AMARILLO "arrecife" RESET "\n");
     return false;
   }
+  arrecife = arrecife_aux;
   return true;
 }
 /*
@@ -139,7 +140,10 @@ bool sacar_del_arrecife(arrecife_t* arrecife, int trasladado){
 *Pre:
 *Post:
 */
-bool modificar_tamanios(arrecife_t* arrecife, acuario_t* acuario, int trasladado){
+bool pasar_al_acuario(acuario_t* acuario, pokemon_t trasladado){
+  (*acuario).pokemon[(*acuario).cantidad_pokemon] = trasladado;
+  (*acuario).cantidad_pokemon++;
+
   acuario_t* acuario_aux;
   acuario_aux = realloc(acuario, (sizeof(acuario_t)*((size_t)((*acuario).cantidad_pokemon)) + 1));
   if(acuario_aux == NULL){
@@ -147,7 +151,7 @@ bool modificar_tamanios(arrecife_t* arrecife, acuario_t* acuario, int trasladado
     return false;
   }
   acuario=acuario_aux;
-  return sacar_del_arrecife(arrecife, trasladado);
+  return true;
 }
 
 /*
@@ -157,17 +161,19 @@ bool modificar_tamanios(arrecife_t* arrecife, acuario_t* acuario, int trasladado
 */
 int hacer_traslado(arrecife_t* arrecife, acuario_t* acuario, bool (*seleccionar_pokemon) (pokemon_t*)){
   int i = 0;
-  bool hay_error = false;
-  while((i < (arrecife->cantidad_pokemon)) && (!hay_error)){
+  bool sin_error = true;
+  while((i < (*arrecife).cantidad_pokemon) && sin_error){
     if (seleccionar_pokemon(&((*arrecife).pokemon[i]))) {
-      (*acuario).pokemon[(*acuario).cantidad_pokemon]=arrecife->pokemon[i];
-      (*acuario).cantidad_pokemon++;
-      hay_error = modificar_tamanios(arrecife, acuario, i);
+      sin_error = pasar_al_acuario(acuario, (*arrecife).pokemon[i]);
+      if(sin_error)
+        sin_error = sacar_del_arrecife(arrecife, i);
+    }else{
+      i++;
     }
   }
-  if(hay_error)
-    return ERROR;
-  return 0;
+  if(sin_error)
+    return 0;
+  return ERROR;
 }
 /*
 *Análisis:
@@ -188,6 +194,7 @@ int trasladar_pokemon(arrecife_t* arrecife, acuario_t* acuario, bool (*seleccion
   int trasladables = contar_transferibles(arrecife, seleccionar_pokemon);
   if(trasladables >= cant_seleccion)
     return hacer_traslado(arrecife, acuario, seleccionar_pokemon);
+  printf(ROJO "No hay pokemones suficientes para el traslado" RESET "\n");
   return ERROR;
 }
 
