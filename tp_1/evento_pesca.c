@@ -122,17 +122,17 @@ return NULL;
 *Pre:
 *Post:
 */
-bool sacar_del_arrecife(arrecife_t* arrecife, int pos_pokemon){
+bool sacar_del_arrecife(arrecife_t* arrecife,  int pos_pokemon){
   (*arrecife).pokemon[pos_pokemon] = (*arrecife).pokemon[((*arrecife).cantidad_pokemon)-1];
   (*arrecife).cantidad_pokemon--;
 
-  arrecife_t* arrecife_aux;
-  arrecife_aux = realloc(arrecife, (sizeof(arrecife_t)*((size_t)(*arrecife).cantidad_pokemon)));
-  if(arrecife_aux == NULL){
-    printf( ROJO "No se pudo ajustar el tamaño del" AMARILLO "arrecife" RESET "\n");
+  pokemon_t* pokemon_aux;
+  pokemon_aux = realloc((*arrecife).pokemon, (sizeof(pokemon_t)*((size_t)(*arrecife).cantidad_pokemon)));
+  if(pokemon_aux == NULL){
+    printf( ROJO "No se pudo ajustar el tamaño del" AMARILLO " arrecife" RESET "\n");
     return false;
   }
-  arrecife = arrecife_aux;
+  (*arrecife).pokemon = pokemon_aux;
   return true;
 }
 /*
@@ -141,16 +141,16 @@ bool sacar_del_arrecife(arrecife_t* arrecife, int pos_pokemon){
 *Post:
 */
 bool pasar_al_acuario(acuario_t* acuario, pokemon_t trasladado){
-  (*acuario).pokemon[(*acuario).cantidad_pokemon] = trasladado;
-  (*acuario).cantidad_pokemon++;
 
-  acuario_t* acuario_aux;
-  acuario_aux = realloc(acuario, (sizeof(acuario_t)*((size_t)((*acuario).cantidad_pokemon)) + 1));
-  if(acuario_aux == NULL){
-    printf(ROJO "No se pudo agrandar el espacio para los pokemones en el" AMARILLO "acuario" RESET "\n");
+  pokemon_t* pokemon_aux;
+  pokemon_aux = realloc((*acuario).pokemon, sizeof(pokemon_t)*((size_t)(*acuario).cantidad_pokemon + 1));
+  if(pokemon_aux == NULL){
+    printf(ROJO "No se pudo agrandar el espacio para los pokemones en el" AMARILLO " acuario" RESET "\n");
     return false;
   }
-  acuario=acuario_aux;
+  (*acuario).pokemon = pokemon_aux;
+  (*acuario).pokemon[(*acuario).cantidad_pokemon] = trasladado;
+  (*acuario).cantidad_pokemon++;
   return true;
 }
 

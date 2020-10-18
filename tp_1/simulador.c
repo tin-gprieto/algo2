@@ -11,7 +11,8 @@
 #define ROJO "\e[31m"
 #define VERDE "\e[32m"
 #define AMARILLO "\e[33m"
-#define COLOR "\e[34m"
+#define AZUL "\e[34m"
+#define ROSA "\e[35m"
 
 const char AYUDA[MAX_RUTA] = "--help";
 const char SI = 'S';
@@ -26,25 +27,32 @@ typedef struct funciones_t{
   char firma_mostrar[MAX_FUNCIONES][MAX_FIRMA];
   int tope_mostrar;
 } funciones_t;
-/*
-*Análisis:
-*Pre:
-*Post:
-*/
+
 bool seleccionar_livianos(pokemon_t* pokemon){
   return ((*pokemon).peso<10);
 }
-/*
-*Análisis:
-*Pre:
-*Post:
-*/
 void mostrar_detallado(pokemon_t* pokemon){
   printf(" %s ; %i km/h ; %i kg ; Color: %s \n", (*pokemon).especie,
-                                                                          (*pokemon).velocidad,
-                                                                          (*pokemon).peso,
-                                                                          (*pokemon).color);
+                                                 (*pokemon).velocidad,
+                                                 (*pokemon).peso,
+                                                 (*pokemon).color);
 }
+void mostrar_csv(pokemon_t* pokemon){
+  printf(" %s ; %i ; %i ; %s \n", (*pokemon).especie,
+                                  (*pokemon).velocidad,
+                                  (*pokemon).peso,
+                                  (*pokemon).color);
+}
+void mostrar_velocidad(pokemon_t* pokemon){
+  printf(" %s | %i  km/h \n", (*pokemon).especie, (*pokemon).velocidad);
+}
+void mostrar_peso(pokemon_t* pokemon){
+  printf(" %s | %i  kg \n", (*pokemon).especie, (*pokemon).peso);
+}
+void mostrar_color(pokemon_t* pokemon){
+  printf(" %s | %s \n", (*pokemon).especie, (*pokemon).color);
+}
+
 /*
 *Análisis: Crea los punteros de arrecife y acuario con su espacio asignado a la memoria dinamica
 *Pre:
@@ -74,7 +82,7 @@ int crear_simulacion( arrecife_t** arrecife, acuario_t** acuario, char ruta_arre
 void imprimir_ayuda(){
   printf("El programa debe ejecutarse de la siguiente manera:\n");
   printf( AMARILLO "  ./evento_pesca <archivo del arrecife> <nombre para guardar el acuario>" RESET "\n");
-  printf("Si desea utilizar" COLOR " arrecife.txt" RESET " y guardar en" COLOR " acuario.txt" RESET " utilice (Makefile necesario):\n");
+  printf("Si desea utilizar" AZUL " arrecife.txt" RESET " y guardar en" AZUL " acuario.txt" RESET " utilice (Makefile necesario):\n");
   printf( AMARILLO "   make exe" RESET "\n");
 }
 
@@ -117,10 +125,12 @@ funciones_t cargar_funciones(){
 *Post:
 */
 void mostrar_funciones_por_tipo(const char* tipo, int tope_funcion, char firma_funciones[MAX_FUNCIONES][MAX_FIRMA]){
-  printf("Funciones para %s los pokemones \n", tipo);
+  printf( ROSA "------------------------------------" RESET "\n");
+  printf( AMARILLO "Funciones para %s los pokemones" RESET "\n", tipo);
   for(int i=0; i<tope_funcion; i++){
-    printf(AMARILLO "=> %i:" RESET " %s \n", i, firma_funciones[i]);
+    printf(VERDE "=> %i:" RESET " %s \n", i, firma_funciones[i]);
   }
+  printf( ROSA "------------------------------------" RESET "\n");
 }
 /*
 *Análisis:
@@ -255,12 +265,12 @@ int main (int argc, char* argv[]){
   liberar_acuario(acuario);
 
   if (se_guardo==ERROR){
-    printf( ROJO "No se pudo guardar los datos en el archivo %s" RESET "\n", ruta_acuario);
+    printf( ROJO "No se pudo guardar los datos en el archivo " AMARILLO " %s" RESET "\n", ruta_acuario);
     return ERROR;
   }
 
   printf( VERDE "Se realizaron %i traslados correctamente " RESET "\n", traslados_hechos);
-  printf( VERDE "Se pudo guardar EXITOSAMENTE los datos en el archivo %s " RESET "\n", ruta_acuario);
+  printf( VERDE "Se pudo guardar EXITOSAMENTE los datos en el archivo" AMARILLO " %s " RESET "\n", ruta_acuario);
 
 return 0;
 }

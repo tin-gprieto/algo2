@@ -12,19 +12,19 @@ VFLAGS= --leak-check=full --track-origins=yes --show-reachable=yes
 
 evento_pesca: simulador.c evento_pesca.c
 		$(CC) simulador.c evento_pesca.c $(CFLAGS) $(WFLAGS) -o evento_pesca
+exe: evento_pesca
+		./evento_pesca $(ARCHIVOS)
+help: evento_pesca
+		./evento_pesca --help
 val: evento_pesca
 		$(V) $(VFLAGS) ./evento_pesca $(ARCHIVOS)
-exe: evento_pesca
-	./evento_pesca $(ARCHIVOS)
-error: evento_pesca
-	./evento_pesca $(ERROR)
-simple: evento_pesca
-	./evento_pesca $(SIMPLE)
-help: evento_pesca
-	./evento_pesca --help
 gdb: evento_pesca
 		$(GDB) evento_pesca  $(GFLAGS)
 rm:
 	$(R) evento_pesca 
 clean:
 	$(R) acuario.txt
+error: evento_pesca
+	./evento_pesca $(ERROR)
+simple: evento_pesca
+	./evento_pesca $(SIMPLE)
