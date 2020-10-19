@@ -9,15 +9,17 @@
 #define ROJO "\e[31m"
 #define VERDE "\e[32m"
 #define AMARILLO "\e[33m"
-#define FORMATO_ARCHIVO "%[^;];%i;%i;%[^\n]\n"
+#define FORMATO_ARCHIVO "%50[^;];%i;%i;%[^\n]\n"
 #define FORMATO_ARCHIVO_ESCRITURA "%s;%i;%i;%s\n"
 
 const int ELEMENTOS_ARCH = 4;
 
 /*
-*Análisis:
-*Pre:
-*Post:
+*Análisis: Lee los registros del archivo pasado por parámetro 
+*y los agrega al bloque de pokemones ajustando su tamaño
+*Pre: Archivo válido y abierto, vector de pokemones creado y tope inicializado
+*Post: Puntero al bloque de pokemones cargado con los elementos del archivo 
+*(hasta el final del mismo o encontrar un error de lectura) 
 */
 pokemon_t* cargar_pokemones(FILE* archivo, pokemon_t* p_pokemon, int* tope_pokemon){
   pokemon_t aux;
@@ -51,9 +53,9 @@ pokemon_t* cargar_pokemones(FILE* archivo, pokemon_t* p_pokemon, int* tope_pokem
   return p_pokemon;
 }
 /*
-*Análisis:
-*Pre:
-*Post:
+*Análisis: Crea y carga con los datos del archivo, un bloque de pokemones dentro de un arrecife
+*Pre: Archivo válido y abierto, arrecife creado
+*Post: Puntero al bloque del arrecife con los pokemones del archivo adentro
 */
 arrecife_t* crear_espacio_pokemon(FILE* archivo, arrecife_t* p_arrecife){
 
@@ -118,14 +120,19 @@ return NULL;
 }
 
 /*
-*Análisis:
-*Pre:
-*Post:
+*Análisis: Sabiendo la posicion del pokemon, lo quita del bloque de pokemones del arrecife y reduce su tamaño
+*Pre: Arrecife creado y posicion del pokemon válida (un pokemon que se deba trasladar) 
+*según una funcion seleccionar
+*Post: Verdadero si lo puede sacar del arrecife, falso si falla cambiando el tamaño
 */
 bool sacar_del_arrecife(arrecife_t* arrecife,  int pos_pokemon){
   (*arrecife).pokemon[pos_pokemon] = (*arrecife).pokemon[((*arrecife).cantidad_pokemon)-1];
   (*arrecife).cantidad_pokemon--;
-
+  
+  if((*arrecife).cantidad_pokemon==0){
+      return true;
+  }
+  
   pokemon_t* pokemon_aux;
   pokemon_aux = realloc((*arrecife).pokemon, (sizeof(pokemon_t)*((size_t)(*arrecife).cantidad_pokemon)));
   if(pokemon_aux == NULL){
@@ -136,9 +143,10 @@ bool sacar_del_arrecife(arrecife_t* arrecife,  int pos_pokemon){
   return true;
 }
 /*
-*Análisis:
-*Pre:
-*Post:
+*Análisis: Amplía el tamaño del bloque de pokemones 
+*y agrega en la última posicion el pokemon pasado por parámetro 
+*Pre: Acuario creado y pokemon que se debe agregar con todas sus caracteristicas
+*Post: Verdadero si lo puede agregar al acuario, falso si falla cambiando el tamaño
 */
 bool pasar_al_acuario(acuario_t* acuario, pokemon_t trasladado){
 
@@ -155,30 +163,31 @@ bool pasar_al_acuario(acuario_t* acuario, pokemon_t trasladado){
 }
 
 /*
-*Análisis:
-*Pre:
-*Post:
+*Análisis: Recorre el arrecife y realiza el traslado 
+con los pokemones que cumplen con la condición de selección
+*Pre: Arrecife y acuario creado, funcion de selección que se pase a trasladar_pokemon
+*Post: 0 si se realizó el traslado completo, -1 si hubo un error
 */
 int hacer_traslado(arrecife_t* arrecife, acuario_t* acuario, bool (*seleccionar_pokemon) (pokemon_t*)){
   int i = 0;
-  bool sin_error = true;
-  while((i < (*arrecife).cantidad_pokemon) && sin_error){
+  bool esta_bien = true;
+  while((i < (*arrecife).cantidad_pokemon) && esta_bien){
     if (seleccionar_pokemon(&((*arrecife).pokemon[i]))) {
-      sin_error = pasar_al_acuario(acuario, (*arrecife).pokemon[i]);
-      if(sin_error)
-        sin_error = sacar_del_arrecife(arrecife, i);
+      esta_bien = pasar_al_acuario(acuario, (*arrecife).pokemon[i]);
+      if(esta_bien)
+        esta_bien = sacar_del_arrecife(arrecife, i);
     }else{
       i++;
     }
   }
-  if(sin_error)
-    return 0;
-  return ERROR;
+  if(!esta_bien)
+    return ERROR;
+  return 0;
 }
 /*
-*Análisis:
-*Pre:
-*Post:
+*Análisis: Recorre el arrecife y cuenta cuantos pokemones cumplen con la condición de selección
+*Pre: Arrecife creado, funcion selección pasada a trasladar_pokemon
+*Post: Cantidad de pokemones que cumplen condición
 */
 int contar_transferibles(arrecife_t* arrecife, bool (*seleccionar_pokemon) (pokemon_t*)){
   int contador = 0;
@@ -191,16 +200,33 @@ int contar_transferibles(arrecife_t* arrecife, bool (*seleccionar_pokemon) (poke
 }
 
 int trasladar_pokemon(arrecife_t* arrecife, acuario_t* acuario, bool (*seleccionar_pokemon) (pokemon_t*), int cant_seleccion){
+  if(cant_seleccion == 0){
+      printf(AMARILLO "Hiciste un traslado de 0 pokemones" RESET "\n");
+      return 0;
+  }
   int trasladables = contar_transferibles(arrecife, seleccionar_pokemon);
-  if(trasladables >= cant_seleccion)
-    return hacer_traslado(arrecife, acuario, seleccionar_pokemon);
+  int estado=0;
+  if(trasladables >= cant_seleccion){
+    estado=hacer_traslado(arrecife, acuario, seleccionar_pokemon);
+    if(estado == ERROR){
+      printf( ROJO "Hubo un problema con el traslado" RESET "\n");
+      return ERROR;
+    }else{
+      printf( VERDE "Se trasladó sin problemas %i pokemones" RESET "\n", trasladables);
+      return 0;
+    }
+  }  
   printf(ROJO "No hay pokemones suficientes para el traslado" RESET "\n");
   return ERROR;
 }
 
 void censar_arrecife(arrecife_t* arrecife, void (*mostrar_pokemon)(pokemon_t*)){
-  for(int i=0; i<(*arrecife).cantidad_pokemon; i++){
-    (*mostrar_pokemon)(&((*arrecife).pokemon[i]));
+  if((*arrecife).cantidad_pokemon == 0){
+    printf(AMARILLO "NO hay más pokemones" RESET "\n");
+  }else{
+    for(int i=0; i<(*arrecife).cantidad_pokemon; i++){
+      (*mostrar_pokemon)(&((*arrecife).pokemon[i]));
+    }
   }
 }
 
@@ -221,8 +247,7 @@ return 0;
 }
 
 void liberar_acuario(acuario_t* acuario){
-  if(((*acuario).pokemon) != NULL)
-    free((*acuario).pokemon);
+  free((*acuario).pokemon);
   free(acuario);
 }
 
