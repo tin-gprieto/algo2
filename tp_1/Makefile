@@ -4,9 +4,9 @@ GDB= gdb
 R= rm
 CFLAGS= -std=c99 -g -O0
 GFLAGS= -tui
-ARCHIVOS= simple.txt acuario.txt
-ERROR= error.txt acuario.txt
-SIMPLE= arrecife.txt acuario.txt
+ARCHIVOS= txt/simple.txt txt/acuario.txt
+ERROR= txt/error.txt txt/acuario.txt
+SIMPLE= txt/arrecife.txt txt/acuario.txt
 WFLAGS= -Wall -Wconversion -Werror
 VFLAGS= --leak-check=full --track-origins=yes --show-reachable=yes
 
@@ -23,7 +23,7 @@ gdb: evento_pesca
 rm:
 	$(R) evento_pesca 
 clean: rm
-	$(R) acuario.txt
+	$(R) txt/acuario.txt
 error: evento_pesca
 	./evento_pesca $(ERROR)
 simple: evento_pesca

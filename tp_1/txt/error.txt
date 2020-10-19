@@ -1,0 +1,6 @@
+Shellder;2;3;violeta
+Paras;9;5;naranja
+Horsea;11;6;celeste
+Politoed;9;34;verde
+Squirtleceleste;6;7
+Magikarp;7;9;naranja

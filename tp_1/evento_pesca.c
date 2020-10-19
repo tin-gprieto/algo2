@@ -200,10 +200,6 @@ int contar_transferibles(arrecife_t* arrecife, bool (*seleccionar_pokemon) (poke
 }
 
 int trasladar_pokemon(arrecife_t* arrecife, acuario_t* acuario, bool (*seleccionar_pokemon) (pokemon_t*), int cant_seleccion){
-  if(cant_seleccion == 0){
-      printf(AMARILLO "Hiciste un traslado de 0 pokemones" RESET "\n");
-      return 0;
-  }
   int trasladables = contar_transferibles(arrecife, seleccionar_pokemon);
   int estado=0;
   if(trasladables >= cant_seleccion){

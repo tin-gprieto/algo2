@@ -1,0 +1,5 @@
+Shellder;2;3;violeta
+Dratini;14;3;celeste
+Politoed;9;4;verde
+Alomomola;22;1;rosa
+

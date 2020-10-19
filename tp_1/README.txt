@@ -14,25 +14,25 @@ implementación interactiva:
 
 evento_pesca.c
 
--crear_arrecife: modularice en varias funciones con acciones más particulares, de por sí
-en la principal se abre el archivo para lectura y se crea el arrecife con malloc, si no puede alguno de los dos, 
+-crear_arrecife: En la principal se abre el archivo para lectura y se crea el arrecife con malloc, si no puede alguno de los dos, 
 devuelve NULL, luego una funcion se encarga de crear y cargar el bloque de pokemones dentro del arrefice;
-dentro de este una parte crea el bloque y otra función se encarga de cargar todos los pokemones, 
+dentro de esta una parte crea el bloque y otra función se encarga de cargar todos los pokemones, 
 donde se lee el archivo mientras se va modificando el tamaño del bloque de pokemones.
+
 -crear_acuario: crea el bloque para el acuario y tambien el bloque correspondiente para los pokemones,
 en caso de que algun malloc falle, devuelve NULL.
--traladar_pokemon: tambien está modularizada según todas las acciones que debe hacer,
-un primera funcion cuenta todos los pokemones transferibles según la funcion seleccionar, y si es cantidad es 
-menor a la cantidad que se pasa por parametro, sale devolviendo 0, ya que no es un error de por sí, 
-sino que el usuario eligió una cantidad no válida (para la interacción con el usuario es conveniente, así
-guarda los datos hasta ese traslado); si pasa eso, realiza el traslado completo, ésta funcion recorre todo el arrecife
-y para cada pokemon que cumple con la funcion seleccionar, lo copia al acuario y luego lo sacar del arrecife; para 
-pasarlo al acuario, primero agranda con realloc el bloque de pokemones y luego pasa ese pokemon a la ultima posicion
-sin ocupar; para sacarlo del arrecife, copia el último pokemon al lugar del pokemon para sacar 
-(ya que no importa el orden), modifica el tope y  achica el arrecife al tamaño actual.
+
+-traladar_pokemon: una primera función cuenta todos los pokemones transferibles según la funcion seleccionar, y si es cantidad es 
+menor a la cantidad que se pasa por parametro, sale devolviendo ERROR; en caso contrario, realiza el traslado completo, ésta funcion recorre todo el arrecife y para cada pokemon que cumple con la funcion seleccionar, lo copia al acuario y luego lo sacar del arrecife; 
+para pasarlo al acuario, primero agranda con realloc el bloque de pokemones y luego pasa ese pokemon a la ultima posicion
+sin ocupar; para sacarlo del arrecife, copia el último pokemon al lugar del pokemon para sacar (ya que no importa el orden), 
+modifica el tope y achica el arrecife al tamaño actual.
+
 -censar_arrecife: ejecuta la funcion mostrar tantas veces como pokemones haya en el arrecife (iteracion for)
+
 -guardar_datos_acuario: abre para escritura el nuevo archivo, si no puede, sale, sino escribe en formato tantos 
 pokemones haya en el acuario (iteracion for)
+
 -liberar_acuario/liberar_arrefice: primero libera el bloque de pokemones, luego el bloque del acuario o el arrecife
 
 main.c
@@ -41,18 +41,18 @@ Para la implementación queria contar mejor la idea general que tiene el program
 como donde guarda el acuario, se pasan por argumentos de comando, en caso de no tener alguno, el programa no corre.
 Luego es todo interactivo con el usuario, decidí hacerlo así para que pueda elegir qué funciones de selección
 o de mostrar por pantalla utilizar, y tambien para determinar la cantidad en cada traslado. Para esto,
-antes y después de un traslado, se pregunta al usuario si quiere seguir el programa haciendo otro, por lo que si acepta,
+antes de un traslado, se pregunta al usuario si quiere seguir haciendo otro, por lo que si acepta,
 elige que funciones usar, y sino sale del programa liberando la memoria dinámica y guardando los datos.
 En caso de que haya algún error con los archivos o mallos/realloc, intenté expresar por pantalla los errores puntualmente
 así se sabe cuales fueron esos problemas. 
 Para la implementacion de las funciones personalizables, usé una estructura con un array de punteros a funciones, 
-sus topes, y un string que explique la funcion, así dentro de la iteracion while sea 
-posible utilizar otras funciones solamente ingresando un número. Para cargar dichas funciones hay que hacer uso de 
-cargar_funciones, la cual ingresando este struct, la funcion, y su nombre o explicacion, se agrega al struct.
+sus topes, y un string que explique la funcion, así dentro de la iteracion while sea posible utilizar otras funciones 
+solamente ingresando un número. Para cargar dichas funciones hay que hacer uso de cargar_funciones, función que ingresando este struct, 
+la funcion, y su nombre o explicacion, se agrega al struct.
 
 Algo que me gustaria modificar es considerar que si la cantidad que ingresa para el traslado es mayor a 
 los pokemones trasladables, avise de esto y no termine la función de traslado con error, 
-sino que pueda seguir haciendo otro traslado y cierre el programa al guardar.Pero lamentablemente no me compiló en chanutron :(
+sino que pueda seguir haciendo otro traslado y cierre el programa al guardar.
 
 •Conceptos utilizados:
 
@@ -84,7 +84,7 @@ sino que pueda seguir haciendo otro traslado y cierre el programa al guardar.Per
 	Malloc y Realloc son dos funciones de stdlib.h que funcionan como herramienta para manejar la memoria dinámica pertenciente
 	al .heap. Siempre que se crea un bloque en la memoria dinámica hay que "liberarlo" luego de su uso, sino 
 	todo lo que se reserve va a seguir ocupado. Para ésto, se hace uso de "void free (void* ptr)" para liberar la memoria
-	utilizada en la dirección "ptr" de memoria.
+	utilizada en la dirección "ptr" de memoria (puntero).
 	
 	La función "void* malloc (size_t size)" es la encargada de crear un bloque de memoria de tamaño size 
 	y devuelve la dirección de memoria del mismo como un puntero "void*", en caso de no poder crear el bloque, 
