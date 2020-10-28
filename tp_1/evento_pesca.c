@@ -168,20 +168,23 @@ con los pokemones que cumplen con la condición de selección
 *Pre: Arrecife y acuario creado, funcion de selección que se pase a trasladar_pokemon
 *Post: 0 si se realizó el traslado completo, -1 si hubo un error
 */
-int hacer_traslado(arrecife_t* arrecife, acuario_t* acuario, bool (*seleccionar_pokemon) (pokemon_t*)){
+int hacer_traslado(arrecife_t* arrecife, acuario_t* acuario, bool (*seleccionar_pokemon) (pokemon_t*), int cant_seleccion){
   int i = 0;
+  int traslados = 0;
   bool esta_bien = true;
-  while((i < (*arrecife).cantidad_pokemon) && esta_bien){
+  while((i < (*arrecife).cantidad_pokemon) && (traslados < cant_seleccion) && esta_bien){
     if (seleccionar_pokemon(&((*arrecife).pokemon[i]))) {
       esta_bien = pasar_al_acuario(acuario, (*arrecife).pokemon[i]);
       if(esta_bien)
         esta_bien = sacar_del_arrecife(arrecife, i);
+      traslados++;
     }else{
       i++;
     }
   }
   if(!esta_bien)
     return ERROR;
+  printf( VERDE "Se trasladó sin problemas %i pokemones" RESET "\n", traslados);
   return 0;
 }
 /*
@@ -203,12 +206,11 @@ int trasladar_pokemon(arrecife_t* arrecife, acuario_t* acuario, bool (*seleccion
   int trasladables = contar_transferibles(arrecife, seleccionar_pokemon);
   int estado=0;
   if(trasladables >= cant_seleccion){
-    estado=hacer_traslado(arrecife, acuario, seleccionar_pokemon);
+    estado=hacer_traslado(arrecife, acuario, seleccionar_pokemon, cant_seleccion);
     if(estado == ERROR){
       printf( ROJO "Hubo un problema con el traslado" RESET "\n");
       return ERROR;
     }else{
-      printf( VERDE "Se trasladó sin problemas %i pokemones" RESET "\n", trasladables);
       return 0;
     }
   }  

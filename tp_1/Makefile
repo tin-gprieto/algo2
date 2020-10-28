@@ -4,9 +4,9 @@ GDB= gdb
 R= rm
 CFLAGS= -std=c99 -g -O0
 GFLAGS= -tui
-ARCHIVOS= txt/simple.txt txt/acuario.txt
+ARCHIVOS= txt/arrecife.txt txt/acuario.txt
 ERROR= txt/error.txt txt/acuario.txt
-SIMPLE= txt/arrecife.txt txt/acuario.txt
+SIMPLE= txt/simple.txt txt/acuario.txt
 WFLAGS= -Wall -Wconversion -Werror
 VFLAGS= --leak-check=full --track-origins=yes --show-reachable=yes
 
