@@ -3,6 +3,7 @@
 Para este aspecto hice uso de un archivo Makefile con ciertas instrucciones.
 -"make" o "make evento_pesca" compila el archivo main junto con evento_pesca.c.
 -"make exe" es para ejecutar el programa con el archivo "arrecife.txt" guardando los datos en "acuario.txt".
+-Tambien puede ejecutarse a mano con "./evento_pesca" e ingresando los dos archivos tanto para el arrecife como el acuario
 -"make help" o "./evento_pesca --help" ejecuta la ayuda al usuario para saber como ejecurarlo 
 en el caso de querer usar otros archivos.
 -En caso de querer hacer pruebas, con "make val" y "make gdb" se ejecutan valgrind y gdb respectivamente. 
@@ -26,7 +27,7 @@ en caso de que algun malloc falle, devuelve NULL.
 menor a la cantidad que se pasa por parametro, sale devolviendo ERROR; en caso contrario, realiza el traslado completo, ésta funcion recorre todo el arrecife y para cada pokemon que cumple con la funcion seleccionar, lo copia al acuario y luego lo sacar del arrecife; 
 para pasarlo al acuario, primero agranda con realloc el bloque de pokemones y luego pasa ese pokemon a la ultima posicion
 sin ocupar; para sacarlo del arrecife, copia el último pokemon al lugar del pokemon para sacar (ya que no importa el orden), 
-modifica el tope y achica el arrecife al tamaño actual.
+modifica el tope y achica el arrecife al tamaño actual. En caso de llegar a la cantidad que se pasó por parámetros, deja de trasladar.
 
 -censar_arrecife: ejecuta la funcion mostrar tantas veces como pokemones haya en el arrecife (iteracion for)
 
@@ -43,14 +44,14 @@ Luego es todo interactivo con el usuario, decidí hacerlo así para que pueda el
 o de mostrar por pantalla utilizar, y tambien para determinar la cantidad en cada traslado. Para esto,
 antes de un traslado, se pregunta al usuario si quiere seguir haciendo otro, por lo que si acepta,
 elige que funciones usar, y sino sale del programa liberando la memoria dinámica y guardando los datos.
-En caso de que haya algún error con los archivos o mallos/realloc, intenté expresar por pantalla los errores puntualmente
+En caso de que haya algún error con los archivos o malloc/realloc, intenté expresar por pantalla los errores puntualmente
 así se sabe cuales fueron esos problemas. 
 Para la implementacion de las funciones personalizables, usé una estructura con un array de punteros a funciones, 
 sus topes, y un string que explique la funcion, así dentro de la iteracion while sea posible utilizar otras funciones 
 solamente ingresando un número. Para cargar dichas funciones hay que hacer uso de cargar_funciones, función que ingresando este struct, 
 la funcion, y su nombre o explicacion, se agrega al struct.
 
-Algo que me gustaria modificar es considerar que si la cantidad que ingresa para el traslado es mayor a 
+//Algo que me gustaria modificar es considerar que si la cantidad que ingresa para el traslado es mayor a 
 los pokemones trasladables, avise de esto y no termine la función de traslado con error, 
 sino que pueda seguir haciendo otro traslado y cierre el programa al guardar.
 
