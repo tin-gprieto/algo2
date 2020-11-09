@@ -260,13 +260,13 @@ lista_iterador_t* lista_iterador_crear(lista_t* lista){
 }
 
 bool lista_iterador_tiene_siguiente(lista_iterador_t* iterador){
-    if(!((iterador->corriente)->siguiente))
+    if(!(iterador->corriente))
         return false;
     return true;
 }
 
 bool lista_iterador_avanzar(lista_iterador_t* iterador){
-    if (!((iterador->corriente)->siguiente))
+    if (!(iterador->corriente))
         return false;
     iterador->corriente = (iterador->corriente)->siguiente;
     return true;
@@ -283,9 +283,9 @@ void lista_iterador_destruir(lista_iterador_t* iterador){
 }
 
 size_t mover_por_nodos(nodo_t* nodo, bool (*funcion)(void *, void *), void *contexto){
-    if(!(nodo->siguiente))
+    if(!nodo)
         return 0;
-    if(!funcion(nodo, contexto))
+    if(!funcion(nodo->elemento, contexto))
         return 0;
     return 1 + mover_por_nodos(nodo->siguiente, funcion, contexto);
 }
