@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include <signal.h>
 
-#define BLANCO "\x1b[37;1m"
-#define VERDE "\x1b[32;1m"
-#define ROJO "\x1b[31;1m"
-#define AMARILLO "\x1b[33;1m"
+#define BLANCO "\x1b[37m"
+#define VERDE "\x1b[32m"
+#define ROJO "\x1b[31m"
+#define AMARILLO "\x1b[33m"
 #define NORMAL "\x1b[0m"
 
 #define TILDE "✓"

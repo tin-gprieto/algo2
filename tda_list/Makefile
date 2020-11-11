@@ -2,27 +2,31 @@ CC= gcc
 V= valgrind
 GDB= gdb
 R= rm
+CFILE=lista_pruebas.c pa2mm.h
+HFILE=lista.c
+FILEXTRA=lista_minipruebas.c
+EXE=lista_se
 CFLAGS= -std=c99 -g -O0
 GFLAGS= -tui
 WFLAGS= -Wall -Wconversion -Werror -Wtype-limits -pedantic
 VFLAGS= --leak-check=full --track-origins=yes --show-reachable=yes
 
-build: lista_pruebas.c pa2mm.h lista.c
-	$(CC) lista_pruebas.c pa2mm.h lista.c $(CFLAGS) $(WFLAGS) -o lista_se
+$(EXE): $(CFILE) $(HFILE)
+	$(CC) $(CFILE) $(HFILE) $(CFLAGS) $(WFLAGS) -o $(EXE)
 		
-mini_build: lista_minipruebas.c lista.c
-	$(CC) lista_minipruebas.c lista.c $(CFLAGS) $(WFLAGS) -o lista_se
+mini_build: $(FILEXTRA) $(HFILE)
+	$(CC) $(FILEXTRA) $(HFILE) $(CFLAGS) $(WFLAGS) -o $(EXE)
 
-test: build
+test: $(EXE)
 	clear
-	$(V) $(VFLAGS) ./lista_se
+	$(V) $(VFLAGS) ./$(EXE)
 
 mini_test: mini_build
 	clear
-	$(V) $(VFLAGS) ./lista_se
+	$(V) $(VFLAGS) ./$(EXE)
 
-gdb: build
-	$(GDB) lista_se $(GFLAGS)
+debug: $(EXE)
+	$(GDB) $(EXE) $(GFLAGS)
 
-mini_gdb: mini_build
-	$(GDB) lista_se $(GFLAGS)
+mini_debug: mini_build
+	$(GDB) $(EXE) $(GFLAGS)
