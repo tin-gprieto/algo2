@@ -71,7 +71,8 @@ int crear_e_insertar_entre_nodos(lista_t * lista, void* elemento, size_t posicio
 /*
 *Crea e inserta un elemento al inicio de la lista
 * Pre: Lista creada
-* Post: Elemento insertado al inicio de la lista
+* Post: Elemento insertado al inicio de la lista, en el caso de
+*ser el primer elemento insertado también es el último.
 */
 int crear_e_insertar_al_inicio(lista_t* lista, void* elemento){
     if(!lista)
