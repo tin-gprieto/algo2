@@ -336,6 +336,8 @@ bool lista_iterador_avanzar(lista_iterador_t* iterador){
     if (!(iterador->lista) || !(iterador->corriente))
         return false;
     iterador->corriente = (iterador->corriente)->siguiente;
+    if(!iterador->corriente)
+        return false;
     return true;
 }
 

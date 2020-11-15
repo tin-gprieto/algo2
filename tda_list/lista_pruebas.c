@@ -72,18 +72,21 @@ void probar_operaciones_pila(){
     size_t cant_elementos = 6;
     lista_t *pila = lista_crear();
 
-    pa2m_nuevo_sub_grupo("Encolar");
+    pa2m_nuevo_sub_grupo("Apilar");
     int estado_pila = inicializar_con_varios_elementos(pila, lista_apilar, elementos, cant_elementos);
     pa2m_afirmar(estado_pila == 0, "Se apiló varios elementos");
     pa2m_afirmar((lista_elementos(pila) == cant_elementos), "Se insertó la cantidad adecuada");
-    pa2m_nuevo_sub_grupo("Desencolar");
+
+    pa2m_nuevo_sub_grupo("Desapilar");
     int * ultimo_elemento = (int *) lista_ultimo(pila);
     pa2m_afirmar(lista_desapilar(pila) == 0,  "Se desapila un elemento");
     pa2m_afirmar(!existe_elemento(pila, ultimo_elemento), "Se desapiló el último elemento");
-    pa2m_nuevo_sub_grupo("Desencolar y vaciar");
+
+    pa2m_nuevo_sub_grupo("Desapilar y vaciar");
     bool se_vacia = vaciar_y_mostrar(pila, lista_ultimo, lista_desapilar, "॰ Pila");
     pa2m_afirmar(se_vacia, "La pila se desapila por completo y queda vacia");
     pa2m_afirmar(lista_desapilar(pila) == ERROR, "No se puede desapilar una pila vacia");
+
     lista_destruir(pila);
 }
 
@@ -96,15 +99,19 @@ void probar_operaciones_cola(){
     int estado_cola = inicializar_con_varios_elementos(cola, lista_encolar, elementos, cant_elementos);
     pa2m_afirmar(estado_cola == 0, "Se encoló varios elementos");
     pa2m_afirmar((lista_elementos(cola) == cant_elementos), "Se insertó la cantidad adecuada");
+
     pa2m_nuevo_sub_grupo("Desencolar");
     int * primer_elemento = (int*) lista_primero(cola);
     pa2m_afirmar(lista_desencolar(cola) == 0, "Se desencola un elemento");
     pa2m_afirmar(!existe_elemento(cola, primer_elemento), "Se desencoló el primer elemento");
+
     pa2m_nuevo_sub_grupo("Desencolar y vaciar");
+    
     bool se_vacia = vaciar_y_mostrar(cola, lista_primero, lista_desencolar, "॰ Cola");
     pa2m_afirmar(se_vacia, "La cola se desencola por completo y queda vacia");
     pa2m_afirmar(lista_desencolar(cola) == ERROR, "No se puede desencolar una cola vacia");
     lista_destruir(cola);
+    
 }
 
 bool mostrar_elemento(void *elemento, void *contexto){
@@ -169,12 +176,13 @@ void iterar_varios_elementos(){
     size_t cant_elementos = 6;
     lista_t *lista = lista_crear();
     inicializar_con_varios_elementos(lista, lista_insertar, elementos, cant_elementos);
-
     lista_iterador_t *iterador = lista_iterador_crear(lista);
+
     pa2m_afirmar((iterador != NULL), "Se crea un iterador correctamente")
     pa2m_afirmar(((iterador->corriente) == (lista->nodo_inicio)), "El iterador comienza apuntando al primer elemento");
     pa2m_afirmar(((iterador->lista) == lista), "El iterador contiene a la lista");
     imprimir_con_it_externo(&(*lista), &(*iterador));
+
     lista_iterador_destruir(iterador);
     lista_destruir(lista);
 }
@@ -184,10 +192,11 @@ void iterar_un_solo_elemento(){
     int elemento = 23;
     lista_insertar(lista, &elemento);
     lista_iterador_t *iterador = lista_iterador_crear(lista);
+
     pa2m_afirmar(lista_iterador_elemento_actual(iterador) == &elemento, "El iterador apunta al único elemento");
-    pa2m_afirmar(lista_iterador_avanzar(iterador), "El iterador puede avanzar");
-    pa2m_afirmar(!lista_iterador_elemento_actual(iterador), "Una vez avanza no tiene elemento");
+    pa2m_afirmar(!lista_iterador_avanzar(iterador), "El iterador no puede avanzar");
     pa2m_afirmar(!lista_iterador_tiene_siguiente(iterador), "No tiene elemento siguiente");
+
     lista_iterador_destruir(iterador);
     lista_destruir(lista);
 }
@@ -195,10 +204,12 @@ void iterar_un_solo_elemento(){
 void iterar_lista_vacia(){
     lista_t *lista = lista_crear();
     lista_iterador_t *iterador = lista_iterador_crear(lista);
+
     pa2m_afirmar(iterador != NULL, "Se crea un iterador para una lista vacia");
     pa2m_afirmar(!lista_iterador_tiene_siguiente(iterador), "No tiene siguiente");
     pa2m_afirmar(!lista_iterador_avanzar(iterador), "No puede avanzar");
     pa2m_afirmar(!lista_iterador_elemento_actual(iterador), "No contiene ningún elemento");
+
     lista_destruir(lista);
     lista_iterador_destruir(iterador);
 }
@@ -213,6 +224,7 @@ void probar_operaciones_it_externo(){
     pa2m_nuevo_sub_grupo("Iteración de una lista vacía");
     iterar_lista_vacia();
 }
+
 void insertar_varios_elementos(int* elementos, size_t cant_elementos){
     lista_t *lista = lista_crear();
     int estado = inicializar_con_varios_elementos(lista, lista_insertar, elementos, cant_elementos);
@@ -220,6 +232,7 @@ void insertar_varios_elementos(int* elementos, size_t cant_elementos){
     pa2m_afirmar((lista_elementos(lista) == cant_elementos), "Se insertó la cantidad adecuada");
     bool insercion = se_inserto_bien(lista, elementos, cant_elementos);
     pa2m_afirmar((int)insercion, "Se insertaron en orden correcto");
+
     lista_destruir(lista);
 }
 
@@ -231,11 +244,14 @@ void insertar_y_borrar_en_posicion(int *elementos, size_t cant_elementos){
 
     pa2m_afirmar((lista_insertar_en_posicion(lista, &elemento, posicion) == 0), "Se inserta un elemento en una posicion de la lista");
     pa2m_afirmar((lista_elementos(lista) == (cant_elementos + 1)), "Tiene la cantidad adecuada");
+    
     pa2m_afirmar((lista_borrar_de_posicion(lista, posicion) == 0), "Se borra el elemento insertado anteriormente");
     pa2m_afirmar((lista_elementos(lista) == cant_elementos), "Tiene la cantidad adecuada");
     pa2m_afirmar((lista_elemento_en_posicion(lista, posicion) != &elemento), "El elemento borrado no está más");
+
     bool insercion = se_inserto_bien(lista, elementos, cant_elementos);
     pa2m_afirmar((int)insercion, "La lista volvió al orden anterior de la inserción");
+
     lista_destruir(lista);
 }
 
@@ -246,11 +262,14 @@ void insertar_y_borrar_al_principio(int *elementos, size_t cant_elementos){
 
     pa2m_afirmar((lista_insertar_en_posicion(lista, &elemento, 0) == 0), "Se inserta un elemento en la posicion 0");
     pa2m_afirmar((lista_elementos(lista) == (cant_elementos + 1)), "Tiene la cantidad adecuada");
+
     pa2m_afirmar((lista_borrar_de_posicion(lista, 0) == 0), "Se borra el elemento de la posicion 0");
     pa2m_afirmar((lista_elementos(lista) == cant_elementos), "Tiene la cantidad adecuada");
     pa2m_afirmar((lista_elemento_en_posicion(lista, 0) != &elemento), "El elemento borrado no está más");
+
     bool insercion = se_inserto_bien(lista, elementos, cant_elementos);
     pa2m_afirmar((int)insercion, "La lista volvió al orden anterior de la inserción");
+
     lista_destruir(lista);
 }
 
@@ -263,10 +282,11 @@ void insertar_y_borrar_al_final(int *elementos, size_t cant_elementos){
     pa2m_afirmar((lista_insertar_en_posicion(lista, &elemento, cant_elementos) == 0), "Se inserta despues del último elemento");
     pa2m_afirmar((lista_ultimo(lista) != ultimo_elemento), "El último elemento no es el elemento anterior");
     pa2m_afirmar((lista_elementos(lista) == (cant_elementos + 1)), "Tiene la cantidad adecuada");
+
     pa2m_afirmar((lista_borrar_de_posicion(lista, cant_elementos) == 0), "Se borra el elemento anteriormente insertado");
     pa2m_afirmar((lista_elementos(lista) == cant_elementos), "Tiene la cantidad adecuada");
     pa2m_afirmar((lista_ultimo(lista) != &elemento), "El elemento no está en el final");
- 
+
     lista_destruir(lista);
 }
 
@@ -285,6 +305,17 @@ void insertar_y_borrar_fuera_de_lista(int* elementos, size_t cant_elementos){
     pa2m_afirmar((lista_ultimo(lista) != &elemento), "El elemento no está en el final");
     pa2m_afirmar((lista_elementos(lista) == cant_elementos), "Tiene la cantidad adecuada");
     
+    lista_destruir(lista);
+}
+
+void insertar_y_borrar_en_lista_vacia(){
+    lista_t *lista = lista_crear();
+    float elemento = 3.5;
+    pa2m_afirmar((lista_borrar_de_posicion(lista, 0) == ERROR), "No se puede borrar en una lista vacía");
+    pa2m_afirmar((lista_insertar_en_posicion(lista, &elemento, 0) == 0), "Se inserta un elemento en la posicion 0");
+    pa2m_afirmar((lista_elementos(lista) == 1), "Tiene la cantidad adecuada");
+    pa2m_afirmar((lista_elemento_en_posicion(lista, 0) == &elemento), "El elemento se encuentra la posicion 0");
+    pa2m_afirmar(lista_primero(lista) == lista_ultimo(lista), "El primer elemento también es el último");
     lista_destruir(lista);
 }
 
@@ -320,6 +351,9 @@ void probar_operaciones_avanzadas(){
     imprimir_separador();
     pa2m_nuevo_sub_grupo("Insertar y borrar fuera de lista");
     insertar_y_borrar_fuera_de_lista(elementos, cant_elementos);
+    imprimir_separador();
+    pa2m_nuevo_sub_grupo("Insertar y borrar en lista_vacia con posicion");
+    insertar_y_borrar_en_lista_vacia();
     imprimir_separador();
     pa2m_nuevo_sub_grupo("Insertar muchos elementos (500)");
     insertar_muchos_elementos();
