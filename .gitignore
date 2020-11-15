@@ -1,7 +1,10 @@
 test/
 tp_1/evento_pesca
 tp_1/entrega/
+tp_1/txt/
 tda_list/entrega/
 tda_list/lista_se
-tp_1/txt/
+tda_list/entrega/
+tda_abb/entrega/
+tda_abb/abb
 .vscode
