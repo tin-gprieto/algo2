@@ -13,6 +13,7 @@ WFLAGS= -Wall -Wconversion -Werror -Wtype-limits -pedantic
 VFLAGS= --leak-check=full --track-origins=yes --show-reachable=yes
 
 $(EXE): $(CFILE) $(HFILE)
+	clear
 	$(CC) $(CFILE) $(HFILE) $(CFLAGS) $(WFLAGS) -o $(EXE)
 		
 test: $(EXE)

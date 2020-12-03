@@ -259,8 +259,8 @@ int main(){
     probar_basicas(); //Crear, Vacio, Destruir, Raiz   
     probar_insercion(); //Insertar, Raiz
     probar_busqueda(); 
-    probar_borrado(); 
-    probar_recorridos();
+    probar_borrado();
+    //probar_recorridos();
     probar_iterador();
     test_mostrar_reporte();
     return 0;
