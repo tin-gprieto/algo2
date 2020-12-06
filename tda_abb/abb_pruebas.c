@@ -9,6 +9,28 @@
 
 #define MAX_VECTOR 10
 
+typedef struct contador{
+    size_t contador;
+    size_t tope;
+} contador_t;
+
+typedef struct array{
+    void** vector;
+    size_t tamanio;
+    size_t posicion;
+} array_t;
+
+bool array_sin_espacio(array_t array){
+    return (array.posicion > (array.tamanio - 1));
+}
+
+bool cargar_array_arbol(void* elemento, void* array){
+    if(array_sin_espacio(*(array_t*)array)) return false;
+    ((array_t*)array)->vector[((array_t*)array)->posicion] = elemento;
+    (((array_t*)array)->posicion)++;
+    return true;
+}
+
 int comparador_int(void* elemento_1, void* elemento_2){
     int primer_numero = *(int*) elemento_1;
     int segundo_numero = *(int*) elemento_2;
@@ -23,7 +45,7 @@ void destructor_dinamico(void* elemento){
     free(elemento);
 }
 
-int cargar_arbol(abb_t* arbol, int elementos[], int tope){
+int cargar_arbol(abb_t* arbol, int elementos[], size_t tope){
     int i = 0;
     int insercion = 0;
     while ((insercion == 0) && (i < tope)){
@@ -33,11 +55,54 @@ int cargar_arbol(abb_t* arbol, int elementos[], int tope){
     return insercion;
 }
 
+bool buscar_elementos(abb_t* arbol, int elementos[], int tope){
+    bool encuentra = true;
+    int i = 0;
+    while(encuentra && i<tope){
+        encuentra = (arbol_buscar(arbol, &elementos[i]) != NULL);
+        i++;
+    }
+    return encuentra;
+}
+
+void print_array(int* array, size_t tope){
+    printf("[");
+    for(size_t i = 0; i < tope; i++){
+        printf(" %i ", array[i]);
+    }
+    printf("] \n");
+}
+bool no_imprimir(void* elemento, void* extra){
+    return false;
+}
+
+bool imprimir_arbol(void* elemento, void* contador){
+    contador_t aux = *(contador_t*)contador;
+    if(aux.contador > aux.tope) return false;
+    if(aux.contador == 0) printf("[");
+    printf(" %i ", *(int*) elemento);
+    if(aux.contador == aux.tope -1) printf("]\n");
+    ((contador_t*)contador)->contador ++;
+    return true;
+}
+
+bool imprimir_impares(void* elemento, void* contador){
+    contador_t aux = *(contador_t*)contador;
+    if(aux.contador > aux.tope) return false;
+    if(aux.contador == 0) printf("[");
+    if((*(int*)elemento)%2 != 0)
+        printf(" %i ", *(int*) elemento);
+    
+    ((contador_t*)contador)->contador ++;
+    if(aux.contador == aux.tope - 1) printf("]\n");
+    return true;
+}
+
 /*
-*Compara 
+*Compara dos vectores del mismo tamaño
 */
-bool comparar_vectores(int vector_1[], int recorrido[], int tamanio){
-    int i=0;
+bool comparar_vectores(int vector_1[], int recorrido[], size_t tamanio){
+    size_t i=0;
     bool coincide=true;
     while (coincide && i<tamanio){
         if (vector_1[i] != recorrido[i])
@@ -48,106 +113,197 @@ bool comparar_vectores(int vector_1[], int recorrido[], int tamanio){
 }
 
 void probar_iterador(){
+    int elementos[] = {9, 5, 3, 2, 4, 7, 6, 8, 13, 11, 10, 12, 15, 14, 16};
+    size_t tope = 15;
+    abb_t* arbol = arbol_crear(comparador_int, NULL);
+    cargar_arbol(arbol, elementos, tope);
+
+    contador_t contador;
+    contador.contador = 0;
+    contador.tope = tope;
+    size_t iteracion = 0;
     test_nuevo_grupo("Pruebas con iterador interno");
-    //completo
-    //en parte
-    //ninguno
+
+    test_nuevo_sub_grupo("Iteracion completa");
+    contador.contador = 0;
+    iteracion = abb_con_cada_elemento(arbol, ABB_RECORRER_INORDEN,imprimir_arbol, &contador);
+    test_afirmar(iteracion == tope, "Se itera completamente INorden");
+    contador.contador = 0;
+    iteracion = abb_con_cada_elemento(arbol, ABB_RECORRER_PREORDEN,imprimir_arbol, &contador);
+    test_afirmar(iteracion == tope, "Se itera completamente PREorden");
+    contador.contador = 0;
+    iteracion = abb_con_cada_elemento(arbol, ABB_RECORRER_POSTORDEN,imprimir_arbol, &contador);
+    test_afirmar(iteracion == tope, "Se itera completamente POSTorden");
+
+    test_nuevo_sub_grupo("Iteracion restringida");
+    contador.contador = 0;
+    iteracion = abb_con_cada_elemento(arbol, ABB_RECORRER_INORDEN, imprimir_impares, &contador);
+    test_afirmar(iteracion == tope, "Se itera en todos los elementos INorden");
+    contador.contador = 0;
+    iteracion = abb_con_cada_elemento(arbol, ABB_RECORRER_PREORDEN,imprimir_impares, &contador);
+    test_afirmar(iteracion == tope, "Se itera en todos los elementos PREorden");
+    contador.contador = 0;
+    iteracion = abb_con_cada_elemento(arbol, ABB_RECORRER_POSTORDEN,imprimir_impares, &contador);
+    test_afirmar(iteracion == tope, "Se itera en todos los elementos POSTorden");
+
+    test_nuevo_sub_grupo("Pruebas de fallo");
+    iteracion = abb_con_cada_elemento(arbol, ABB_RECORRER_INORDEN, NULL, NULL);
+    test_afirmar(iteracion == 0, "No itera si la funcion es NULL");
+    iteracion = abb_con_cada_elemento(arbol, ABB_RECORRER_INORDEN, no_imprimir, NULL);
+    test_afirmar(iteracion == 0, "No itera si la funcion es siempre falsa");
+    int recorrido_invalido = 5;
+    contador.contador = 0;
+    iteracion = abb_con_cada_elemento(arbol, recorrido_invalido, imprimir_arbol, &contador);
+    test_afirmar(iteracion == 0, "No itera si el recorrido es inválido");
+
+    arbol_destruir(arbol);
 }
 
-void probar_recorridos(){
-    abb_t* arbol = arbol_crear(comparador_int, NULL);
-    int elementos[] = {5, 3, 4, 7, 6, 9, 12};
-    int tope = 7;
-    cargar_arbol(arbol, elementos, tope);
+void trasformar_generico_a_int(void** array, size_t tope, int array_int[]){
+    for(int i = 0; i < tope; i++)
+        array_int[i] = *(int*)array[i];
+}
+
+void pruebas_recorrido_completas(size_t (*recorrido)(abb_t*, void**, size_t), int orden_completo[], int orden_incompleto[], int orden_insuficiente[]){
+    int completo[] = {9, 5, 3, 2, 4, 7, 6, 8, 13, 11, 10, 12, 15, 14, 16};
+    size_t tope_completo = 15;
+    int incompleto[] = {9, 5, 3, 2, 4, 13, 15, 14, 16};
+    size_t tope_incompleto = 9;
+    size_t tope_insuficiente =  9;  
+
+
+    test_nuevo_sub_grupo("Árbol Completo");
+    abb_t* arbol_completo = arbol_crear(comparador_int, NULL);
+    cargar_arbol(arbol_completo, completo, tope_completo);
     
-    int* elementos_recorridos;
-    int** recorrido = &elementos_recorridos;
-    size_t tamanio_recorrido = 0;
+    void* array_completo[tope_completo];
     size_t cant_recorrido = 0;
     bool orden_adecuado = true;
 
-    test_nuevo_grupo("Recorrido Inorden");
-    int inorden[]={3, 4, 5, 6, 7, 9, 12};
-    tamanio_recorrido = 10;
-    cant_recorrido = arbol_recorrido_inorden(arbol, (void**) recorrido, tamanio_recorrido);
-    test_afirmar(cant_recorrido == tope, "Se recorrió la cantidad adecuada");
-    orden_adecuado = comparar_vectores(inorden, elementos_recorridos, tope);
+    cant_recorrido = recorrido(arbol_completo, array_completo , tope_completo);
+    test_afirmar(cant_recorrido == tope_completo, "Se recorrió la cantidad adecuada");
+    int recorrido_completo[cant_recorrido];
+    trasformar_generico_a_int(array_completo, cant_recorrido, recorrido_completo);
+    orden_adecuado = comparar_vectores(orden_completo, recorrido_completo, cant_recorrido);
     test_afirmar(orden_adecuado, "Se recorrió en el orden correcto");
+     
+    arbol_destruir(arbol_completo);
+    
+    test_nuevo_sub_grupo("Árbol Incompleto");
+    
+    abb_t* arbol_incompleto = arbol_crear(comparador_int, NULL);
+    cargar_arbol(arbol_incompleto, incompleto, tope_incompleto);
+    
+    void* array_incompleto[tope_incompleto];
+    cant_recorrido = 0;
+    orden_adecuado = true;
 
-    test_nuevo_grupo("Recorrido Preorden");
-    int preorden[] = {5, 3, 4, 7, 6, 9, 12};
-    tamanio_recorrido = 10;
-    cant_recorrido = arbol_recorrido_preorden(arbol, (void**) recorrido, tamanio_recorrido);
-    test_afirmar(cant_recorrido == tope, "Se recorrió la cantidad adecuada");
-    orden_adecuado = comparar_vectores(preorden, elementos_recorridos, tope);
+    cant_recorrido = recorrido(arbol_incompleto, array_incompleto , tope_incompleto);
+    test_afirmar(cant_recorrido == tope_incompleto, "Se recorrió la cantidad adecuada");
+    int recorrido_incompleto[cant_recorrido];
+    trasformar_generico_a_int(array_incompleto, cant_recorrido, recorrido_incompleto);
+    orden_adecuado = comparar_vectores(orden_incompleto, recorrido_incompleto, cant_recorrido);
     test_afirmar(orden_adecuado, "Se recorrió en el orden correcto");
+     
+    arbol_destruir(arbol_incompleto);
 
-    test_nuevo_grupo("Recorrido Inorden");
-    int postorden[] = {12, 9, 7, 6, 5, 4, 3};
-    tamanio_recorrido = 10;
-    cant_recorrido = arbol_recorrido_postorden(arbol, (void**) recorrido, tamanio_recorrido);
-    test_afirmar(cant_recorrido == tope, "Se recorrió la cantidad adecuada");
-    orden_adecuado = comparar_vectores(postorden, elementos_recorridos, tope);
+    test_nuevo_sub_grupo("Array sin capacidad suficiente");
+
+    abb_t* arbol_insuficiente = arbol_crear(comparador_int, NULL);
+    cargar_arbol(arbol_insuficiente, completo, tope_completo);
+    
+    void* array_insuficiente[tope_incompleto];
+    cant_recorrido = 0;
+    orden_adecuado = true;
+
+    cant_recorrido = recorrido(arbol_insuficiente, array_insuficiente , tope_insuficiente);
+    test_afirmar(cant_recorrido == tope_insuficiente, "Se recorrió la cantidad adecuada");
+    int recorrido_insuficiente[cant_recorrido];
+    trasformar_generico_a_int(array_insuficiente, tope_insuficiente, recorrido_insuficiente);
+    orden_adecuado = comparar_vectores(orden_insuficiente, recorrido_insuficiente, tope_insuficiente);
     test_afirmar(orden_adecuado, "Se recorrió en el orden correcto");
-
-    arbol_destruir(arbol);
+     
+    arbol_destruir(arbol_insuficiente);
 }
 
+void probar_recorridos(){
 
+    test_nuevo_grupo("Recorrido Inorden");
+    int inorden_completo[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+    int inorden_incompleto[] = {2, 3, 4, 5, 9, 13, 14, 15, 16};
+    int inorden_insuficiente[] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
+    pruebas_recorrido_completas(arbol_recorrido_inorden, inorden_completo, inorden_incompleto, inorden_insuficiente);
+
+    test_nuevo_grupo("Recorrido Preorden");
+
+    int preorden_completo[] = {9, 5, 3, 2, 4, 7, 6, 8, 13, 11, 10, 12, 15, 14, 16};
+    int preorden_incompleto[] = {9, 5, 3, 2, 4, 13, 15, 14, 16};
+    int preorden_insuficiente[] = {9, 5, 3, 2, 4, 7, 6, 8, 13};
+    pruebas_recorrido_completas(arbol_recorrido_preorden, preorden_completo, preorden_incompleto, preorden_insuficiente);
+
+    test_nuevo_grupo("Recorrido Postorden");
+
+    int postorden_completo[] = {2, 4, 3, 6, 8, 7, 5, 10, 12, 11, 14, 16, 15, 13, 9};
+    int postorden_incompleto[] = {2, 4, 3, 5, 14, 16, 15, 13, 9};
+    int postorden_insuficiente[] = {2, 4, 3, 6, 8, 7, 5, 10, 12};
+    pruebas_recorrido_completas(arbol_recorrido_postorden, postorden_completo, postorden_incompleto, postorden_insuficiente);
+
+}
+
+void prueba_borrado_generica(abb_t* arbol, int* elemento_borrado, size_t cant_inicial, int borrado_esperado[]){
+    size_t tamanio_recorrido = cant_inicial;
+    void* recorrido[tamanio_recorrido] ;
+    size_t cant_recorrido = 0;
+    bool orden_adecuado = false;
+    test_afirmar(arbol_borrar(arbol, (void*) elemento_borrado) == 0, "Se elimina el elemento");
+    test_afirmar(arbol_buscar(arbol, (void*) elemento_borrado) == NULL, "El elemento no se encuentra en el árbol");
+    int elementos_borrados[tamanio_recorrido];
+    cant_recorrido = arbol_recorrido_preorden(arbol, recorrido, tamanio_recorrido);
+    test_afirmar(cant_recorrido == cant_inicial - 1, "El árbol se encuentra con la cantidad de elementos adecuada");
+    trasformar_generico_a_int(recorrido, cant_recorrido, elementos_borrados);
+    orden_adecuado = comparar_vectores(borrado_esperado, elementos_borrados, cant_recorrido);
+    test_afirmar(orden_adecuado, "Se recorrió en el orden correcto");
+    print_array(elementos_borrados, cant_recorrido);
+
+}
+ 
 void probar_borrado(){
     abb_t *arbol = arbol_crear(comparador_int, NULL);
     int elementos[] = {5, 3, 4, 7, 6, 9, 12};
-    int tope = 7;
+    size_t tope = 7;
     cargar_arbol(arbol, elementos, tope);
-
-    int *elementos_encontrados;
-    int **recorrido = &elementos_encontrados;
-    size_t tamanio_recorrido = 0;
-    size_t cant_recorrido = 0;
-    tamanio_recorrido = 10;
-    bool orden_adecuado = false;
 
     test_nuevo_grupo("Pruebas con Borrar");
 
-    test_nuevo_sub_grupo("Con Predecesor inorden");
-    test_afirmar(arbol_borrar(arbol, &elementos[0]) == 0, "Se elimina el elemento");
-    test_afirmar(arbol_buscar(arbol, &elementos[0]) == NULL, "El elemento no se encuentra en el árbol");
+    printf("Árbol(preorden): ");
+    print_array(elementos, tope);
+
+    test_nuevo_sub_grupo("Raíz con Predecesor inorden");
     int borrado_1_esperado[] = {4, 3, 7, 6, 9, 12};
-    cant_recorrido = arbol_recorrido_preorden(arbol, (void **)recorrido, tamanio_recorrido);
-    test_afirmar(cant_recorrido == tope - 1, "El árbol se encuentra con la cantidad de elementos adecuada");
-    orden_adecuado = comparar_vectores(borrado_1_esperado, elementos_encontrados, tope - 1);
-    test_afirmar(orden_adecuado, "Se recorrió en el orden correcto");
+    printf("Borra el elemento : %i : %p \n", elementos[0], (void*) &elementos[0]);
+    prueba_borrado_generica(arbol, &elementos[0], tope, borrado_1_esperado);
+    tope --;
 
     test_nuevo_sub_grupo("No tiene sub-árbol menor");
-    test_afirmar(arbol_borrar(arbol, &elementos[5]) == 0, "Se elimina el elemento");
-    test_afirmar(arbol_buscar(arbol, &elementos[5]) == NULL, "El elemento no se encuentra en el árbol");
-    int borrado_2_esperado[] = {4, 3, 7, 6, 9, 12};
-    cant_recorrido = arbol_recorrido_preorden(arbol, (void **)recorrido, tamanio_recorrido);
-    test_afirmar(cant_recorrido == tope - 2, "El árbol se encuentra con la cantidad de elementos adecuada");
-    orden_adecuado = comparar_vectores(borrado_2_esperado, elementos_encontrados, tope - 2);
-    test_afirmar(orden_adecuado, "Se recorrió en el orden correcto");
-
+    int borrado_2_esperado[] = {4, 3, 7, 6, 12};
+    printf("Borra el elemento : %i : %p \n", elementos[5], (void*) &elementos[5]);
+    prueba_borrado_generica(arbol, &elementos[5], tope, borrado_2_esperado);
+    tope --;
+    
     test_nuevo_sub_grupo("El hijo menor es hoja");
-    test_afirmar(arbol_borrar(arbol, &elementos[3]) == 0, "Se elimina el elemento");
-    test_afirmar(arbol_buscar(arbol, &elementos[3]) == NULL, "El elemento no se encuentra en el árbol");
-    int borrado_3_esperado[] = {4, 3, 7, 6, 9, 12};
-    cant_recorrido = arbol_recorrido_preorden(arbol, (void **)recorrido, tamanio_recorrido);
-    test_afirmar(cant_recorrido == tope - 3, "El árbol se encuentra con la cantidad de elementos adecuada");
-    orden_adecuado = comparar_vectores(borrado_3_esperado, elementos_encontrados, tope - 3);
-    test_afirmar(orden_adecuado, "Se recorrió en el orden correcto");
-
+    int borrado_3_esperado[] = {4, 3, 6, 12};
+    printf("Borra el elemento : %i : %p \n", elementos[3], (void*) &elementos[3]);
+    prueba_borrado_generica(arbol, &elementos[3], tope, borrado_3_esperado);
+    tope --;
+    
     test_nuevo_sub_grupo("No tiene hijos");
-    test_afirmar(arbol_borrar(arbol, &elementos[6]) == 0, "Se elimina el elemento");
-    test_afirmar(arbol_buscar(arbol, &elementos[6]) == NULL, "El elemento no se encuentra en el árbol");
-    int borrado_4_esperado[] = {4, 3, 7, 6, 9, 12};
-    cant_recorrido = arbol_recorrido_preorden(arbol, (void **)recorrido, tamanio_recorrido);
-    test_afirmar(cant_recorrido == tope - 4, "El árbol se encuentra con la cantidad de elementos adecuada");
-    orden_adecuado = comparar_vectores(borrado_4_esperado, elementos_encontrados, tope - 4);
-    test_afirmar(orden_adecuado, "Se recorrió en el orden correcto");
-
+    int borrado_4_esperado[] = {4, 3, 6};
+    printf("Borra el elemento : %i : %p \n", elementos[6], (void*) &elementos[6]);
+    prueba_borrado_generica(arbol, &elementos[6], tope, borrado_4_esperado);
+    tope --;
+    
     arbol_destruir(arbol);
 }
-
 
 void probar_busqueda(){
     test_nuevo_grupo("Pruebas con Buscar");
@@ -160,7 +316,7 @@ void probar_busqueda(){
     test_afirmar(*(int*)arbol_buscar(arbol, (void*) elemento_insertado) == numero_insertado, "Coinciden los valores de ambos elementos");
 
     int elementos[] = {5, 3, 4, 7, 6, 9, 12};
-    int tope = 7;
+    size_t tope = 7;
     cargar_arbol(arbol, elementos, tope);
 
     int j = 0;
@@ -224,7 +380,7 @@ void probar_insercion(){
     abb_t* arbol_2 = arbol_crear(comparador_int, NULL);
 
     int elementos[]={5,3,4,7,6,9,12};
-    int tope = 7;
+    size_t tope = 7;
     int insercion = cargar_arbol(arbol_2, elementos, tope);
 
     test_afirmar(insercion == 0, "Se insertaron correctamente varios elementos");
@@ -259,9 +415,9 @@ int main(){
     probar_basicas(); //Crear, Vacio, Destruir, Raiz   
     probar_insercion(); //Insertar, Raiz
     probar_busqueda(); 
-    probar_borrado();
-    //probar_recorridos();
+    probar_recorridos();
     probar_iterador();
+    probar_borrado();
     test_mostrar_reporte();
     return 0;
 }
