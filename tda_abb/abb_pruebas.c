@@ -25,10 +25,10 @@ bool array_sin_espacio(array_t array){
 }
 
 bool cargar_array_arbol(void* elemento, void* array){
-    if(array_sin_espacio(*(array_t*)array)) return false;
+    if(array_sin_espacio(*(array_t*)array)) return true;
     ((array_t*)array)->vector[((array_t*)array)->posicion] = elemento;
     (((array_t*)array)->posicion)++;
-    return true;
+    return false;
 }
 
 int comparador_int(void* elemento_1, void* elemento_2){
@@ -73,29 +73,29 @@ void print_array(int* array, size_t tope){
     printf("] \n");
 }
 bool no_imprimir(void* elemento, void* extra){
-    return false;
+    return true;
 }
 
 bool imprimir_arbol(void* elemento, void* contador){
     contador_t aux = *(contador_t*)contador;
-    if(aux.contador > aux.tope) return false;
+    if(aux.contador > aux.tope) return true;
     if(aux.contador == 0) printf("[");
     printf(" %i ", *(int*) elemento);
     if(aux.contador == aux.tope -1) printf("]\n");
     ((contador_t*)contador)->contador ++;
-    return true;
+    return false;
 }
 
 bool imprimir_impares(void* elemento, void* contador){
     contador_t aux = *(contador_t*)contador;
-    if(aux.contador > aux.tope) return false;
+    if(aux.contador > aux.tope) return true;
     if(aux.contador == 0) printf("[");
     if((*(int*)elemento)%2 != 0)
         printf(" %i ", *(int*) elemento);
     
     ((contador_t*)contador)->contador ++;
     if(aux.contador == aux.tope - 1) printf("]\n");
-    return true;
+    return false;
 }
 
 /*
@@ -150,7 +150,7 @@ void probar_iterador(){
     iteracion = abb_con_cada_elemento(arbol, ABB_RECORRER_INORDEN, NULL, NULL);
     test_afirmar(iteracion == 0, "No itera si la funcion es NULL");
     iteracion = abb_con_cada_elemento(arbol, ABB_RECORRER_INORDEN, no_imprimir, NULL);
-    test_afirmar(iteracion == 0, "No itera si la funcion es siempre falsa");
+    test_afirmar(iteracion == 0, "No itera si la funcion es siempre verdadera");
     int recorrido_invalido = 5;
     contador.contador = 0;
     iteracion = abb_con_cada_elemento(arbol, recorrido_invalido, imprimir_arbol, &contador);
@@ -252,7 +252,7 @@ void probar_recorridos(){
 
 void prueba_borrado_generica(abb_t* arbol, int* elemento_borrado, size_t cant_inicial, int borrado_esperado[]){
     size_t tamanio_recorrido = cant_inicial;
-    void* recorrido[tamanio_recorrido] ;
+    void* recorrido[tamanio_recorrido];
     size_t cant_recorrido = 0;
     bool orden_adecuado = false;
     test_afirmar(arbol_borrar(arbol, (void*) elemento_borrado) == 0, "Se elimina el elemento");
@@ -261,14 +261,14 @@ void prueba_borrado_generica(abb_t* arbol, int* elemento_borrado, size_t cant_in
     cant_recorrido = arbol_recorrido_preorden(arbol, recorrido, tamanio_recorrido);
     test_afirmar(cant_recorrido == cant_inicial - 1, "El árbol se encuentra con la cantidad de elementos adecuada");
     trasformar_generico_a_int(recorrido, cant_recorrido, elementos_borrados);
-    orden_adecuado = comparar_vectores(borrado_esperado, elementos_borrados, cant_recorrido);
-    test_afirmar(orden_adecuado, "Se recorrió en el orden correcto");
+    orden_adecuado = comparar_vectores(borrado_esperado, elementos_borrados, cant_inicial-1);
+    test_afirmar(orden_adecuado, "Se recorrió en los elementos adecuados");
     print_array(elementos_borrados, cant_recorrido);
 
 }
  
 void probar_borrado(){
-    abb_t *arbol = arbol_crear(comparador_int, NULL);
+    abb_t * arbol = arbol_crear(comparador_int, NULL);
     int elementos[] = {5, 3, 4, 7, 6, 9, 12};
     size_t tope = 7;
     cargar_arbol(arbol, elementos, tope);
@@ -278,30 +278,59 @@ void probar_borrado(){
     printf("Árbol(preorden): ");
     print_array(elementos, tope);
 
+    test_nuevo_sub_grupo("Elemento fuera de árbol");
+    int elemento_random = 23;
+    test_afirmar(arbol_borrar(arbol, (void*) &elemento_random) == ERROR, "NO se puede eliminar un elemento que no sea del árbol");
+    void* recorrido[tope];
+    size_t cant_recorrido = arbol_recorrido_preorden(arbol, recorrido, tope);
+    test_afirmar(cant_recorrido == tope, "El árbol se encuentra con la misma cantidad de elementos");
+    int recorrido_int[tope];
+    trasformar_generico_a_int(recorrido, cant_recorrido, recorrido_int);
+    bool orden_adecuado = comparar_vectores(elementos, recorrido_int, tope);
+    test_afirmar(orden_adecuado, "Se conserva el orden de los elementos"); 
+
     test_nuevo_sub_grupo("Raíz con Predecesor inorden");
     int borrado_1_esperado[] = {4, 3, 7, 6, 9, 12};
-    printf("Borra el elemento : %i : %p \n", elementos[0], (void*) &elementos[0]);
+    printf("Borra el elemento : %i \n", elementos[0]);
     prueba_borrado_generica(arbol, &elementos[0], tope, borrado_1_esperado);
     tope --;
 
     test_nuevo_sub_grupo("No tiene sub-árbol menor");
     int borrado_2_esperado[] = {4, 3, 7, 6, 12};
-    printf("Borra el elemento : %i : %p \n", elementos[5], (void*) &elementos[5]);
+    printf("Borra el elemento : %i \n", elementos[5]);
     prueba_borrado_generica(arbol, &elementos[5], tope, borrado_2_esperado);
     tope --;
     
     test_nuevo_sub_grupo("El hijo menor es hoja");
     int borrado_3_esperado[] = {4, 3, 6, 12};
-    printf("Borra el elemento : %i : %p \n", elementos[3], (void*) &elementos[3]);
+    printf("Borra el elemento : %i \n", elementos[3]);
     prueba_borrado_generica(arbol, &elementos[3], tope, borrado_3_esperado);
     tope --;
     
     test_nuevo_sub_grupo("No tiene hijos");
     int borrado_4_esperado[] = {4, 3, 6};
-    printf("Borra el elemento : %i : %p \n", elementos[6], (void*) &elementos[6]);
+    printf("Borra el elemento : %i \n", elementos[6]);
     prueba_borrado_generica(arbol, &elementos[6], tope, borrado_4_esperado);
     tope --;
-    
+
+    test_nuevo_sub_grupo("Raíz de dos hijos");
+    int borrado_5_esperado[] = {3, 6};
+    printf("Borra el elemento : %i \n", elementos[2]);
+    prueba_borrado_generica(arbol, &elementos[2], tope, borrado_5_esperado);
+    tope --;
+
+    test_nuevo_sub_grupo("Raíz con hijo único mayor");
+    int borrado_6_esperado[] = {6};
+    printf("Borra el elemento : %i \n", elementos[1]);
+    prueba_borrado_generica(arbol, &elementos[1], tope, borrado_6_esperado);
+    tope --;
+
+    test_nuevo_sub_grupo("Raíz Hoja");
+    int borrado_7_esperado[tope];
+    printf("Borra el elemento : %i \n", elementos[4]);
+    prueba_borrado_generica(arbol, &elementos[4], tope, borrado_7_esperado);
+    tope --;
+
     arbol_destruir(arbol);
 }
 
