@@ -5,16 +5,13 @@
 #include <stdbool.h>
 
 #define ERROR -1
+#define EXITO 0
 #define DERECHA 1
 #define IZQUIERDA -1
 #define COMPARADOR 0
 #define ERROR_PUNTERO NULL
 
-#define SUCESOR        5
-#define PREDECESOR     4 
-#define RAMA           3
-#define RAIZ           2
-#define HOJA           1
+#define RAIZ           1
 #define REEMPLAZO      0
 #define NO_ENCONTRADO -1
 #define ERROR         -1
@@ -32,7 +29,8 @@ typedef struct familia{
 } familia_t;
 
 /*
-*Verdadero si no tiene hijos
+*Pre : Nodo no nulo 
+*Post: Verdadero si no tiene hijos
 */
 bool es_hoja(nodo_abb_t* nodo){
     if(!nodo) return true; 
@@ -41,15 +39,19 @@ bool es_hoja(nodo_abb_t* nodo){
     return false;
 }
 /*
-*Veradero si el elemento coincide con el elemento de
+*Pre : Arbol no nulo y con raiz (al menos un elemento)
+*Post: Veradero si el elemento coincide con el elemento de
 la raíz del árbol
 */
 bool es_raiz(abb_t *arbol, void * elemento){
+    if(!arbol || !arbol->nodo_raiz) return false;
     return(arbol->nodo_raiz->elemento == elemento); 
 }
 /*
 * Dado un nodo y su destructor, destruye el elemento
 y borra el nodo
+* Pre : Nodo no nulo y destructor existente
+* Post: Nodo destruido
 */
 void nodo_abb_liberar(nodo_abb_t* nodo_borrar, abb_liberar_elemento destructor){
     if(nodo_borrar && destructor)
@@ -59,7 +61,8 @@ void nodo_abb_liberar(nodo_abb_t* nodo_borrar, abb_liberar_elemento destructor){
 
 /*
 *Destruye todos los nodos del arbol junto con sus elementos
-*Pre: En la primera llamada el nodo debe ser la raíz
+*Pre : En la primera llamada el nodo debe ser la raíz
+*Post: Se destruyen todos los nodos del arbol junto con sus elementos
 */
 void destruir_nodos_abb(abb_t* arbol, nodo_abb_t* nodo){
     if(!nodo)
@@ -73,7 +76,9 @@ void destruir_nodos_abb(abb_t* arbol, nodo_abb_t* nodo){
 
 /*
 *Inserta un nuevo nodo según corresponda con el comparador
-*Devuelve 0 si lo inserta correctamente o ERROR en caso contrario
+*Pre : nuevo_nodo previamente creado en el heap e inicializado, primera llamada con
+nodo_raiz como corriente
+*Post: Devuelve EXITO si lo inserta correctamente o ERROR en caso contrario
 */
 int nodo_abb_insertar(abb_comparador comparador, nodo_abb_t* nuevo_nodo, nodo_abb_t* corriente){
     if(!corriente)
@@ -90,12 +95,16 @@ int nodo_abb_insertar(abb_comparador comparador, nodo_abb_t* nuevo_nodo, nodo_ab
         else
             nodo_abb_insertar(comparador, nuevo_nodo, corriente->izquierda);
     } 
-    return 0;
+    return EXITO;
 }
 /*
 *Se inicializa un nodo como hoja junto con su elemento
+*Pre : Nodo no nulo 
+*Post: Nodo hoja con elemento
 */
 void nodo_abb_inicializar(nodo_abb_t* nodo, void* elemento){
+    if(!nodo)
+        return;
     nodo->elemento = elemento; 
     nodo->izquierda = NULL;
     nodo->derecha = NULL;
@@ -114,7 +123,7 @@ abb_t *arbol_crear(abb_comparador comparador, abb_liberar_elemento destructor){
 
 /*
 *Busca un nodo dado un elemento
-*Pre: debe existir comparador y la primera llamda debe ser con la raíz del arbol
+*Pre : debe existir comparador y la primera llamda debe ser con la raíz del arbol
 *Post: nodo con el elemento o NULL si no lo encuentra
 */
 nodo_abb_t* nodo_abb_buscar(abb_comparador comparador, nodo_abb_t *corriente, void *elemento){
@@ -136,13 +145,13 @@ int arbol_insertar(abb_t* arbol, void* elemento){
     nodo_abb_inicializar(nuevo_nodo, elemento);
     if(!arbol->nodo_raiz){
         arbol->nodo_raiz = nuevo_nodo;
-        return 0;
+        return EXITO;
     }
     return nodo_abb_insertar(arbol->comparador, nuevo_nodo, arbol->nodo_raiz);
 }
 /*
 * Borra una raiz con hijos
-* Pre: NO puede ser hoja
+* Pre : NO puede ser hoja
 * Post: Reemplzo como raiz del árbol y heredando los hijos de la raíz
 */
 int nodo_raiz_borrar(abb_t* arbol, familia_t borrado, familia_t reemplazo){
@@ -157,12 +166,14 @@ int nodo_raiz_borrar(abb_t* arbol, familia_t borrado, familia_t reemplazo){
     }
     arbol->nodo_raiz = reemplazo.nodo;
     nodo_abb_liberar(borrado.nodo, arbol->destructor);
-    return 0;
+    return EXITO;
 }
 
 /*
 *Según la descendencia del nodo borrado (si es hijo izquierdo o derecho),
-*el nodo reemplazado pasa a ser el hijo del padre del borrado. 
+*el nodo reemplazado pasa a ser el hijo del padre del borrado.
+*Pre : reemplazo y borrado (con descendencia y padre) buscados 
+*Post: el reemplazo ocupa el lugar del borrado
 */
 void heredar_padre(familia_t borrado, familia_t reemplazo){
     if (borrado.descendencia == IZQUIERDA)
@@ -172,7 +183,7 @@ void heredar_padre(familia_t borrado, familia_t reemplazo){
 }
 /*
 * Borra un nodo que tiene hijo y no es raiz
-* Pre: NO puede ser hoja ni raiz que
+* Pre : NO puede ser hoja ni raiz que
 * Post: Reemplazo en la posicion del borrado
 */
 int nodo_abb_borrar(familia_t borrado, familia_t reemplazo, abb_liberar_elemento destructor){
@@ -195,18 +206,18 @@ int nodo_abb_borrar(familia_t borrado, familia_t reemplazo, abb_liberar_elemento
         reemplazo.nodo->izquierda = borrado.nodo->izquierda;
     }
     nodo_abb_liberar(borrado.nodo, destructor);
-    return 0;
+    return EXITO;
 }
 /*
 * Borra una hoja (no tiene hijos)
-* Pre: El nodo borrado debe ser hoja y pertenecer al árbol
+* Pre : El nodo borrado debe ser hoja y pertenecer al árbol
 * Post: puntero del padre nulo y 0 ya que lo borra
 */
 int nodo_hoja_borrar(familia_t borrado, abb_t* arbol){
     if(es_raiz(arbol, borrado.nodo->elemento)){
         arbol->nodo_raiz = NULL;
         nodo_abb_liberar(borrado.nodo, arbol->destructor);
-        return 0;
+        return EXITO;
     }
     if(borrado.descendencia == DERECHA)
         borrado.nodo_padre->derecha = NULL;
@@ -216,10 +227,12 @@ int nodo_hoja_borrar(familia_t borrado, abb_t* arbol){
     return 0;
 }
 /*
-* Devuelve verdadero si algunos de los hijos del padre
+*Pre : Padre no nulo y con al menos un hijo
+*Post: Devuelve verdadero si algunos de los hijos del padre
 tiene como elemento al hijo.
 */
 bool es_padre(nodo_abb_t * padre, void* hijo){
+    if(!padre) return false;
     if(padre->izquierda)
         if(padre->izquierda->elemento == hijo) return true;
     if(padre->derecha)
@@ -228,7 +241,7 @@ bool es_padre(nodo_abb_t * padre, void* hijo){
 }
 /*
 *Buscar el padre de un nodo que contenga al elemento
-*Pre: La priemra llamada a la función debe ser el nodo_raiz como corriente
+*Pre : La priemra llamada a la función debe ser el nodo_raiz como corriente
 *Post: Devuelve el nodo del padre o NULL en caso de que no haya 
 (Si no hay padre, tampoco hay nodo)
 */
@@ -371,6 +384,7 @@ bool insertar_en_array(void* elemento, void* array){
 * Pre : termina debe ser falso en la primera llamada 
         el contador debe estar inicializado
         el corriente debe ser la raiz del árbol en la primera llamada
+* Post: Funcion aplicada a cada elemento mientras ésta sea falsa
 */
 void recorrer_inorden(nodo_abb_t* corriente, bool (*funcion)(void*, void*), void* extra, bool *termina, size_t* contador){
     if(!corriente || (*termina))
@@ -390,6 +404,7 @@ void recorrer_inorden(nodo_abb_t* corriente, bool (*funcion)(void*, void*), void
 * Pre : termina debe ser falso en la primera llamada 
         el contador debe estar inicializado
         el corriente debe ser la raiz del árbol en la primera llamada
+* Post: Funcion aplicada a cada elemento mientras ésta sea falsa
 */
 void recorrer_preorden(nodo_abb_t* corriente, bool (*funcion)(void*, void*), void* extra, bool *termina, size_t* contador){
     if (!corriente || (*termina))
@@ -409,6 +424,7 @@ void recorrer_preorden(nodo_abb_t* corriente, bool (*funcion)(void*, void*), voi
 * Pre : termina debe ser falso en la primera llamada 
         el contador debe estar inicializado
         el corriente debe ser la raiz del árbol en la primera llamada
+* Post: Funcion aplicada a cada elemento mientras ésta sea falsa
 */
 void recorrer_postorden(nodo_abb_t* corriente, bool (*funcion)(void*, void*), void* extra, bool *termina, size_t* contador){
     if (!corriente || (*termina))
@@ -423,7 +439,8 @@ void recorrer_postorden(nodo_abb_t* corriente, bool (*funcion)(void*, void*), vo
 }
 /*
 * Dado un vector genérico (vacío) y su tamanio, inicializar un array_t
-* Devuelve un array_t inicializado (primera posicion = 0)
+* Pre : array previamente creado y vacio
+* Post: Devuelve un array_t inicializado (primera posicion = 0)
 */
 array_t inicializar_array(void** array, size_t tamanio){
     array_t aux;
@@ -435,7 +452,7 @@ array_t inicializar_array(void** array, size_t tamanio){
 /*
 * Dado un árcbol, un vector genérico (vacío) y su tamanio, y una función de recorrido,
 * recorre el árbol llenando el vector hasta su tamanio o hasta que se recorra completamente
-* Pre: árbol creado con su comparador, función recorrido del estilo de inorde, preorden o postorden;
+* Pre : árbol creado con su comparador, función recorrido del estilo de inorde, preorden o postorden;
 * Post: Cantidad de elementos recorridos 
 */
 size_t recorrer_arbol(abb_t *arbol, void **array, size_t tamanio_array, void (*recorrido)(nodo_abb_t*, bool(*)(void*, void*), void*, bool*, size_t*)){
@@ -464,7 +481,8 @@ void arbol_destruir(abb_t *arbol){
 
 }
 /*
-*Devuelve verdadero si el recorrido pasado por parámetro
+*Pre : Recorrido recibido por parametro
+*Post: Devuelve verdadero si el recorrido pasado por parámetro
 cumple con alguna de las constantes
 */
 bool recorrido_valido(int recorrido){
