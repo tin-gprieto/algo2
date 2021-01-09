@@ -60,3 +60,14 @@ void test_mostrar_reporte(){
            __test_cantidad_de_pruebas_fallidas,
            __test_cantidad_de_pruebas_fallidas == 0 ? "OK" : "D:");
 }
+
+bool comparar_vectores(int vector_1[], int vector_2[], size_t tamanio){
+    size_t i=0;
+    bool coincide=true;
+    while (coincide && i<tamanio){
+        if (vector_1[i] != vector_2[i])
+            coincide=false;
+        i++;
+    }
+    return coincide;
+}

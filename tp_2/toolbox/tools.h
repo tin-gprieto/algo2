@@ -58,4 +58,10 @@ void test_nuevo_sub_grupo(const char *descripcion);
 */
 void test_mostrar_reporte();
 
+/*
+*Compara dos vectores de números y del mismo tamaño
+*Devuelve verdadero si son iguales
+*/
+bool comparar_vectores(int vector_1[], int vector_2[], size_t tamanio);
+
 #endif /* __TOOLS_H__ */
