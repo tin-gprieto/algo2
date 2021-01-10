@@ -16,7 +16,7 @@ TEST_EXE= test/prueba.exe
 HEAP_EXE= test/heap.exe
 
 LIB_FILE= toolbox/tools.c code/batallas.c code/aventura.c
-TDA_FILE= toolbox/tdas/*.c
+TDA_FILE= toolbox/tools.c toolbox/tdas/*.c
 
 
 $(EXE): $(CFILE) $(LIB_FILE) $(TDA_FILE)

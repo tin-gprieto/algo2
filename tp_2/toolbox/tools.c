@@ -1,8 +1,49 @@
 #include "tools.h"
 #define MAX_BAR 10
 
-void warning(const char * description){
-    printf(ROJO "%s - Hubo un problema con %s" RESET "\n", CRUZ, description);
+void print_vector(int* array, size_t size){
+    printf("    [");
+    for(int i=0; i<size; i++)
+        printf(" %i ", array[i]);
+    printf("]\n");
+}
+
+bool comparar_vectores(int vector_1[], int vector_2[], size_t tamanio){
+    size_t i=0;
+    bool coincide=true;
+    while (coincide && i<tamanio){
+        if (vector_1[i] != vector_2[i])
+            coincide=false;
+        i++;
+    }
+    return coincide;
+}
+
+void print_barra_porcentaje(size_t cantidad, size_t total){
+    if(cantidad > total){
+        printf(ROJO " ERROR " RESET);
+        return; 
+    }
+    float porcentaje = (((float)cantidad)/(float)total) * 100;
+    char bar[MAX_BAR];
+    for(int i = 0; i<(porcentaje/10); i++)
+        bar[i] = '0';
+
+    printf ("|");
+    for(int i = 0; i< MAX_BAR; i++){
+        if(bar[i] == '0'){
+            printf (FVERDE "  " RESET);
+        }else{
+            printf ("  ");
+        }
+            
+    }
+    printf ("|");
+    printf("%.1f \n", porcentaje);
+}
+
+void warning(const char * descripcion){
+    printf(ROJO "%s - Hubo un problema con %s" RESET "\n", CRUZ, descripcion);
 }
 
 int __test_cantidad_de_pruebas_corridas = 0;
@@ -59,15 +100,4 @@ void test_mostrar_reporte(){
            __test_cantidad_de_pruebas_corridas,
            __test_cantidad_de_pruebas_fallidas,
            __test_cantidad_de_pruebas_fallidas == 0 ? "OK" : "D:");
-}
-
-bool comparar_vectores(int vector_1[], int vector_2[], size_t tamanio){
-    size_t i=0;
-    bool coincide=true;
-    while (coincide && i<tamanio){
-        if (vector_1[i] != vector_2[i])
-            coincide=false;
-        i++;
-    }
-    return coincide;
 }

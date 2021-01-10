@@ -32,9 +32,26 @@
 #define MAX_COLS 80
 
 /*
+*Imprime por pantalla un array de números enteros de tamaño size
+*/
+void print_vector(int* vector, size_t tamanio);
+
+/*
+*Compara dos vectores de números y del mismo tamaño
+*Devuelve verdadero si son iguales
+*/
+bool comparar_vectores(int vector_1[], int vector_2[], size_t tamanio);
+
+/*
+*Imprime por pantalla el porcentaje representado en una barra 
+*que representa cantidad en relacion al total
+*/
+void print_barra_porcentaje(size_t cantidad, size_t total);
+
+/*
 *Imprime por pantalla una advertencia según description
 */
-void warning(const char * description);
+void warning(const char * descripcion);
 
 /*
 *Imprime por pantalla una prueba con su descripcion
@@ -57,11 +74,5 @@ void test_nuevo_sub_grupo(const char *descripcion);
 *Muestra por pantall la cantidad de pruebas corridas y errores
 */
 void test_mostrar_reporte();
-
-/*
-*Compara dos vectores de números y del mismo tamaño
-*Devuelve verdadero si son iguales
-*/
-bool comparar_vectores(int vector_1[], int vector_2[], size_t tamanio);
 
 #endif /* __TOOLS_H__ */
