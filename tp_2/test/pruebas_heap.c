@@ -72,6 +72,7 @@ void pruebas_basicas(){
     test_afirmar(heap_vacio(heap), "El heap queda vacio");
     test_afirmar(heap_elementos(heap) == VACIO, "El heap queda con 0 elementos");
     test_afirmar(heap_raiz(heap) == NULL, "El heap no tiene raíz");
+    test_afirmar(heap_borrar(heap) == ERROR, "No se puede borrar en un heap vacío");
    
     heap_destruir(heap);
 }

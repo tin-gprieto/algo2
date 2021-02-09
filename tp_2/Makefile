@@ -15,7 +15,7 @@ HEAP_FILE=test/pruebas_heap.c
 TEST_EXE= test/prueba.exe
 HEAP_EXE= test/heap.exe
 
-LIB_FILE= toolbox/tools.c code/batallas.c code/aventura.c
+LIB_FILE= toolbox/tools.c code/batallas.c code/juego.c code/interfaz.c
 TDA_FILE= toolbox/tools.c toolbox/tdas/*.c
 
 
@@ -29,7 +29,12 @@ play: $(EXE)
 $(TEST_EXE): $(TEST_FILE) $(LIB_FILE) 
 	clear
 	$(CC) $(TEST_FILE) $(LIB_FILE) $(CFLAGS) $(WFLAGS) -o $(TEST_EXE)
+
 test: $(TEST_EXE)
+	clear
+	./$(TEST_EXE)
+
+val: $(TEST_EXE)
 	clear
 	$(V) $(VFLAGS) ./$(TEST_EXE)
 

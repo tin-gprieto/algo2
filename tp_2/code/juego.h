@@ -1,5 +1,5 @@
-#ifndef __AVENTURA_H__
-#define __AVENTURA_H__
+#ifndef __JUEGO_H__
+#define __JUEGO_H__
 
 #include "../toolbox/tools.h"
 #include "../toolbox/tdas/lista.h"
@@ -20,6 +20,12 @@ typedef struct entrenador{
     char nombre[MAX_STRING];
     lista_t* pokemones; //Cola
 }entrenador_t;
+
+typedef struct personaje{
+    char nombre[MAX_STRING];
+    lista_t* caja; //Cola
+    lista_t* party; //Cola
+}personaje_t;
 
 typedef struct gimnasio{
     char nombre[MAX_STRING];
