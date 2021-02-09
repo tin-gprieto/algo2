@@ -6,6 +6,7 @@ const size_t LIMITE_INTERFAZ = 80;
 const size_t MARCO_INICIO = 20;
 const size_t MARCO_FIN = 19;
 const size_t INTERFAZ_DESCRP= 30;
+const size_t INTERFAZ_TITULO= 25;
 const int INICIO = 0;
 const int FIN = 1;
 const int LIM_MARCO = 2;
@@ -58,16 +59,24 @@ void imprimir_marco(int marco){
 void titulo_gimnasio(const char* titulo){
     printf("     "AMARILLO FONDO"                     ____________________________________                       "RESET"\n");
     imprimir_espaciado();
-    printf("     "BLANCO FONDO  "                      ߷  GIMNASIO: %s \n" RESET, titulo);
-    //imprimir_margen(FIN, LIMITE_INTERFAZ - 40 - strlen(titulo));
+    printf("     "BLANCO FONDO  "                      ߷  GIMNASIO: %s " RESET, titulo);
+    if(strlen(titulo)< INTERFAZ_TITULO){
+        for (int i = 0; i < INTERFAZ_TITULO-strlen(titulo); i++)
+            printf(FONDO" ");
+    }
+    imprimir_margen(FIN, MARCO_FIN);
     printf("     "AMARILLO FONDO"                     ____________________________________                       "RESET"\n");
 }
 
 void titulo_batalla(const char* titulo){
     printf("     "AMARILLO FONDO"                       ____________________________________                     "RESET"\n");
     imprimir_espaciado();
-    printf("     "VERDE FONDO   "                       %s VICTORIA:" BLANCO "%s \n" RESET, TILDE, titulo);
-    //imprimir_margen(FIN, LIMITE_INTERFAZ - 40 - strlen(titulo));
+    printf("     "VERDE FONDO   "                       %s VICTORIA:" BLANCO " %s " RESET, TILDE, titulo);
+     if(strlen(titulo)< INTERFAZ_TITULO){
+        for (int i = 0; i < INTERFAZ_TITULO-strlen(titulo); i++)
+            printf(FONDO" ");
+    }
+    imprimir_margen(FIN, MARCO_FIN);
     printf("     "AMARILLO FONDO"                       ____________________________________                     "RESET"\n");
 }
 
@@ -158,6 +167,7 @@ char pedir_clave(char opciones[], size_t cantidad){
         printf("    Ingrese nuevamente la opción :");
         clave = (char)getc(stdin);
     }
+    getc(stdin);
     return clave;
 }
 
@@ -169,13 +179,11 @@ char pedir_clave(char opciones[], size_t cantidad){
 void imprimir_descripcion(char opcion, const char* descripcion){
     imprimir_espaciado();
     imprimir_margen(INICIO, MARCO_INICIO);
-
-    printf(AMARILLO " ༄ ( %c )"  RESET FONDO " - "  , opcion);
-    for(int i=0; i < strlen(descripcion); i++)
-            printf("%c", descripcion[i]);
-    for(int i=0; i < INTERFAZ_DESCRP - strlen(descripcion); i++)
-            printf(" ");
-
+    printf(AMARILLO " ༄ ( %c )"  RESET FONDO " - %s"  , opcion, descripcion);
+    if(strlen(descripcion)< INTERFAZ_DESCRP){
+        for (int i = 0; i < INTERFAZ_DESCRP-strlen(descripcion); i++)
+            printf(FONDO" ");
+    }
     imprimir_margen(FIN, MARCO_FIN);
     imprimir_espaciado();
 }
@@ -214,9 +222,9 @@ void inicializar_inicio(interfaz_t* menu){
 
 void inicializar_gimnasio(interfaz_t* menu){
     menu->opciones[0]= PERSONAJE;
-    strcpy(menu->descripciones[0], "Información del personaje");
+    strcpy(menu->descripciones[0], "Informacion del personaje");
     menu->opciones[1]= GIMNASIO;
-    strcpy(menu->descripciones[1], "Información del gimnasio");
+    strcpy(menu->descripciones[1], "Informacion del gimnasio");
     menu->opciones[2]= CAMBIAR;
     strcpy(menu->descripciones[2], "Cambiar pokemones de combate");
     menu->opciones[3]= BATALLA;
@@ -232,7 +240,7 @@ void inicializar_batalla(interfaz_t* menu){
 
 void inicializar_victoria(interfaz_t* menu){
     menu->opciones[0]= TOMAR_PKM;
-    strcpy(menu->descripciones[0], "Tomar prestado");
+    strcpy(menu->descripciones[0], "Tomar prestado un pokemon");
     menu->opciones[1]= CAMBIAR;
     strcpy(menu->descripciones[1], "Cambiar pokemones de combate");
     menu->opciones[2]= AVANZAR;
