@@ -43,7 +43,7 @@ void print_barra_porcentaje(size_t cantidad, size_t total){
 }
 
 void warning(const char * descripcion){
-    printf(ROJO "%s - Hubo un problema con %s" RESET "\n", CRUZ, descripcion);
+    printf(ROJO "   %s - Hubo un problema con %s" RESET "\n", CRUZ, descripcion);
 }
 
 int __test_cantidad_de_pruebas_corridas = 0;
@@ -71,32 +71,32 @@ void test_afirmar(int afirmacion, const char *descripcion){
     __test_prueba_actual = descripcion;
     __test_atajarse(__test_morir);
     if (afirmacion) {
-        printf(VERDE "%s " ,TILDE);
+        printf(VERDE "   %s " ,TILDE);
     }else{
         __test_cantidad_de_pruebas_fallidas++;
-        printf(ROJO "%s ",CRUZ);
+        printf(ROJO "   %s ",CRUZ);
     }
-    printf(BLANCO "%s\n", __test_prueba_actual);
+    printf(BLANCO " %s\n", __test_prueba_actual);
     fflush(stdout);
     __test_prueba_actual = NULL;
     __test_cantidad_de_pruebas_corridas++;
 }
 
 void test_nuevo_grupo(const char *descripcion){
-    printf(AMARILLO "\n%s\n", descripcion);
+    printf(AMARILLO "\n   %s\n   ", descripcion);
     while (*(descripcion++))
         printf("=");
     printf(BLANCO "\n");
 }
 
 void test_nuevo_sub_grupo(const char *descripcion){
-    printf("---------------------------------");
-    printf(CYAN "\n%s\n" RESET, descripcion);
+    printf("   ---------------------------------");
+    printf(CYAN "\n   %s\n   " RESET, descripcion);
 }
 
 void test_mostrar_reporte(){
-    printf(BLANCO "\n---------------------------------\n");
-    printf("%i pruebas corridas, %i errores - %s\n" RESET,
+    printf(BLANCO "\n   ---------------------------------\n");
+    printf("    %i pruebas corridas, %i errores - %s\n" RESET,
            __test_cantidad_de_pruebas_corridas,
            __test_cantidad_de_pruebas_fallidas,
            __test_cantidad_de_pruebas_fallidas == 0 ? "OK" : "D:");

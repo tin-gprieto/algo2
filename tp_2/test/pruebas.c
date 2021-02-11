@@ -2,23 +2,19 @@
 #include "../code/interfaz.h"
 
 int main(){
-    system("clear");
-    interfaz_t menus[MAX_MENU];
-    inicializar_menus(menus);
-    char clave =  mostrar_menu(menus, MENU_INICIO, NULL);
-    system("clear");
-    printf("    Opción elegida : %c \n", clave); 
-    clave =  mostrar_menu(menus, MENU_GYM, "CAPO");
-    system("clear");
-    printf("    Opción elegida : %c \n", clave);
-    clave = mostrar_menu(menus, MENU_BATALLA, "GENIO");
-    system("clear");
-    printf("    Opción elegida : %c \n", clave);
-    clave = mostrar_menu(menus, MENU_VICTORIA, NULL);
-    system("clear");
-    printf("    Opción elegida : %c \n", clave);
-    clave = mostrar_menu(menus, MENU_DERROTA, NULL);
-    system("clear");
-    printf("    Opción elegida : %c \n", clave);
-    return 0;
+    interfaz_t* interfaz = interfaz_crear(MAX_MENU);
+    if(!interfaz) return ERROR;
+    inicializar_interfaz(interfaz);
+    pokemon_t pkm_1;
+    strcpy(pkm_1.nombre, "Pikachu");
+    pkm_1.ataque = 1;
+    pkm_1.defensa = 5;
+    pkm_1.velocidad = 6;
+    pokemon_t pkm_2;
+    strcpy(pkm_2.nombre, "Charizard");
+    pkm_2.ataque = 50;
+    pkm_2.defensa = 32;
+    pkm_2.velocidad = 4;
+    interfaz_destruir(interfaz);
+    return EXITO;
 }
