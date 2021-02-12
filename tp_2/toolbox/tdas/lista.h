@@ -15,6 +15,18 @@ typedef struct lista{
     size_t cantidad;
 }lista_t;
 
+typedef struct cola{
+    nodo_t* nodo_inicio;
+    nodo_t* nodo_fin;
+    size_t cantidad;
+}cola_t;
+
+typedef struct pila{
+    nodo_t* nodo_inicio;
+    nodo_t* nodo_fin;
+    size_t cantidad;
+}pila_t;
+
 typedef struct lista_iterador{
     nodo_t* corriente;
     lista_t* lista;
@@ -79,42 +91,6 @@ bool lista_vacia(lista_t* lista);
  */
 size_t lista_elementos(lista_t* lista);
 
-/* 
- * Apila un elemento.
- * Devuelve 0 si pudo o -1 en caso contrario.
- */
-int lista_apilar(lista_t* lista, void* elemento);
-
-/* 
- * Desapila un elemento.
- * Devuelve 0 si pudo desapilar o -1 si no pudo.
- */
-int lista_desapilar(lista_t* lista);
-
-/*
- * Devuelve el elemento en el tope de la pila o NULL
- * en caso de estar vacía.
- */
-void* lista_tope(lista_t* lista);
-
-/* 
- * Encola un elemento.
- * Devuelve 0 si pudo encolar o -1 si no pudo.
- */
-int lista_encolar(lista_t* lista, void* elemento);
-
-/* 
- * Desencola un elemento.
- * Devuelve 0 si pudo desencolar o -1 si no pudo.
- */
-int lista_desencolar(lista_t* lista);
-
-/*
- * Devuelve el primer elemento de la cola o NULL en caso de estar
- * vacía.
- */
-void* lista_primero(lista_t* lista);
-
 /*
  * Libera la memoria reservada por la lista.
  */
@@ -168,5 +144,73 @@ void lista_iterador_destruir(lista_iterador_t* iterador);
  * La función retorna la cantidad de elementos iterados o 0 en caso de error.
  */
 size_t lista_con_cada_elemento(lista_t* lista, bool (*funcion)(void*, void*), void *contexto);
+
+/*
+ * Crea una pila reservando la memoria necesaria.
+ * Devuelve un puntero a la pila creada o NULL en caso de error.
+ */
+pila_t* pila_crear();
+
+/* 
+ * Apila un elemento.
+ * Devuelve 0 si pudo o -1 en caso contrario.
+ */
+int pila_apilar(pila_t* pila, void* elemento);
+
+/* 
+ * Desapila un elemento.
+ * Devuelve 0 si pudo desapilar o -1 si no pudo.
+ */
+int pila_desapilar(pila_t* pila);
+
+/*
+ * Devuelve el elemento en el tope de la pila o NULL
+ * en caso de estar vacía.
+ */
+void* pila_tope(pila_t* pila);
+
+/* 
+ * Devuelve true si la pila está vacía o false en caso contrario.
+ */
+bool pila_vacia(pila_t* pila);
+
+/*
+ * Libera la memoria reservada por la pila.
+ */
+void pila_destruir(pila_t* pila);
+
+/*
+ * Crea una cola reservando la memoria necesaria.
+ * Devuelve un puntero a una cola creada o NULL en caso de error.
+ */
+cola_t* cola_crear();
+
+/* 
+ * Encola un elemento.
+ * Devuelve 0 si pudo encolar o -1 si no pudo.
+ */
+int cola_encolar(cola_t* cola, void* elemento);
+
+/* 
+ * Desencola un elemento.
+ * Devuelve 0 si pudo desencolar o -1 si no pudo.
+ */
+int cola_desencolar(cola_t* cola);
+
+/*
+ * Devuelve el primer elemento de la cola o NULL en caso de estar
+ * vacía.
+ */
+void* cola_primero(cola_t* cola);
+
+/* 
+ * Devuelve true si la cola está vacía o false en caso contrario.
+ */
+bool cola_vacia(cola_t* cola);
+
+/*
+ * Libera la memoria reservada por la cola.
+ */
+void cola_destruir(cola_t* cola);
 
 #endif /* __LISTA_H__ */

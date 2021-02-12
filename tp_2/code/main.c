@@ -40,16 +40,6 @@ void jugar_partida(juego_t* juego){
 * Pre:
 * Post:
 */
-void menu_inicio(juego_t* juego){
-    imprimir_decoracion();
-    imprimir_menu(&(juego->menus[MENU_INICIO]));
-}
-
-/* 
-* 
-* Pre:
-* Post:
-*/
 bool siga_en_inicio(juego_t* juego){
     return !juego->personaje && !juego->batalla.gimnasios && juego->estado == INICIO;
 }
@@ -82,8 +72,7 @@ void inicializar_juego(juego_t* juego){
 int main(){
     juego_t juego;
     inicializar_juego(&juego);
-    while(siga_en_inicio(&juego))
-        menu_inicio(&juego);
+    //while(siga_en_inicio(&juego))
     if(juego.estado == SIMULAR)
         simular_partida(juego);
     else

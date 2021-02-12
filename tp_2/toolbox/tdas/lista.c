@@ -269,45 +269,6 @@ size_t lista_elementos(lista_t* lista){
     return lista->cantidad;
 }
 
-int lista_apilar(lista_t* lista, void* elemento){
-    if(!lista) 
-        return ERROR;
-    if (lista->cantidad == 0)
-        return crear_e_insertar_al_inicio(&(*lista), elemento);
-    return crear_e_insertar_al_final(&(*lista), elemento);
-}
-
-int lista_desapilar(lista_t* lista){
-    return lista_borrar_al_final(&(*lista));
-}
-
-void* lista_tope(lista_t* lista){
-    if (!lista)
-        return NULL;
-    return (lista->nodo_fin)->elemento;
-}
-
-int lista_encolar(lista_t* lista, void* elemento){
-    if (!lista)
-        return ERROR;
-    if (lista->cantidad == 0)
-        return crear_e_insertar_al_inicio(&(*lista), elemento);
-    return crear_e_insertar_al_final(&(*lista), elemento);
-}
-
-int lista_desencolar(lista_t* lista){
-    if ((!lista) || (lista->cantidad == 0))
-        return ERROR;
-    borrar_primer_elemento(lista);
-    return 0;
-}
-
-void* lista_primero(lista_t* lista){
-    if((!lista) || (!lista->nodo_inicio)) 
-        return NULL;
-    return (lista->nodo_inicio)->elemento;
-}
-
 void lista_destruir(lista_t* lista){
     if (!lista)
         return;
@@ -357,4 +318,65 @@ size_t lista_con_cada_elemento(lista_t* lista, bool (*funcion)(void*, void*), vo
     if(!lista || !funcion)
         return 0;
     return mover_por_nodos(lista->nodo_inicio, funcion, contexto);
+}
+
+pila_t* pila_crear(){
+    return (pila_t*) lista_crear();
+}
+bool pila_vacia(pila_t* pila){
+    return (!pila || pila->cantidad == 0); 
+}
+int pila_apilar(pila_t* pila, void* elemento){
+    if(!pila) 
+        return ERROR;
+    if (pila->cantidad == 0)
+        return crear_e_insertar_al_inicio((lista_t*) pila, elemento);
+    return crear_e_insertar_al_final((lista_t*) pila, elemento);
+}
+
+int pila_desapilar(pila_t* pila){
+    return lista_borrar_al_final((lista_t*) pila);
+}
+
+void* pila_tope(pila_t* pila){
+    if (!pila)
+        return NULL;
+    return (pila->nodo_fin)->elemento;
+}
+
+void pila_destruir(pila_t* pila){
+    lista_destruir((lista_t*) pila);
+}
+
+cola_t* cola_crear(){
+   return (cola_t*) lista_crear();
+}
+
+bool cola_vacia(cola_t* cola){
+    return (!cola || cola->cantidad == 0); 
+}
+
+int lista_encolar(lista_t* lista, void* elemento){
+    if (!lista)
+        return ERROR;
+    if (lista->cantidad == 0)
+        return crear_e_insertar_al_inicio(&(*lista), elemento);
+    return crear_e_insertar_al_final(&(*lista), elemento);
+}
+
+int cola_desencolar(cola_t* cola){
+    if ((!cola) || (cola->cantidad == 0))
+        return ERROR;
+    borrar_primer_elemento((lista_t*) cola);
+    return 0;
+}
+
+void* cola_primero(cola_t* cola){
+    if((!cola) || (!cola->nodo_inicio)) 
+        return NULL;
+    return (cola->nodo_inicio)->elemento;
+}
+
+void cola_destruir(cola_t* cola){
+    lista_destruir((lista_t*) cola);
 }

@@ -19,20 +19,21 @@ typedef struct pokemon{
 
 typedef struct entrenador{
     char nombre[MAX_STRING];
-    lista_t* pokemones; //Cola
+    lista_t* pokemones;
 }entrenador_t;
 
 typedef struct personaje{
     char nombre[MAX_STRING];
-    lista_t* caja; //Lista
-    lista_t* party; //Cola
+    lista_t* caja; 
+    lista_t* party; 
 }personaje_t;
 
 typedef struct gimnasio{
     char nombre[MAX_STRING];
     int dificultad;
     int id_batalla;
-    lista_t* entrenadores; //Pila
+    pila_t* entrenadores; 
+    size_t cant_entrenadores;
 }gimnasio_t;
 
 /* Funciones para el funcionamiento del main y que requieran ser testeadas*/
