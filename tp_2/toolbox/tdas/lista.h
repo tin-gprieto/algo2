@@ -175,6 +175,11 @@ void* pila_tope(pila_t* pila);
 bool pila_vacia(pila_t* pila);
 
 /*
+ * Devuelve la cantidad de elementos almacenados en la pila.
+ */
+size_t pila_elementos(pila_t* pila);
+
+/*
  * Libera la memoria reservada por la pila.
  */
 void pila_destruir(pila_t* pila);
@@ -207,6 +212,11 @@ void* cola_primero(cola_t* cola);
  * Devuelve true si la cola está vacía o false en caso contrario.
  */
 bool cola_vacia(cola_t* cola);
+
+/*
+ * Devuelve la cantidad de elementos almacenados en la cola.
+ */
+size_t cola_elementos(cola_t* cola);
 
 /*
  * Libera la memoria reservada por la cola.

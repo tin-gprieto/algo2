@@ -7,13 +7,12 @@
 #include "../toolbox/tdas/heap.h"
 #include "juego.h"
 
-#define MAX_OPC 4
 #define MAX_MENU 5
+#define MAX_OPC 4
 #define MAX_STR 100
 #define COMBATE 0
 #define CAJA 1
 #define ENTRENADOR 2
-#define ENTRENADOR_2 3
 
 //Estados de la interfaz
 #define PERSONAJE 'E'
@@ -36,6 +35,10 @@
 #define MENU_VICTORIA 3
 #define MENU_DERROTA 4
 
+
+#define LECTURA "r"
+#define ESCRITURA "w"
+
 #define DERROTA -1
 #define VICTORIA 1
 
@@ -54,7 +57,7 @@ typedef struct interfaz{
 /* 
 * Crea la interfaz en memoria dinamica
 * Pre : -
-* Post: Interfaz lista para usarse
+* Post: puntero a interfaz lista para usarse o NULL en caso de algún error
 */
 interfaz_t* interfaz_crear();
 
@@ -68,10 +71,11 @@ void interfaz_destruir(interfaz_t* interfaz);
 /* 
 * Devuelve el estado actual de la interfaz
 * (Modo en el que debe ejecutarse según lo elegido por el usuario)
-* Pre : Interfaz creada
-* Post: Constante(letra) que representa el estado
+* Pre : Interfaz creada y estado válido
+* Post: Verdadero si el estado de la interfaz coincide con el pasado
+* falso en el caso de no cumplirse
 */
-char interfaz_estado(interfaz_t* interfaz);
+bool interfaz_estado(interfaz_t* interfaz, char estado);
 
 /* 
 * Muestra el menu inicio y sus opciones
@@ -114,7 +118,7 @@ void menu_derrota(interfaz_t* interfaz, const char* gimnasio);
 * Pre : -
 * Post: Información por pantalla
 */
-void menu_maestro();
+void menu_maestro_pokemon();
 
 /* 
 * Elimina una de las opciones del menu;
@@ -134,10 +138,10 @@ size_t pedir_pokemon(lista_t* pokemones, int lista);
 
 /* 
 * Pide una ruta de archivo al usuario y devuelve el archivo abierto
-* Pre : archivo FILE* sin usar
-* Post: archivo abierto para lectura
+* Pre : archivo FILE* sin usar y modo válido para la apertura
+* Post: archivo abierto, debe ser cerrado una vez usado
 */
-void pedir_archivo(FILE* archivo);
+FILE* pedir_archivo(const char* modo);
 
 /* 
 * Muestra por pantalla la informacion de personaje
@@ -145,7 +149,7 @@ void pedir_archivo(FILE* archivo);
 * Pre : Personaje previamente cargado
 * Post: Información por pantalla
 */
-void informacion_personaje(personaje_t* personaje);
+void personaje_informacion(personaje_t* personaje);
 
 /* 
 * Muestra por pantalla la informacion de gimnasio
@@ -153,6 +157,6 @@ void informacion_personaje(personaje_t* personaje);
 * Pre : Gimnasio previamente cargado
 * Post: Información por pantalla
 */
-void informacion_gimnasio(gimnasio_t* gimnasio);
+void gimnasio_informacion(gimnasio_t* gimnasio);
 
 #endif /* __INTERFAZ_H__ */

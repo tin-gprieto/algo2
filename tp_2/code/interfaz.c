@@ -585,7 +585,7 @@ void inicializar_victoria(interfaz_t* interfaz){
 */
 void inicializar_derrota(interfaz_t* interfaz){
     cargar_opcion(interfaz, MENU_DERROTA, CAMBIAR, "Cambiar pokemones de combate" );
-    cargar_opcion(interfaz, MENU_DERROTA, REPETIR, "Repetir batalla o simulacion" );
+    cargar_opcion(interfaz, MENU_DERROTA, REPETIR, "Repetir batalla / simulacion" );
     cargar_opcion(interfaz, MENU_DERROTA, SALIR, "Finalizar partida" );
 }
 /* 
@@ -603,7 +603,7 @@ void inicializar_interfaz(interfaz_t* interfaz){
 
 //FUNCIONES INTERFAZ.H
 
-void informacion_gimnasio(gimnasio_t* gimnasio){
+void gimnasio_informacion(gimnasio_t* gimnasio){
     imprimir_marco(INICIO);
     imprimir_linea(MARGEN_MEDIO_LARGO+4, SUBRAYADO, "INFORMACION DEL GIMNASIO");
     imprimir_enter();
@@ -618,14 +618,14 @@ void informacion_gimnasio(gimnasio_t* gimnasio){
     imprimir_linea_bicolor(MARGEN_CORTO, AMARILLO, "ENTRENADORES RESTANTES:    ", BLANCO, entrenadores);
     entrenador_t aux = * (entrenador_t*) pila_tope(gimnasio->entrenadores);
     imprimir_linea_bicolor(MARGEN_CORTO, AMARILLO, "PROXIMO RIVAL: ", BLANCO, aux.nombre);
-    listar_pokemones(aux.pokemones, ENTRENADOR_2);
+    listar_pokemones(aux.pokemones, NULO);
     imprimir_marco(FIN);
     char opciones[2];
     sprintf(opciones, "%c", AVANZAR);
     pedir_clave(opciones, UNIDAD);
 }
 
-void informacion_personaje(personaje_t* personaje){
+void personaje_informacion(personaje_t* personaje){
     imprimir_marco(INICIO);
     imprimir_linea(MARGEN_MEDIO_LARGO+4, SUBRAYADO, "INFORMACION DEL PERSONAJE");
     imprimir_enter();
@@ -641,17 +641,19 @@ void informacion_personaje(personaje_t* personaje){
     pedir_clave(opciones, UNIDAD);
 }
 
-void pedir_archivo(FILE* archivo){
+FILE* pedir_archivo(const char* modo){
+    FILE* archivo;
     imprimir_espaciado(INTERFAZ_ESPACIO);
     printf("Ingrese la ruta del archivo:");
     char ruta_archivo[MAX_STR];
     scanf("%100[^\n]", ruta_archivo);
-    archivo = fopen(ruta_archivo, "r");
+    archivo = fopen(ruta_archivo, modo);
     while(!archivo){
         imprimir_advertencia();
         scanf("%100[^\n]", ruta_archivo);
-        archivo = fopen(ruta_archivo, "r");
+        archivo = fopen(ruta_archivo, modo);
     }
+    return archivo;
 }
 
 size_t pedir_pokemon(lista_t* pokemones, int lista){
@@ -671,7 +673,7 @@ void eliminar_opcion(interfaz_t* interfaz, size_t menu, char opcion){
     interfaz->menus[menu].cant_opciones --;
 }
 
-void menu_maestro(){
+void menu_maestro_pokemon(){
     system(LIMPIAR);
     imprimir_marco(INICIO);
     imprimir_enter();;
@@ -755,8 +757,8 @@ void menu_inicio(interfaz_t* interfaz){
     mostrar_opciones(interfaz, MENU_INICIO);
 }
 
-char interfaz_estado(interfaz_t* interfaz){
-    return interfaz->estado;
+bool interfaz_estado(interfaz_t* interfaz, char estado){
+    return interfaz->estado == estado;
 }
 
 void interfaz_destruir(interfaz_t* interfaz){

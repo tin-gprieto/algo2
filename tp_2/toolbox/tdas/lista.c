@@ -326,6 +326,13 @@ pila_t* pila_crear(){
 bool pila_vacia(pila_t* pila){
     return (!pila || pila->cantidad == 0); 
 }
+
+size_t pila_elementos(pila_t* pila){
+    if (!pila)
+        return 0;
+    return pila->cantidad;
+}
+
 int pila_apilar(pila_t* pila, void* elemento){
     if(!pila) 
         return ERROR;
@@ -356,12 +363,18 @@ bool cola_vacia(cola_t* cola){
     return (!cola || cola->cantidad == 0); 
 }
 
-int lista_encolar(lista_t* lista, void* elemento){
-    if (!lista)
+size_t cola_elementos(cola_t* cola){
+    if (!cola)
+        return 0;
+    return cola->cantidad;
+}
+
+int cola_encolar(cola_t* cola, void* elemento){
+    if (!cola)
         return ERROR;
-    if (lista->cantidad == 0)
-        return crear_e_insertar_al_inicio(&(*lista), elemento);
-    return crear_e_insertar_al_final(&(*lista), elemento);
+    if (cola->cantidad == 0)
+        return crear_e_insertar_al_inicio((lista_t*)cola, elemento);
+    return crear_e_insertar_al_final((lista_t*)cola, elemento);
 }
 
 int cola_desencolar(cola_t* cola){
