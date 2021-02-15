@@ -8,7 +8,46 @@
 #include "batallas.h"
 
 #define MAX_STRING 50
-#define ESTADO_INICIAL -1
+
+#define MAX_MENU 5
+#define MAX_OPC 4
+#define MAX_STR 100
+
+//tipo de listas
+#define COMBATE 0
+#define CAJA 1
+#define ENTRENADOR 2
+
+//Estados de la interfaz
+#define PERSONAJE 'E'
+#define AGREGAR_GYM 'A'
+#define INICIAR 'I'
+#define SIMULAR 'S'
+#define GIMNASIO 'G'
+#define CAMBIAR 'C'
+#define BATALLA 'B'
+#define AVANZAR 'N'
+#define TOMAR_PKM 'T'
+#define REPETIR 'R'
+#define SALIR 'F'
+#define ESTADO_NULO ' '
+
+//tipos de menus
+#define MENU_INICIO 0
+#define MENU_GYM 1
+#define MENU_BATALLA 2
+#define MENU_VICTORIA 3
+#define MENU_DERROTA 4
+
+//apertura de archivos
+#define LECTURA "r"
+#define ESCRITURA "w"
+
+//estado batalla
+#define DERROTA -1
+#define ESTADO_INICIAL 0
+#define VICTORIA 1
+#define PELEANDO 2
 
 typedef struct pokemon{
     char nombre[MAX_STRING];
@@ -38,14 +77,13 @@ typedef struct gimnasio{
     size_t cant_entrenadores;
 }gimnasio_t;
 
+typedef void (*mostrar_batalla)(pokemon_t*, pokemon_t*, int);
+
+typedef int (*funcion_batalla)(void*, void*);
+
 /* Funciones para el funcionamiento del main y que requieran ser testeadas*/
 
-/* 
-* Dado un archivo, crea un personaje con la información dentro
-* Pre : Archivo abierto para lectura
-* Post: Personaje creado en memoria dinámica
-*/
-personaje_t* cargar_personaje(FILE * archivo);
+personaje_t* cargar_personaje(void (*pedir_archivo)(char *));
 
 /* 
 *  Dado un personaje, lo destruye junto a todas sus estructuras
@@ -54,12 +92,8 @@ personaje_t* cargar_personaje(FILE * archivo);
 */
 void personaje_destruir(personaje_t* personaje);
 
-/* 
-* Dado un archivo, crea un heap de gimnasios con la información dentro
-* Pre : Archivo abierto para lectura
-* Post: Heap minimal con todos los gimnasios dentro
-*/
-heap_t* cargar_gimnasios(FILE * archivo);
+
+heap_t* cargar_gimnasios(void (*pedir_archivo)(char *));
 
 /* 
 * Dado un gimansio y un estado, devuelve si el ambos coinciden
@@ -82,28 +116,33 @@ void gimnasio_cambiar_estado(gimnasio_t* gimnasio, int nuevo_estado);
 * Post: Puntero a entrenador en última posicion
 */
 entrenador_t* gimnasio_ultimo_entrenador(gimnasio_t* gimnasio);
-/* 
-* Dada la posicion de un pokemon del conjunto del lider,
-* lo transfiere a la caja del personaje
-* Pre : Posicion del pokemon válida para la lista del lider, entrenador y personajes cargados
-* Post: Caja del personaje con nuevo pokemon
-*/
-void tomar_pokemon(entrenador_t* lider, size_t posicion_pkm, personaje_t* personaje);
-/* 
-* Dadas dos posicones, una de un pokemon en el party y otro en la caja,
-* Quita el pokemon del party para agregar el de la caja.
-* Pre : Ambas posiciones de los pokemones que sean válidas, personaje cargado
-* Post: Party con un intercambio de pokemones
-*/
-void intercambiar_pokemones(personaje_t* personaje, size_t pkm_party, size_t pkm_box);
 
 /* 
-* Realiza todas las batallas de un gimnasio 
-* Pre : Gimnasio cargado y no vacío
-* Post: Devuelve el gimnasio en el estado correspondiente
+* Realiza una batalla del gimnasio
+* Pre : Gimnasio cargado y no vacío, personaje cargado, 
+* funcion batalla corriespondiente al gimnasio y un menú batalla que muestre los datos de la misma
+* Post: Devuelve el estado que debe tener el gimnasio
 * (En caso de que gane, dejará el gimnasio con su lider)
 */
-void gimanasio_luchar(gimnasio_t* gimnasio);
+int gimnasio_batalla(gimnasio_t* gimnasio, personaje_t* personaje, funcion_batalla batalla, mostrar_batalla menu);
+
+
+/* 
+* Se ejecuta la opción de tomar un pokemon del lider
+* (Muestra los pokemones del lider para que el usuario elija uno)
+* Pre : Gimnasio creado y unicamento con el último entrenador(lider), funcion para pedir pokemones al usuario 
+* Post: Caja del personaje con un nuevo pokemón
+*/
+void quitar_pokemon_lider(personaje_t* personaje, gimnasio_t* gimnasio, size_t (*pedir_pokemon)(lista_t*, int));
+
+/* 
+* Se ejecuta la opción de cambiar el party
+* (Muestra los pokemones del party 
+* y la caja para que el usuario elija cual intercambiar)
+* Pre : Personaje creado, funcion para pedir pokemones al usuario 
+* Post: Party modificado
+*/
+void cambiar_party(personaje_t* personaje, size_t (*pedir_pokemon)(lista_t*, int));
 
 /* 
 * Dado un heap, crea uno nuevo copiando su contenido pero sin perder el originals

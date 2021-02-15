@@ -2,6 +2,7 @@
 
 #define FONDO "\e[44m"
 #define FONDO_2 "\e[40m"
+#define FONDO_3 "\e[43m"
 #define SUBRAYADO "\e[4;37m"
 #define AMARILLO_SUB "\e[4;33m"
 #define AMARILLO_PARP "\e[5;33m"
@@ -112,9 +113,9 @@ void imprimir_linea_bicolor(size_t margen, const char* color_1, const char* line
     printf("%s", linea_1);
     printf(RESET FONDO);
     determinar_color(color_2);
-    printf("%s", linea_2);
+    printf("  %s", linea_2);
     printf(RESET);
-    limite = INTERFAZ_LIM - margen - strlen(linea_1) - strlen(linea_2);
+    limite = INTERFAZ_LIM - margen - strlen(linea_1) - strlen(linea_2) - 2;
 
     imprimir_margen(FIN, limite);
     
@@ -166,7 +167,6 @@ void mostrar_advertencia(){
     imprimir_espaciado(INTERFAZ_ESPACIO);
     printf("Ingrese nuevamente la opción :");
 }
-
 /* 
 * Valida la clave ingresada por el usuario
 * Pre : Recibe una clave y las opciones que tiene para ser válida
@@ -234,7 +234,7 @@ void imprimir_opcion(char clave, const char* descripcion){
     char linea_1[INTERFAZ_LIM];            
     char linea_2[INTERFAZ_LIM];
     sprintf(linea_1," >> ( %c )", clave);             
-    sprintf(linea_2," - %s", descripcion);             
+    sprintf(linea_2,"-  %s", descripcion);             
     imprimir_linea_bicolor(MARGEN_MEDIO, AMARILLO, linea_1, BLANCO, linea_2);
     
 }
@@ -298,7 +298,7 @@ void dibujo_inicio(){
 }
 /* 
 * Imprime por pantalla el encabezado del gimnasio
-* Pre : nombre del gimansio
+* Pre : nombre del gimnasio
 * Post: Título impreso por pantalla
 */
 void encabezado_gimnasio(const char* gimnasio){
@@ -405,24 +405,28 @@ void informacion_batalla(pokemon_t* pkm_1, pokemon_t* pkm_2, int estado){
 void encabezado_victoria(){
     imprimir_marco(INICIO);
     imprimir_barra(VERDE, INICIO);
-    imprimir_linea(MARGEN_LARGO, VERDE," GIMANSIO SUPERADO ");
+    imprimir_linea(MARGEN_LARGO, VERDE," GIMNASIO SUPERADO ");
     imprimir_barra(VERDE, FIN);
 }
 /* 
 * Imprime por pantalla el encabezado de victoria 
-* y el nombre del último gimansio
-* Pre : nombre del gimansio
+* y el nombre del último gimnasio
+* Pre : nombre del gimnasio
 * Post: Información por pantalla
 */
-void encabezado_derrota(const char* gimansio){ 
+void encabezado_derrota(gimnasio_t* gimnasio){ 
     imprimir_marco(INICIO);
     imprimir_barra(ROJO, INICIO);
     imprimir_linea(MARGEN_LARGO, ROJO, " HAS PERDIDO ");
     imprimir_barra(ROJO, FIN);
     imprimir_enter();
-    char string_2[INTERFAZ_LIM];
-    sprintf(string_2,"ULTIMO GIMNASIO: %s ", gimansio);
-    imprimir_linea(MARGEN_MEDIO, SUBRAYADO, string_2);
+    imprimir_linea_bicolor(MARGEN_MEDIO, SUBRAYADO,"ULTIMO GIMNASIO:",BLANCO, gimnasio->nombre);
+    entrenador_t* entrenador = (entrenador_t*) pila_tope(gimnasio->entrenadores);
+    if(entrenador){
+        imprimir_enter();
+        imprimir_linea_bicolor(MARGEN_MEDIO, SUBRAYADO, "ENTRENADOR:", BLANCO, entrenador->nombre);
+        imprimir_enter();
+    }
 }
 /* 
 * Dada un letra, lo busca en un vector de letras
@@ -515,7 +519,6 @@ void imprimir_titulo_pokemones(int lista){
 * Post: Información por pantalla
 */
 void listar_pokemones(lista_t* pokemones, int lista){
-    imprimir_enter();
     imprimir_titulo_pokemones(lista);
     imprimir_enter();
     lista_iterador_t* iterador = lista_iterador_crear(pokemones);
@@ -561,14 +564,6 @@ void inicializar_gimnasio(interfaz_t* interfaz){
     cargar_opcion(interfaz, MENU_GYM, BATALLA, "Luchar primer batalla" );
 }
 /* 
-* Inicializa el menu batalla con sus opciones y descripciones
-* Pre : Interfaz creada
-* Post: Menú funcional para la interfaz
-*/
-void inicializar_batalla(interfaz_t* interfaz){
-    cargar_opcion(interfaz, MENU_BATALLA, AVANZAR, "Siguiente batalla" );
-}
-/* 
 * Inicializa el menu victoria con sus opciones y descripciones
 * Pre : Interfaz creada
 * Post: Menú funcional para la interfaz
@@ -596,7 +591,6 @@ void inicializar_derrota(interfaz_t* interfaz){
 void inicializar_interfaz(interfaz_t* interfaz){
     inicializar_inicio(interfaz);
     inicializar_gimnasio(interfaz);
-    inicializar_batalla(interfaz);
     inicializar_victoria(interfaz);
     inicializar_derrota(interfaz);
 }
@@ -604,6 +598,11 @@ void inicializar_interfaz(interfaz_t* interfaz){
 //FUNCIONES INTERFAZ.H
 
 void gimnasio_informacion(gimnasio_t* gimnasio){
+    if(!gimnasio){
+        warning("el gimnasio");
+        return;
+    }
+    system(LIMPIAR);
     imprimir_marco(INICIO);
     imprimir_linea(MARGEN_MEDIO_LARGO+4, SUBRAYADO, "INFORMACION DEL GIMNASIO");
     imprimir_enter();
@@ -617,8 +616,12 @@ void gimnasio_informacion(gimnasio_t* gimnasio){
     sprintf(entrenadores, "%li", gimnasio->cant_entrenadores);
     imprimir_linea_bicolor(MARGEN_CORTO, AMARILLO, "ENTRENADORES RESTANTES:    ", BLANCO, entrenadores);
     entrenador_t aux = * (entrenador_t*) pila_tope(gimnasio->entrenadores);
+    imprimir_enter();
     imprimir_linea_bicolor(MARGEN_CORTO, AMARILLO, "PROXIMO RIVAL: ", BLANCO, aux.nombre);
-    listar_pokemones(aux.pokemones, NULO);
+    listar_pokemones(aux.pokemones, ENTRENADOR);
+    imprimir_enter();
+    imprimir_enter();
+    imprimir_opcion(AVANZAR, "Avanzar");
     imprimir_marco(FIN);
     char opciones[2];
     sprintf(opciones, "%c", AVANZAR);
@@ -626,11 +629,18 @@ void gimnasio_informacion(gimnasio_t* gimnasio){
 }
 
 void personaje_informacion(personaje_t* personaje){
+    if(!personaje){
+        warning("el personaje principal");
+        return;
+    }
+    system(LIMPIAR);
     imprimir_marco(INICIO);
     imprimir_linea(MARGEN_MEDIO_LARGO+4, SUBRAYADO, "INFORMACION DEL PERSONAJE");
     imprimir_enter();
     imprimir_linea_bicolor(MARGEN_CORTO, AMARILLO, "NOMBRE:     ", BLANCO, personaje->nombre);
+    imprimir_enter();
     listar_pokemones(personaje->caja, CAJA);
+    imprimir_enter();
     listar_pokemones(personaje->party, COMBATE);
     imprimir_enter();
     imprimir_enter();
@@ -641,22 +651,26 @@ void personaje_informacion(personaje_t* personaje){
     pedir_clave(opciones, UNIDAD);
 }
 
-FILE* pedir_archivo(const char* modo){
+void pedir_archivo(char ruta_archivo[MAX_STR]){
     FILE* archivo;
     imprimir_espaciado(INTERFAZ_ESPACIO);
     printf("Ingrese la ruta del archivo:");
-    char ruta_archivo[MAX_STR];
     scanf("%100[^\n]", ruta_archivo);
-    archivo = fopen(ruta_archivo, modo);
+    archivo = fopen(ruta_archivo, LECTURA);
     while(!archivo){
-        imprimir_advertencia();
+        mostrar_advertencia();
         scanf("%100[^\n]", ruta_archivo);
-        archivo = fopen(ruta_archivo, modo);
+        archivo = fopen(ruta_archivo, LECTURA);
     }
-    return archivo;
+    fclose(archivo);
 }
 
 size_t pedir_pokemon(lista_t* pokemones, int lista){
+    if(!pokemones){
+        warning("la lista de pokemones");
+        return lista_elementos(pokemones);
+    }
+    system(LIMPIAR);
     imprimir_marco(INICIO);
     listar_pokemones(pokemones, lista);
     imprimir_marco(FIN);
@@ -723,35 +737,64 @@ void menu_maestro_pokemon(){
     imprimir_marco(FIN);
 }
 
-void menu_derrota(interfaz_t* interfaz, const char* gimnasio){
-    if(!interfaz) return;
+void menu_derrota(interfaz_t* interfaz, gimnasio_t* gimnasio){
+    if(!interfaz){
+        warning("la interfaz");
+        return;
+    }
+    if(!gimnasio){
+         warning("el gimnasio");
+        return;
+    }
     system(LIMPIAR);
     encabezado_derrota(gimnasio);
     mostrar_opciones(interfaz, MENU_DERROTA);
 }
 
 void menu_victoria(interfaz_t* interfaz){
-    if(!interfaz) return;
+    if(!interfaz){
+        warning("la interfaz");
+        return;
+    }
     system(LIMPIAR);
     encabezado_victoria();
     mostrar_opciones(interfaz, MENU_VICTORIA);
 }
 
-void menu_batalla(interfaz_t* interfaz, pokemon_t* pkm_1, pokemon_t* pkm_2, int estado){
-    if(!interfaz || !pkm_1 || !pkm_2) return;
+void menu_batalla(pokemon_t* pkm_1, pokemon_t* pkm_2, int estado){
+    if(!pkm_1 || !pkm_2){
+        warning("los pokemones de la batalla");
+        return;
+    }
     system(LIMPIAR);
     informacion_batalla(pkm_1, pkm_2, estado);
-    mostrar_opciones(interfaz, MENU_BATALLA);
+    imprimir_enter();
+    imprimir_opcion(AVANZAR, "Avanzar");
+    imprimir_marco(FIN);
+    char opciones[2];
+    sprintf(opciones, "%c", AVANZAR);
+    pedir_clave(opciones, UNIDAD);
 }
 
-void menu_gimnasio(interfaz_t* interfaz, const char* gimansio){
-    if(!interfaz) return;
+void menu_gimnasio(interfaz_t* interfaz, gimnasio_t* gimnasio){
+    if(!interfaz){
+        warning(" la interfaz");
+        return;
+    }
+    if(!gimnasio){
+         warning("el gimnasio");
+        return;
+    }
     system(LIMPIAR);
-    encabezado_gimnasio(gimansio);
+    encabezado_gimnasio(gimnasio->nombre);
     mostrar_opciones(interfaz, MENU_GYM);
 }
 
 void menu_inicio(interfaz_t* interfaz){
+    if(!interfaz){
+        warning(" la interfaz");
+        return;
+    }
     system(LIMPIAR);
     dibujo_inicio();
     mostrar_opciones(interfaz, MENU_INICIO);
