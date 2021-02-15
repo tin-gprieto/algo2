@@ -1,9 +1,45 @@
 #include "../code/juego.h"
 #include "../code/interfaz.h"
 
-int main(){
-    interfaz_t* interfaz = interfaz_crear(MAX_MENU);
-    if(!interfaz) return ERROR;
+#define MAX_PKM 3
+
+lista_t* crear_caja(pokemon_t pokemones[], size_t cantidad){
+    lista_t* lista = lista_crear();
+    if(!lista) return NULL;
+    for(int i=0; i < cantidad; i++){
+        lista_insertar(lista, &pokemones[i]);
+    }
+    return lista;
+}
+
+lista_t* crear_party(pokemon_t pokemones[], size_t cantidad){
+    lista_t* lista = lista_crear();
+    if(!lista) return NULL;
+    for(int i=0; i < cantidad; i++){
+        if(pokemones[i].elegido)
+            lista_insertar(lista, &pokemones[i]);
+    }
+    return lista;
+}
+
+void inicializar_estructuras(gimnasio_t* gimnasio, personaje_t* personaje, entrenador_t* entrenador, pokemon_t pokemones[], size_t cant_pkm){
+  
+    strcpy(personaje->nombre, "Ash Ketchup");
+    personaje->caja = crear_caja(pokemones, cant_pkm);
+
+    personaje->party =  crear_party(pokemones, cant_pkm);
+    strcpy(entrenador->nombre, "Brock");
+
+    entrenador->pokemones = crear_caja(pokemones, cant_pkm);
+
+    strcpy(gimnasio->nombre, "Ciudad Paleta");
+    gimnasio->dificultad = 15;
+    gimnasio->cant_entrenadores = 8;
+    gimnasio->entrenadores = pila_crear();
+    pila_apilar(gimnasio->entrenadores, (void*) entrenador);
+}
+
+void crear_pokemones(pokemon_t pokemones[], size_t* cantidad){
     pokemon_t pkm_1;
     strcpy(pkm_1.nombre, "Pikachu");
     pkm_1.ataque = 1;
@@ -23,47 +59,37 @@ int main(){
     pkm_3.velocidad = 12;
     pkm_3.elegido = true;
 
+    pokemones[0]=pkm_1;
+    pokemones[1]=pkm_2;
+    pokemones[2]=pkm_3;
+    (*cantidad) = MAX_PKM;
+}
+
+int main(){
+    interfaz_t* interfaz = interfaz_crear(MAX_MENU);
+    if(!interfaz) return ERROR;
+    
+    pokemon_t pokemones[MAX_PKM];
+    size_t cant_pkm = 0;
+
+    crear_pokemones(pokemones, &cant_pkm);
+
     personaje_t personaje;
-    strcpy(personaje.nombre, "Martin Gonzalez");
-
-    personaje.caja = lista_crear();
-    lista_insertar(personaje.caja, (void*)&pkm_2);
-    lista_insertar(personaje.caja, (void*)&pkm_3);
-    lista_insertar(personaje.caja, (void*)&pkm_1);
-
-    personaje.party = lista_crear();
-    lista_insertar(personaje.party, (void*)&pkm_2);
-    lista_insertar(personaje.party, (void*)&pkm_3);
-
-    informacion_personaje(&personaje);
-
     entrenador_t entrenador;
-
-    strcpy(entrenador.nombre, "Martin Gonzalez");
-
-    entrenador.pokemones = lista_crear();
-    lista_insertar(entrenador.pokemones, (void*)&pkm_2);
-    lista_insertar(entrenador.pokemones, (void*)&pkm_3);
-    lista_insertar(entrenador.pokemones, (void*)&pkm_1);
-
     gimnasio_t gimnasio;
 
-    strcpy(gimnasio.nombre, "Ciudad Paleta");
-    gimnasio.dificultad = 15;
-    gimnasio.cant_entrenadores = 8;
-    gimnasio.entrenadores = pila_crear();
-    pila_apilar(gimnasio.entrenadores, (void*) &entrenador);
-    
-    informacion_gimnasio(&gimnasio);
+    inicializar_estructuras(&gimnasio, &personaje, &entrenador, pokemones, cant_pkm);
 
-    /*
-    size_t posicion = pedir_pokemon(personaje.caja, ENTRENADOR, personaje.nombre);
-    pokemon_t* seleccionado = lista_elemento_en_posicion(personaje.caja, posicion);
-    printf("          %s ", seleccionado->nombre);
-    printf("        ATQ: %i ", seleccionado->ataque);
-    printf("        DEF: %i ", seleccionado->defensa);
-    printf("        VEL: %i \n", seleccionado->velocidad);
-    */
+    menu_inicio(interfaz);
+    menu_gimnasio(interfaz, &gimnasio);
+    personaje_informacion(&personaje);
+    gimnasio_informacion(&gimnasio);
+    menu_batalla(&pokemones[0], &pokemones[2], DERROTA);
+    menu_batalla(&pokemones[1], &pokemones[0], VICTORIA);
+    pedir_pokemon(personaje.party, COMBATE);
+    pedir_pokemon(personaje.caja, CAJA);
+    pedir_pokemon(entrenador.pokemones, ENTRENADOR);
+
     interfaz_destruir(interfaz);
     lista_destruir(personaje.caja);
     lista_destruir(personaje.party);

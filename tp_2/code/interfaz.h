@@ -7,40 +7,7 @@
 #include "../toolbox/tdas/heap.h"
 #include "juego.h"
 
-#define MAX_MENU 5
-#define MAX_OPC 4
-#define MAX_STR 100
-#define COMBATE 0
-#define CAJA 1
-#define ENTRENADOR 2
 
-//Estados de la interfaz
-#define PERSONAJE 'E'
-#define AGREGAR_GYM 'A'
-#define INICIAR 'I'
-#define SIMULAR 'S'
-#define GIMNASIO 'G'
-#define CAMBIAR 'C'
-#define BATALLA 'B'
-#define AVANZAR 'N'
-#define TOMAR_PKM 'T'
-#define REPETIR 'R'
-#define SALIR 'F'
-#define ESTADO_NULO ' '
-
-//tipos de menus
-#define MENU_INICIO 0
-#define MENU_GYM 1
-#define MENU_BATALLA 2
-#define MENU_VICTORIA 3
-#define MENU_DERROTA 4
-
-
-#define LECTURA "r"
-#define ESCRITURA "w"
-
-#define DERROTA -1
-#define VICTORIA 1
 
 typedef struct menu{
     char opciones[MAX_OPC];
@@ -85,11 +52,11 @@ bool interfaz_estado(interfaz_t* interfaz, char estado);
 void menu_inicio(interfaz_t* interfaz);
 
 /* 
-* Muestra el menu gimansio y sus opciones
-* Pre : Interfaz creada y nombre del gimansio
+* Muestra el menu gimnasio y sus opciones
+* Pre : Interfaz creada y nombre del gimnasio
 * Post: Interfaz en el estado elegido por usuario 
 */
-void menu_gimnasio(interfaz_t* interfaz, const char* gimansio);
+void menu_gimnasio(interfaz_t* interfaz, gimnasio_t* gimnasio);
 
 /* 
 * Muestra el menu batalla con la informacion de los pokemones
@@ -97,7 +64,7 @@ void menu_gimnasio(interfaz_t* interfaz, const char* gimansio);
 * (Costantes VICTORIA y DERROTA)
 * Post: Información por pantalla de la batalla
 */
-void menu_batalla(interfaz_t* interfaz, pokemon_t* pkm_1, pokemon_t* pkm_2, int estado);
+void menu_batalla(pokemon_t* pkm_1, pokemon_t* pkm_2, int estado);
 
 /* 
 * Muestra el menu victoria y sus opciones
@@ -108,10 +75,10 @@ void menu_victoria(interfaz_t* interfaz);
 
 /* 
 * Muestra el menu derrota y sus opciones
-* Pre : Interfaz creada y nombre del gimansio en donde fue derrotado
+* Pre : Interfaz creada y nombre del gimnasio en donde fue derrotado
 * Post: Información por pantalla e interfaz en el estado elegido por usuario 
 */
-void menu_derrota(interfaz_t* interfaz, const char* gimnasio);
+void menu_derrota(interfaz_t* interfaz, gimnasio_t* gimnasio);
 
 /* 
 * Muestra por pantalla un aviso de que se superó el juego
@@ -137,11 +104,11 @@ void eliminar_opcion(interfaz_t* interfaz, size_t menu, char opcion);
 size_t pedir_pokemon(lista_t* pokemones, int lista);
 
 /* 
-* Pide una ruta de archivo al usuario y devuelve el archivo abierto
-* Pre : archivo FILE* sin usar y modo válido para la apertura
-* Post: archivo abierto, debe ser cerrado una vez usado
+* Pide una ruta de archivo al usuario y devuelve como parametro
+* Pre : -
+* Post: ruta válida del archivo (sin fallo de apertura)
 */
-FILE* pedir_archivo(const char* modo);
+void pedir_archivo(char ruta_archivo[MAX_STR]);
 
 /* 
 * Muestra por pantalla la informacion de personaje
