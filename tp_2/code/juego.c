@@ -1,8 +1,34 @@
 #include "juego.h"
 
+/*
+*
+* Pre :
+* Post:
+*/
+void entrenador_destruir(entrenador_t* entrenador){
+
+}
+/*
+*
+* Pre :
+* Post:
+*/
+void recorrer_pila(pila_t* entrenadores, void(*destructor)(entrenador_t*)){
+
+}
+/*
+*
+* Pre :
+* Post:
+*/
+void gimnasio_destructor(gimnasio_t* gimnasio){
+
+}
+
 void personaje_destruir(personaje_t* personaje){
 
 }
+
 /* 
 * Dado un archivo, crea un personaje con la información dentro
 * Pre : Archivo abierto para lectura
@@ -20,7 +46,7 @@ heap_t* leer_archivo_gimnasios(FILE * archivo){
     return NULL;    
 }
 
-personaje_t* cargar_personaje(void (*pedir_archivo)(char *)){
+personaje_t* personaje_cargar(void (*pedir_archivo)(char *)){
     char ruta_archivo[MAX_STR];
     pedir_archivo(ruta_archivo);
     FILE * archivo = fopen(ruta_archivo, LECTURA);
@@ -29,7 +55,7 @@ personaje_t* cargar_personaje(void (*pedir_archivo)(char *)){
     return personaje;
 }
 
-heap_t* cargar_gimnasios(void (*pedir_archivo)(char *)){
+heap_t* gimnasios_cargar(void (*pedir_archivo)(char *)){
     char ruta_archivo[MAX_STR];
     pedir_archivo(ruta_archivo);
     FILE * archivo = fopen(ruta_archivo, LECTURA);
@@ -49,21 +75,37 @@ void gimnasio_cambiar_estado(gimnasio_t* gimnasio, int nuevo_estado){
 entrenador_t* gimnasio_ultimo_entrenador(gimnasio_t* gimnasio){
     return (entrenador_t*) pila_tope(gimnasio->entrenadores); 
 }
+/*
+*
+* Pre :
+* Post:
+*/
+int batalla_luchar(personaje_t* personaje, entrenador_t* entrenador, funcion_batalla batalla, mostrar_batalla menu){
+    return DERROTA;
+}
+/*
+*
+* Pre :
+* Post:
+*/
+void gimnasio_siguiente_entrenador(gimnasio_t* gimnasio){
+    entrenador_destruir(gimnasio_ultimo_entrenador(gimnasio));
+    pila_desapilar(gimnasio->entrenadores);
+}
 
 int gimnasio_batalla(gimnasio_t* gimnasio, personaje_t* personaje, funcion_batalla batalla, mostrar_batalla menu){
     entrenador_t* entrenador = gimnasio_ultimo_entrenador(gimnasio);
-    int resultado = luchar_batalla(personaje, entrenador, batalla, menu);
+    int resultado = batalla_luchar(personaje, entrenador, batalla, menu);
     if(resultado == VICTORIA){
         if(pila_elementos(gimnasio->entrenadores) == 1){
             return VICTORIA; 
         }else{
-            destruir_entrenador(gimnasio_ultimo_entrenador(gimnasio));
-            pila_desapilar(gimnasio->entrenadores);
+            gimnasio_siguiente_entrenador(gimnasio);
             return PELEANDO;
         }
-    }else if (resultado == DERROTA){
-            return DERROTA;
     }
+    return DERROTA;
+    
 }
 
 /* 

@@ -83,7 +83,7 @@ typedef int (*funcion_batalla)(void*, void*);
 
 /* Funciones para el funcionamiento del main y que requieran ser testeadas*/
 
-personaje_t* cargar_personaje(void (*pedir_archivo)(char *));
+personaje_t* personaje_cargar(void (*pedir_archivo)(char *));
 
 /* 
 *  Dado un personaje, lo destruye junto a todas sus estructuras
@@ -93,7 +93,7 @@ personaje_t* cargar_personaje(void (*pedir_archivo)(char *));
 void personaje_destruir(personaje_t* personaje);
 
 
-heap_t* cargar_gimnasios(void (*pedir_archivo)(char *));
+heap_t* gimnasios_cargar(void (*pedir_archivo)(char *));
 
 /* 
 * Dado un gimansio y un estado, devuelve si el ambos coinciden

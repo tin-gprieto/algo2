@@ -18,17 +18,12 @@
 //Constantes
 #define MAX_FUNCIONES 5
 
-typedef struct liga{
-    heap_t* gimnasios;
-    funcion_batalla* funciones;
-    size_t tope_funciones;
-}liga_t;
-
 typedef struct juego{
     int estado;
     personaje_t* personaje;
-    liga_t* liga;
+    heap_t* gimnasios;
     interfaz_t* interfaz;
+    funcion_batalla* funciones;
 }juego_t;
 
 /* 
@@ -37,7 +32,7 @@ typedef struct juego{
 * Post: Verdadero si se han cargado un personaje y los gimnasios
 */
 bool juego_preparado(juego_t* juego){
-    return juego->personaje && juego->liga->gimnasios;
+    return juego->personaje && juego->gimnasios;
 }
 /* 
 * Determina si el estado del juego coincide con el estado pasado
@@ -66,7 +61,7 @@ void gimnasio_perdido(juego_t* juego, gimnasio_t* gimnasio){
         if(interfaz_estado(juego->interfaz, CAMBIAR))
             cambiar_party(juego->personaje, pedir_pokemon);
         if(interfaz_estado(juego->interfaz, REPETIR))
-            gimnasio_cambiar_estado(gimnasio, ESTADO_INICIAL);
+            gimnasio_cambiar_estado(gimnasio, PELEANDO);
         if(interfaz_estado(juego->interfaz, SALIR)){
             juego_cambiar_estado(juego, PERDIDO);
         }
@@ -87,40 +82,13 @@ void gimnasio_ganado(juego_t* juego, gimnasio_t* gimnasio){
                 cambiar_party(juego->personaje, pedir_pokemon);
             menu_victoria(juego->interfaz);
         }else{
-            heap_borrar(juego->liga->gimnasios);
+            heap_borrar(juego->gimnasios); //Chequear
         }
     }
 }
 
 funcion_batalla obtener_funcion_batalla(juego_t *juego, gimnasio_t * gimnasio){
-    return  juego->liga->funciones[gimnasio->id_batalla];
-}
-/* 
-* Ejecuta la función de empezar un gimnasio
-* Pre : Juego creado e iniciado, gimnasio en ESTADO_INICIAL
-* Post: Juego perdido o avanzado al siguiente gimnasio
-*/
-void ejecutar_menu_gimnasio(juego_t* juego, gimnasio_t* gimnasio){
-    menu_gimnasio(juego->interfaz, gimnasio);
-    while(estado_juego(juego, JUGANDO)){
-        if(interfaz_estado(juego->interfaz, PERSONAJE)){
-            personaje_informacion(juego->personaje);
-        }else if(interfaz_estado(juego->interfaz, GIMNASIO)){
-            gimnasio_informacion(gimnasio);
-        }else if(interfaz_estado(juego->interfaz, CAMBIAR)){
-            cambiar_party(juego->personaje, pedir_pokemon);
-        }else if(interfaz_estado(juego->interfaz, BATALLA)){
-            funcion_batalla batalla = obtener_funcion_batalla(juego, gimnasio);
-            int estado = gimnasio_batalla(juego->personaje, gimnasio, batalla, menu_batalla);
-            gimnasio_cambiar_estado(gimnasio, estado);
-            if(gimnasio_estado(gimnasio, PERDIDO))
-                gimnasio_perdido(juego, gimnasio);
-            if(gimnasio_estado(juego, GANADO))
-                gimnasio_ganado(juego, gimnasio);
-            if(gimnasio_estado(gimnasio, PELEANDO))
-                menu_gimnasio(juego->interfaz, gimnasio);
-        }
-    }
+    return  juego->funciones[gimnasio->id_batalla];
 }
 /* 
 * Juega una partida completa
@@ -128,11 +96,24 @@ void ejecutar_menu_gimnasio(juego_t* juego, gimnasio_t* gimnasio){
 * Post: JUego perdido o ganado
 */
 void jugar_partida(juego_t* juego){
-    while(estado_juego(juego, JUGANDO)){
-        gimnasio_t* gimnasio_actual = (gimnasio_t*) heap_raiz(juego->liga->gimnasios);
-        ejecutar_menu_gimnasio(juego, gimnasio_actual);
-        if(heap_vacio(juego->liga->gimnasios))
-            juego_cambiar_estado(juego, GANADO);
+    while(juego_estado(juego, JUGANDO)){
+        gimnasio_t* gimnasio_actual = (gimnasio_t*) heap_raiz(juego->gimnasios);
+        menu_gimnasio(juego->interfaz, gimnasio_actual);
+        if(interfaz_estado(juego->interfaz, PERSONAJE)){
+            personaje_informacion(juego->personaje);
+        }else if(interfaz_estado(juego->interfaz, GIMNASIO)){
+            gimnasio_informacion(gimnasio_actual);
+        }else if(interfaz_estado(juego->interfaz, CAMBIAR)){
+            cambiar_party(juego->personaje, pedir_pokemon);
+        }else if(interfaz_estado(juego->interfaz, BATALLA)){
+            funcion_batalla batalla = obtener_funcion_batalla(juego, gimnasio_actual);
+            int estado = gimnasio_batalla(gimnasio_actual, juego->personaje, batalla, menu_batalla);
+            gimnasio_cambiar_estado(gimnasio_actual, estado);
+            if(gimnasio_estado(gimnasio_actual, PERDIDO))
+                gimnasio_perdido(juego, gimnasio_actual);
+            if(gimnasio_estado(gimnasio_actual, GANADO))
+                gimnasio_ganado(juego, gimnasio_actual);
+        }
     }
 }
 /*
@@ -155,13 +136,13 @@ void juego_agregar_personaje(juego_t* juego){
 * Pre :
 * Post:
 */
-void juego_agregar_personaje(juego_t* juego){
+void juego_agregar_gimnasios(juego_t* juego){
     heap_t* gimnasios = gimnasios_cargar(pedir_archivo);
     if(!gimnasios){
         warning("la carga de los gimnasios");
         juego_cambiar_estado(juego, ERROR);
     }else{
-        juego->liga->gimnasios = gimnasios;
+        juego->gimnasios = gimnasios;
         eliminar_opcion(juego->interfaz, MENU_INICIO, AGREGAR_GYM);
     } 
 
@@ -173,12 +154,12 @@ void juego_agregar_personaje(juego_t* juego){
 * Post: Juego preaparado para ser jugado (sea para Jugar o Simular)
 */
 void iniciar_partida(juego_t* juego){
-     while(!juego_preparado(juego) && estado_juego(juego) == INICIO){
+     while(!juego_preparado(juego) && juego_estado(juego, INICIO)){
         menu_inicio(juego->interfaz);
         if(interfaz_estado(juego->interfaz, PERSONAJE)){
-            juego_agregar_personaje(pedir_archivo);
+            juego_agregar_personaje(juego);
         }else if(interfaz_estado(juego->interfaz, AGREGAR_GYM)){
-            juego->liga->gimnasios = juego_agregar_gimnasios(pedir_archivo);
+            juego_agregar_gimnasios(juego);
         }else if(interfaz_estado(juego->interfaz, INICIAR)){
             if(juego_preparado(juego))
                 juego_cambiar_estado(juego, JUGANDO);
@@ -189,26 +170,14 @@ void iniciar_partida(juego_t* juego){
     }
 }
 /* 
-* Destruye la estructura de la liga
-(Los gimnasios y la estructura de funciones batalla)
-* Pre : Liga y juego creados
-* Post: Memoria ocupada por la liga liberada
-*/
-void liga_destruir(liga_t* liga){
-    if(!liga || !liga->gimnasios || !liga->funciones)
-        return;
-    heap_destruir(liga->gimnasios);
-    free(liga->funciones);
-    free(liga);
-}
-/* 
 * Destruye la estructura del juego por completo
 * Pre : Juego creado
 * Post: Memoria ocupada por el juego liberada
 */
 void destruir_juego(juego_t* juego){
     if(!juego) return;
-    liga_destruir(juego->liga);
+    heap_destruir(juego->gimnasios);
+    free(juego->funciones);
     interfaz_destruir(juego->interfaz);
     personaje_destruir(juego->personaje);
 }
@@ -218,19 +187,14 @@ void destruir_juego(juego_t* juego){
 * Pre : Estructura del juego creada para almacenar a la liga
 * Post: Liga con las distintas funciones de batallas
 */
-liga_t* inicializar_liga(){
-    liga_t* aux = malloc(sizeof(liga_t));
+funcion_batalla*  funciones_crear(){
+    funcion_batalla* aux = calloc(MAX_FUNCIONES, sizeof(funcion_batalla));
     if(!aux) return NULL;
-    aux->gimnasios = NULL;
-    funcion_batalla fun_aux = calloc(MAX_FUNCIONES, sizeof(funcion_batalla));
-    if(!fun_aux) return NULL;
-    aux->funciones = fun_aux;
-    aux->tope_funciones = MAX_FUNCIONES;
-    aux->funciones[FUNCION_1] = funcion_batalla_1; 
-    aux->funciones[FUNCION_2] = funcion_batalla_2; 
-    aux->funciones[FUNCION_3] = funcion_batalla_3; 
-    aux->funciones[FUNCION_4] = funcion_batalla_4; 
-    aux->funciones[FUNCION_5] = funcion_batalla_5;
+    aux[FUNCION_1] = funcion_batalla_1; 
+    aux[FUNCION_2] = funcion_batalla_2; 
+    aux[FUNCION_3] = funcion_batalla_3; 
+    aux[FUNCION_4] = funcion_batalla_4; 
+    aux[FUNCION_5] = funcion_batalla_5;
     return aux;
 }
 /* 
@@ -242,11 +206,12 @@ juego_t* juego_crear(){
     juego_t* juego = malloc(sizeof(juego_t));
     if(!juego) return NULL;
     juego->estado = INICIO;
+    juego->gimnasios = NULL;
+    juego->personaje = NULL;
     juego->interfaz = interfaz_crear();
     if(!juego->interfaz) return NULL;
-    juego->liga = inicializar_liga();
-    if(!juego->liga) return NULL;
-    juego->personaje = NULL;
+    juego->funciones = funciones_crear();
+    if(!juego->funciones) return NULL;
     return juego;
 }
 /* 
@@ -260,8 +225,8 @@ void simulacion_perdida(juego_t* juego, gimnasio_t* gimnasio, heap_t* auxiliar){
         if(interfaz_estado(juego->interfaz, CAMBIAR))
             cambiar_party(juego->personaje, pedir_pokemon);
         if(interfaz_estado(juego->interfaz, REPETIR)){
-            heap_destruir(juego->liga->gimnasios);
-            juego->liga->gimnasios = copiar_heap (auxiliar);
+            heap_destruir(juego->gimnasios);
+            juego->gimnasios = copiar_heap (auxiliar);
         }
         if(interfaz_estado(juego->interfaz, SALIR))
             juego_cambiar_estado(juego, PERDIDO);
@@ -273,15 +238,17 @@ void simulacion_perdida(juego_t* juego, gimnasio_t* gimnasio, heap_t* auxiliar){
 * Post: Juego perdido o ganado
 */
 void simular_partida(juego_t* juego){
-    heap_t* heap_auxiliar = copiar_heap(juego->liga->gimnasios);
-    while(estado_juego(juego, SIMULANDO)){
-        gimnasio_t* gym_actual = (gimnasio_t*) heap_raiz(juego->liga->gimnasios);
-        gimanasio_luchar(gym_actual);
-        if(gimnasio_estado(gym_actual, GANADO))
-            heap_borrar(juego->liga->gimnasios);
-        if(gimnasio_estado(gym_actual, PERDIDO));
-            simulacion_perdida(juego, gym_actual, heap_auxiliar);
-        if(heap_vacio(juego->liga->gimnasios))
+    heap_t* heap_auxiliar = copiar_heap(juego->gimnasios);
+    while(juego_estado(juego, SIMULANDO)){
+        gimnasio_t* gimnasio_actual = (gimnasio_t*) heap_raiz(juego->gimnasios);
+        funcion_batalla batalla = obtener_funcion_batalla(juego, gimnasio_actual);
+        int estado = gimnasio_batalla(gimnasio_actual, juego->personaje, batalla, menu_batalla);
+        gimnasio_cambiar_estado(gimnasio_actual, estado);
+        if(gimnasio_estado(gimnasio_actual, GANADO))
+            heap_borrar(juego->gimnasios);
+        if(gimnasio_estado(gimnasio_actual, PERDIDO))
+            simulacion_perdida(juego, gimnasio_actual, heap_auxiliar);
+        if(heap_vacio(juego->gimnasios))
             juego_cambiar_estado(juego, GANADO); 
     }
     heap_destruir(heap_auxiliar);
@@ -294,7 +261,7 @@ int main(){
         return ERROR;
     }
     iniciar_partida(juego);
-    if(estado_juego(juego, ERROR))
+    if(juego_estado(juego, ERROR))
         return ERROR;
 
     if(juego_estado(juego, SIMULANDO))

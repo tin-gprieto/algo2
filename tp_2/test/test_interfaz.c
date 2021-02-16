@@ -1,4 +1,3 @@
-#include "../code/juego.h"
 #include "../code/interfaz.h"
 
 #define MAX_PKM 3
