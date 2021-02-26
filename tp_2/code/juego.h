@@ -7,30 +7,10 @@
 #include "../toolbox/tdas/heap.h"
 #include "batallas.h"
 
-#define MAX_STRING 50
-
-#define MAX_MENU 5
-#define MAX_OPC 4
-#define MAX_STR 100
-
 //tipo de listas
 #define COMBATE 0
 #define CAJA 1
 #define ENTRENADOR 2
-
-//Estados de la interfaz
-#define PERSONAJE 'E'
-#define AGREGAR_GYM 'A'
-#define INICIAR 'I'
-#define SIMULAR 'S'
-#define GIMNASIO 'G'
-#define CAMBIAR 'C'
-#define BATALLA 'B'
-#define AVANZAR 'N'
-#define TOMAR_PKM 'T'
-#define REPETIR 'R'
-#define SALIR 'F'
-#define ESTADO_NULO ' '
 
 //tipos de menus
 #define MENU_INICIO 0
@@ -49,28 +29,36 @@
 #define VICTORIA 1
 #define PELEANDO 2
 
+//constantes
+#define MAX_MENU 5
+#define MAX_OPC 4
+#define MAX_STR 100
+#define MAX_NOMBRE 50
+
 typedef struct pokemon{
-    char nombre[MAX_STRING];
+    char nombre[MAX_NOMBRE];
     int velocidad;
     int ataque;
     int defensa;
     bool elegido;
+    int nivel;
 }pokemon_t;
 
 typedef struct entrenador{
-    char nombre[MAX_STRING];
+    char nombre[MAX_NOMBRE];
     lista_t* pokemones;
 }entrenador_t;
 
 typedef struct personaje{
-    char nombre[MAX_STRING];
+    char nombre[MAX_NOMBRE];
+    int medallas;
     lista_t* caja; 
     lista_t* party; 
 }personaje_t;
 
 typedef struct gimnasio{
     int estado;
-    char nombre[MAX_STRING];
+    char nombre[MAX_NOMBRE];
     int dificultad;
     int id_batalla;
     pila_t* entrenadores; 
@@ -83,7 +71,7 @@ typedef int (*funcion_batalla)(void*, void*);
 
 /* Funciones para el funcionamiento del main y que requieran ser testeadas*/
 
-personaje_t* personaje_cargar(void (*pedir_archivo)(char *));
+personaje_t* personaje_cargar(char ruta_archivo[MAX_STR]);
 
 /* 
 *  Dado un personaje, lo destruye junto a todas sus estructuras
@@ -93,7 +81,7 @@ personaje_t* personaje_cargar(void (*pedir_archivo)(char *));
 void personaje_destruir(personaje_t* personaje);
 
 
-heap_t* gimnasios_cargar(void (*pedir_archivo)(char *));
+heap_t* gimnasios_cargar(char ruta_archivo[MAX_STR]);
 
 /* 
 * Dado un gimansio y un estado, devuelve si el ambos coinciden
@@ -143,12 +131,5 @@ void quitar_pokemon_lider(personaje_t* personaje, gimnasio_t* gimnasio, size_t (
 * Post: Party modificado
 */
 void cambiar_party(personaje_t* personaje, size_t (*pedir_pokemon)(lista_t*, int));
-
-/* 
-* Dado un heap, crea uno nuevo copiando su contenido pero sin perder el originals
-* Pre : Heap creado y no vacio
-* Post: Un nuevo heap con el contenido del anterior
-*/
-heap_t* copiar_heap (heap_t* heap);
 
 #endif /* __AVENTURA_H__ */

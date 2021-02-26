@@ -1,7 +1,6 @@
 
 #include "juego.h"
 #include "interfaz.h"
-#define VACIO 0
 
 //funciones batalla
 #define FUNCION_1 1
@@ -17,11 +16,18 @@
 #define GANADO 5
 //Constantes
 #define MAX_FUNCIONES 5
+#define VACIO 0
+
+typedef struct archivos{
+    char ruta_personaje[MAX_STR];
+    char ruta_gimnasios[MAX_STR];
+}archivos_t;
 
 typedef struct juego{
     int estado;
     personaje_t* personaje;
     heap_t* gimnasios;
+    archivos_t archivos;
     interfaz_t* interfaz;
     funcion_batalla* funciones;
 }juego_t;
@@ -50,85 +56,20 @@ int juego_estado(juego_t* juego, int estado){
 void juego_cambiar_estado(juego_t* juego, int nuevo_estado){
     juego->estado = nuevo_estado;
 }
-/* 
-* Ejecuta el menu derrota dejando el juego según lo que elija el personaje
-* Pre : Juego creado e iniciado, haber jugado la partida y perder en un gimnasio
-* Post: Juego en estado correspondiente
-*/
-void gimnasio_perdido(juego_t* juego, gimnasio_t* gimnasio){
-    menu_derrota(juego->interfaz, gimnasio);
-    while(gimnasio_estado(gimnasio, PERDIDO) && juego_estado(juego, JUGANDO)){
-        if(interfaz_estado(juego->interfaz, CAMBIAR))
-            cambiar_party(juego->personaje, pedir_pokemon);
-        if(interfaz_estado(juego->interfaz, REPETIR))
-            gimnasio_cambiar_estado(gimnasio, PELEANDO);
-        if(interfaz_estado(juego->interfaz, SALIR)){
-            juego_cambiar_estado(juego, PERDIDO);
-        }
-    }
-}
-/* 
-* Ejecuta el menu victoria dejando el juego según lo que elija el personaje
-* Pre : Juego creado e iniciado, haber jugado la partida y ganar un gimnasio
-* Post: Juego en estado correspondiente
-*/
-void gimnasio_ganado(juego_t* juego, gimnasio_t* gimnasio){
-    menu_victoria(juego->interfaz);
-    while(!interfaz_estado(juego->interfaz, AVANZAR)){
-        if(!interfaz_estado(juego->interfaz, AVANZAR)){
-            if(interfaz_estado(juego->interfaz, TOMAR_PKM))
-                quitar_pokemon_lider(juego->personaje, gimnasio, pedir_pokemon);
-            if(interfaz_estado(juego->interfaz, CAMBIAR))
-                cambiar_party(juego->personaje, pedir_pokemon);
-            menu_victoria(juego->interfaz);
-        }else{
-            heap_borrar(juego->gimnasios); //Chequear
-        }
-    }
-}
-
-funcion_batalla obtener_funcion_batalla(juego_t *juego, gimnasio_t * gimnasio){
-    return  juego->funciones[gimnasio->id_batalla];
-}
-/* 
-* Juega una partida completa
-* Pre : Juego creado e iniciado (con gimansio y personajes cargados)
-* Post: JUego perdido o ganado
-*/
-void jugar_partida(juego_t* juego){
-    while(juego_estado(juego, JUGANDO)){
-        gimnasio_t* gimnasio_actual = (gimnasio_t*) heap_raiz(juego->gimnasios);
-        menu_gimnasio(juego->interfaz, gimnasio_actual);
-        if(interfaz_estado(juego->interfaz, PERSONAJE)){
-            personaje_informacion(juego->personaje);
-        }else if(interfaz_estado(juego->interfaz, GIMNASIO)){
-            gimnasio_informacion(gimnasio_actual);
-        }else if(interfaz_estado(juego->interfaz, CAMBIAR)){
-            cambiar_party(juego->personaje, pedir_pokemon);
-        }else if(interfaz_estado(juego->interfaz, BATALLA)){
-            funcion_batalla batalla = obtener_funcion_batalla(juego, gimnasio_actual);
-            int estado = gimnasio_batalla(gimnasio_actual, juego->personaje, batalla, menu_batalla);
-            gimnasio_cambiar_estado(gimnasio_actual, estado);
-            if(gimnasio_estado(gimnasio_actual, PERDIDO))
-                gimnasio_perdido(juego, gimnasio_actual);
-            if(gimnasio_estado(gimnasio_actual, GANADO))
-                gimnasio_ganado(juego, gimnasio_actual);
-        }
-    }
-}
 /*
 *
 * Pre :
 * Post:
 */
 void juego_agregar_personaje(juego_t* juego){
-    personaje_t* personaje = personaje_cargar(pedir_archivo);
+    pedir_archivo(juego->archivos.ruta_personaje);
+    personaje_t* personaje = personaje_cargar(juego->archivos.ruta_personaje);
     if(!personaje){
-        warning("la carga del personaje");
+        warning("la creación del personaje o el formato del archivo");
         juego_cambiar_estado(juego, ERROR);
     }else{
         juego->personaje = personaje;
-        eliminar_opcion(juego->interfaz, MENU_INICIO, PERSONAJE);
+        eliminar_opcion(juego->interfaz, MENU_INICIO, OPCION_PERSONAJE);
     } 
 }     
 /*
@@ -137,37 +78,16 @@ void juego_agregar_personaje(juego_t* juego){
 * Post:
 */
 void juego_agregar_gimnasios(juego_t* juego){
-    heap_t* gimnasios = gimnasios_cargar(pedir_archivo);
+    pedir_archivo(juego->archivos.ruta_gimnasios);    
+    heap_t* gimnasios = gimnasios_cargar(juego->archivos.ruta_gimnasios);
     if(!gimnasios){
-        warning("la carga de los gimnasios");
+        warning("la creación de los gimnasios o el formato del archivo");
         juego_cambiar_estado(juego, ERROR);
     }else{
         juego->gimnasios = gimnasios;
-        eliminar_opcion(juego->interfaz, MENU_INICIO, AGREGAR_GYM);
+        eliminar_opcion(juego->interfaz, MENU_INICIO, OPCION_AGREGAR_GYM);
     } 
 
-}
-
-/* 
-* Deja al juego en estado correspondiente para la partida
-* Pre : Juego creado
-* Post: Juego preaparado para ser jugado (sea para Jugar o Simular)
-*/
-void iniciar_partida(juego_t* juego){
-     while(!juego_preparado(juego) && juego_estado(juego, INICIO)){
-        menu_inicio(juego->interfaz);
-        if(interfaz_estado(juego->interfaz, PERSONAJE)){
-            juego_agregar_personaje(juego);
-        }else if(interfaz_estado(juego->interfaz, AGREGAR_GYM)){
-            juego_agregar_gimnasios(juego);
-        }else if(interfaz_estado(juego->interfaz, INICIAR)){
-            if(juego_preparado(juego))
-                juego_cambiar_estado(juego, JUGANDO);
-        }else if(interfaz_estado(juego->interfaz, SIMULAR)){
-            if(juego_preparado(juego))
-                juego_cambiar_estado(juego, SIMULANDO);
-        }
-    }
 }
 /* 
 * Destruye la estructura del juego por completo
@@ -215,20 +135,108 @@ juego_t* juego_crear(){
     return juego;
 }
 /* 
+* Deja al juego en estado correspondiente para la partida
+* Pre : Juego creado
+* Post: Juego preaparado para ser jugado (sea para Jugar o Simular)
+*/
+void iniciar_partida(juego_t* juego){
+     while(!juego_preparado(juego) && juego_estado(juego, INICIO)){
+        menu_inicio(juego->interfaz);
+        if(interfaz_estado(juego->interfaz, OPCION_PERSONAJE)){
+            juego_agregar_personaje(juego);
+        }else if(interfaz_estado(juego->interfaz, OPCION_AGREGAR_GYM)){
+            juego_agregar_gimnasios(juego);
+        }else if(interfaz_estado(juego->interfaz, OPCION_INICIAR)){
+            if(juego_preparado(juego))
+                juego_cambiar_estado(juego, JUGANDO);
+        }else if(interfaz_estado(juego->interfaz, OPCION_SIMULAR)){
+            if(juego_preparado(juego))
+                juego_cambiar_estado(juego, SIMULANDO);
+        }
+    }
+}
+/* 
+* Ejecuta el menu derrota dejando el juego según lo que elija el personaje
+* Pre : Juego creado e iniciado, haber jugado la partida y perder en un gimnasio
+* Post: Juego en estado correspondiente
+*/
+void gimnasio_perdido(juego_t* juego, gimnasio_t* gimnasio){
+    menu_derrota(juego->interfaz, gimnasio);
+    while(gimnasio_estado(gimnasio, PERDIDO) && juego_estado(juego, JUGANDO)){
+        if(interfaz_estado(juego->interfaz, OPCION_CAMBIAR))
+            cambiar_party(juego->personaje, pedir_pokemon);
+        if(interfaz_estado(juego->interfaz, OPCION_REPETIR))
+            gimnasio_cambiar_estado(gimnasio, PELEANDO);
+        if(interfaz_estado(juego->interfaz, OPCION_SALIR)){
+            juego_cambiar_estado(juego, PERDIDO);
+        }
+    }
+}
+/* 
+* Ejecuta el menu victoria dejando el juego según lo que elija el personaje
+* Pre : Juego creado e iniciado, haber jugado la partida y ganar un gimnasio
+* Post: Juego en estado correspondiente
+*/
+void gimnasio_ganado(juego_t* juego, gimnasio_t* gimnasio){
+    menu_victoria(juego->interfaz);
+    while(!interfaz_estado(juego->interfaz, OPCION_AVANZAR)){
+        if(!interfaz_estado(juego->interfaz, OPCION_AVANZAR)){
+            if(interfaz_estado(juego->interfaz, OPCION_TOMAR_PKM))
+                quitar_pokemon_lider(juego->personaje, gimnasio, pedir_pokemon);
+            if(interfaz_estado(juego->interfaz, OPCION_CAMBIAR))
+                cambiar_party(juego->personaje, pedir_pokemon);
+            menu_victoria(juego->interfaz);
+        }else{
+            heap_borrar(juego->gimnasios); //Chequear
+        }
+    }
+}
+
+funcion_batalla obtener_funcion_batalla(juego_t *juego, gimnasio_t * gimnasio){
+    return  juego->funciones[gimnasio->id_batalla - 1];
+}
+/* 
+* Juega una partida completa
+* Pre : Juego creado e iniciado (con gimansio y personajes cargados)
+* Post: JUego perdido o ganado
+*/
+void jugar_partida(juego_t* juego){
+    while(juego_estado(juego, JUGANDO)){
+        gimnasio_t* gimnasio_actual = (gimnasio_t*) heap_raiz(juego->gimnasios);
+        menu_gimnasio(juego->interfaz, gimnasio_actual);
+        if(interfaz_estado(juego->interfaz, OPCION_PERSONAJE)){
+            personaje_informacion(juego->personaje);
+        }else if(interfaz_estado(juego->interfaz, OPCION_GIMNASIO)){
+            gimnasio_informacion(gimnasio_actual);
+        }else if(interfaz_estado(juego->interfaz, OPCION_CAMBIAR)){
+            cambiar_party(juego->personaje, pedir_pokemon);
+        }else if(interfaz_estado(juego->interfaz, OPCION_BATALLA)){
+            funcion_batalla batalla = obtener_funcion_batalla(juego, gimnasio_actual);
+            int estado = gimnasio_batalla(gimnasio_actual, juego->personaje, batalla, menu_batalla);
+            gimnasio_cambiar_estado(gimnasio_actual, estado);
+            if(gimnasio_estado(gimnasio_actual, PERDIDO))
+                gimnasio_perdido(juego, gimnasio_actual);
+            if(gimnasio_estado(gimnasio_actual, GANADO))
+                gimnasio_ganado(juego, gimnasio_actual);
+        }
+    }
+}
+
+/* 
 * Ejecuta el menu_derrota y sus opciones para una simulación
-* Pre : Juego simulado y perdido, 
+* Pre : Juego simulado y perdido, previamente iniciado
 * Post:
 */
-void simulacion_perdida(juego_t* juego, gimnasio_t* gimnasio, heap_t* auxiliar){
+void simulacion_perdida(juego_t* juego, gimnasio_t* gimnasio){
     menu_derrota(juego->interfaz, gimnasio);
-    while(!interfaz_estado(juego->interfaz, REPETIR) || juego_estado(juego, PERDIDO)){
-        if(interfaz_estado(juego->interfaz, CAMBIAR))
+    while(!interfaz_estado(juego->interfaz, OPCION_REPETIR) || juego_estado(juego, PERDIDO)){
+        if(interfaz_estado(juego->interfaz, OPCION_CAMBIAR))
             cambiar_party(juego->personaje, pedir_pokemon);
-        if(interfaz_estado(juego->interfaz, REPETIR)){
+        if(interfaz_estado(juego->interfaz, OPCION_REPETIR)){
             heap_destruir(juego->gimnasios);
-            juego->gimnasios = copiar_heap (auxiliar);
+            juego->gimnasios = gimnasios_cargar(juego->archivos.ruta_gimnasios);
         }
-        if(interfaz_estado(juego->interfaz, SALIR))
+        if(interfaz_estado(juego->interfaz, OPCION_SALIR))
             juego_cambiar_estado(juego, PERDIDO);
     }
 }
@@ -238,7 +246,6 @@ void simulacion_perdida(juego_t* juego, gimnasio_t* gimnasio, heap_t* auxiliar){
 * Post: Juego perdido o ganado
 */
 void simular_partida(juego_t* juego){
-    heap_t* heap_auxiliar = copiar_heap(juego->gimnasios);
     while(juego_estado(juego, SIMULANDO)){
         gimnasio_t* gimnasio_actual = (gimnasio_t*) heap_raiz(juego->gimnasios);
         funcion_batalla batalla = obtener_funcion_batalla(juego, gimnasio_actual);
@@ -247,11 +254,10 @@ void simular_partida(juego_t* juego){
         if(gimnasio_estado(gimnasio_actual, GANADO))
             heap_borrar(juego->gimnasios);
         if(gimnasio_estado(gimnasio_actual, PERDIDO))
-            simulacion_perdida(juego, gimnasio_actual, heap_auxiliar);
+            simulacion_perdida(juego, gimnasio_actual);
         if(heap_vacio(juego->gimnasios))
             juego_cambiar_estado(juego, GANADO); 
     }
-    heap_destruir(heap_auxiliar);
 }
 
 int main(){

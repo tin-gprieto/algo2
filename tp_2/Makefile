@@ -36,9 +36,6 @@ $(TEST_EXE): $(TEST_FILE) $(TOOL_FILE) $(TDA_FILE) $(LIB_FILE)
 
 test: $(TEST_EXE)
 	clear
-	./$(TEST_EXE)
-
-val: $(TEST_EXE)
 	$(V) $(VFLAGS) ./$(TEST_EXE)
 
 $(INTERFAZ_EXE): $(INTERFAZ_FILE) $(TOOL_FILE) $(TDA_FILE) $(LIB_FILE) 

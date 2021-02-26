@@ -83,15 +83,15 @@ void test_afirmar(int afirmacion, const char *descripcion){
 }
 
 void test_nuevo_grupo(const char *descripcion){
-    printf(AMARILLO "\n   %s\n   ", descripcion);
+    printf(AMARILLO "\n   %s\n", descripcion);
     while (*(descripcion++))
         printf("=");
     printf(BLANCO "\n");
 }
 
 void test_nuevo_sub_grupo(const char *descripcion){
-    printf("   ---------------------------------");
-    printf(CYAN "\n   %s\n   " RESET, descripcion);
+    printf("   _________________________________");
+    printf(CYAN "\n   %s\n" RESET, descripcion);
 }
 
 void test_mostrar_reporte(){

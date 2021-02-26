@@ -2,31 +2,32 @@
 
 #define FONDO "\e[44m"
 #define FONDO_2 "\e[40m"
-#define FONDO_3 "\e[43m"
 #define SUBRAYADO "\e[4;37m"
 #define AMARILLO_SUB "\e[4;33m"
 #define AMARILLO_PARP "\e[5;33m"
 #define LIMPIAR "clear"
 
-const size_t MARCO_ESP          = 2;
-const size_t INTERFAZ_LIM       = 80;
-const size_t INTERFAZ_ESPACIO   = 10;
-const size_t INTERFAZ_OPC       = 10;
-const size_t MARGEN_CORTO       = 5;
-const size_t MARGEN_MEDIO       = 20;
-const size_t MARGEN_MEDIO_LARGO = 22;
-const size_t MARGEN_LARGO       = 30;
-const size_t NOMBRE_MAX         = 17;
+static const size_t MARCO_ESP          = 2;
+static const size_t INTERFAZ_LIM       = 80;
+static const size_t INTERFAZ_ESPACIO   = 10;
+static const size_t MARGEN_CORTO       = 5;
+static const size_t MARGEN_MEDIO       = 20;
+static const size_t MARGEN_MEDIO_LARGO = 22;
+static const size_t MARGEN_LARGO       = 30;
 
-const int ESP_1  = 21;
-const int ESP_2  = 15;
-const int ESP_3  = 4;
-const int ESP_4  = 0;
+static const int ESP_1  = 21;
+static const int ESP_2  = 15;
+static const int ESP_3  = 4;
 
-const int INICIO = 0;
-const int NULO = 0;
-const int FIN = 1;
-const size_t UNIDAD= 1;
+#define ATAQUE "ATQ"
+#define DEFENSA "DEF"
+#define VELOCIDAD "VEL"
+#define NIVEL "NVL"
+
+static const char INTERFAZ_INICIAL = ' ';
+static const int INICIO = 0;
+static const int FIN = 1;
+static const size_t UNIDAD= 1;
 
 /* 
 * Imprime una serie de espacios por pantalla
@@ -105,7 +106,7 @@ void imprimir_linea(size_t margen, const char* color, const char* linea){
 * colores válidos entre las opciones
 * Post: Un linea de texto alineada en la interfaz
 */
-void imprimir_linea_bicolor(size_t margen, const char* color_1, const char* linea_1, const char* color_2, const char* linea_2){
+void imprimir_linea_partida(size_t margen, const char* color_1, const char* linea_1, const char* color_2, const char* linea_2){
     imprimir_margen(INICIO, margen);
     size_t limite;
 
@@ -113,9 +114,9 @@ void imprimir_linea_bicolor(size_t margen, const char* color_1, const char* line
     printf("%s", linea_1);
     printf(RESET FONDO);
     determinar_color(color_2);
-    printf("  %s", linea_2);
+    printf("%s", linea_2);
     printf(RESET);
-    limite = INTERFAZ_LIM - margen - strlen(linea_1) - strlen(linea_2) - 2;
+    limite = INTERFAZ_LIM - margen - strlen(linea_1) - strlen(linea_2);
 
     imprimir_margen(FIN, limite);
     
@@ -233,9 +234,9 @@ size_t pedir_pos(size_t maximo){
 void imprimir_opcion(char clave, const char* descripcion){
     char linea_1[INTERFAZ_LIM];            
     char linea_2[INTERFAZ_LIM];
-    sprintf(linea_1," >> ( %c )", clave);             
+    sprintf(linea_1," >> ( %c )  ", clave);             
     sprintf(linea_2,"-  %s", descripcion);             
-    imprimir_linea_bicolor(MARGEN_MEDIO, AMARILLO, linea_1, BLANCO, linea_2);
+    imprimir_linea_partida(MARGEN_MEDIO, AMARILLO, linea_1, BLANCO, linea_2);
     
 }
 /* 
@@ -251,6 +252,20 @@ void mostrar_opciones(interfaz_t* interfaz, int tipo){
     }
     imprimir_marco(FIN);
     interfaz->estado = pedir_clave(interfaz->menus[tipo].opciones, interfaz->menus[tipo].cant_opciones);
+}
+/*
+* Muestra por pantalla la opción de avanzar y pide al usuario 
+* que la ingrese para continuar con la ejecución 
+* Pre : -
+* Post: Información por pantalla y pedido al usuario de un input
+*/
+void pedir_opcion_avanzar(){
+    imprimir_enter();
+    imprimir_opcion(OPCION_AVANZAR, "Avanzar");
+    imprimir_marco(FIN);
+    char opciones[2];
+    sprintf(opciones, "%c", OPCION_AVANZAR);
+    pedir_clave(opciones, UNIDAD);
 }
 /* 
 * Muestra por pantalla un dibujo para el inicio
@@ -304,7 +319,7 @@ void dibujo_inicio(){
 void encabezado_gimnasio(const char* gimnasio){
     imprimir_marco(INICIO);
     imprimir_barra(AMARILLO, INICIO);
-    imprimir_linea_bicolor(MARGEN_MEDIO, AMARILLO, " GIMNASIO:  ", BLANCO, gimnasio);
+    imprimir_linea_partida(MARGEN_MEDIO, AMARILLO, " GIMNASIO:  ", BLANCO, gimnasio);
     imprimir_barra(AMARILLO, FIN); 
 }
 /* 
@@ -342,8 +357,16 @@ void cargar_separacion_magnitud(char separcion[INTERFAZ_LIM], int longitud, int 
 void imprimir_magnitud_batalla(int magnitud_1, int magnitud_2, const char* id){
     char string[INTERFAZ_LIM];
     char separcion[INTERFAZ_LIM];
-    cargar_separacion_magnitud(separcion, (int) ESP_2, magnitud_1);
-    sprintf(string, "%s: %i%s%s: %i", id, magnitud_1, separcion, id, magnitud_2);
+    cargar_separacion_magnitud(separcion, ESP_2, magnitud_1);
+    
+    if(magnitud_1 == 0)
+        sprintf(string, "%s: -%s%s: %i", id, separcion, id, magnitud_2);
+    else if(magnitud_2 == 0)
+        sprintf(string, "%s: %i%s%s: -", id, magnitud_1, separcion, id);
+    else
+        sprintf(string, "%s: %i%s%s: %i", id, magnitud_1, separcion, id, magnitud_2);
+
+
     imprimir_linea(MARGEN_MEDIO_LARGO, BLANCO, string);
 }
 /* 
@@ -356,7 +379,7 @@ void imprimir_nombre_batalla(const char * nombre_1, const char * nombre_2){
     char separcion[INTERFAZ_LIM];
     cargar_separacion(separcion, ESP_1 - (int) strlen(nombre_1));
     sprintf(string, "%s%s%s", nombre_1, separcion, nombre_2);
-    imprimir_linea(MARGEN_MEDIO_LARGO, BLANCO, string);
+    imprimir_linea(MARGEN_MEDIO_LARGO, AMARILLO, string);
 }
 /* 
 * Muestra por pantalla las caracteristicas de dos pokemones
@@ -366,9 +389,10 @@ void imprimir_nombre_batalla(const char * nombre_1, const char * nombre_2){
 void mostrar_pokemones_batalla(pokemon_t* pkm_1, pokemon_t* pkm_2){
     imprimir_enter();
     imprimir_nombre_batalla(pkm_1->nombre, pkm_2->nombre);
-    imprimir_magnitud_batalla(pkm_1->ataque, pkm_2->ataque, "ATQ");
-    imprimir_magnitud_batalla(pkm_1->defensa, pkm_2->defensa, "DEF");
-    imprimir_magnitud_batalla(pkm_1->velocidad, pkm_2->velocidad, "VEL");
+    imprimir_magnitud_batalla(pkm_1->nivel, pkm_2->nivel, NIVEL);
+    imprimir_magnitud_batalla(pkm_1->ataque, pkm_2->ataque, ATAQUE);
+    imprimir_magnitud_batalla(pkm_1->defensa, pkm_2->defensa, DEFENSA);
+    imprimir_magnitud_batalla(pkm_1->velocidad, pkm_2->velocidad, VELOCIDAD);
     imprimir_enter();
 }
 /* 
@@ -376,7 +400,7 @@ void mostrar_pokemones_batalla(pokemon_t* pkm_1, pokemon_t* pkm_2){
 * Pre : estado DERROTA o VICTORIA, pokemones cargados
 * Post: Información por pantalla
 */
-void informacion_batalla(pokemon_t* pkm_1, pokemon_t* pkm_2, int estado){
+void informacion_batalla(pokemon_t* pkm_propio, pokemon_t* pkm_rival, int estado){
     imprimir_marco(INICIO);
     imprimir_enter();
     imprimir_linea(MARGEN_MEDIO, AMARILLO_SUB, "BATALLA");
@@ -395,7 +419,7 @@ void informacion_batalla(pokemon_t* pkm_1, pokemon_t* pkm_2, int estado){
     imprimir_enter();
    
     imprimir_linea(MARGEN_MEDIO, FONDO_2, "       PROPIO       ||       RIVAL       "); 
-    mostrar_pokemones_batalla(pkm_1, pkm_2);
+    mostrar_pokemones_batalla(pkm_propio, pkm_rival);
 }
 /* 
 * Imprime por pantalla el encabezado de victoria
@@ -420,11 +444,11 @@ void encabezado_derrota(gimnasio_t* gimnasio){
     imprimir_linea(MARGEN_LARGO, ROJO, " HAS PERDIDO ");
     imprimir_barra(ROJO, FIN);
     imprimir_enter();
-    imprimir_linea_bicolor(MARGEN_MEDIO, SUBRAYADO,"ULTIMO GIMNASIO:",BLANCO, gimnasio->nombre);
+    imprimir_linea_partida(MARGEN_MEDIO, SUBRAYADO,"ULTIMO GIMNASIO:",BLANCO, gimnasio->nombre);
     entrenador_t* entrenador = (entrenador_t*) pila_tope(gimnasio->entrenadores);
     if(entrenador){
         imprimir_enter();
-        imprimir_linea_bicolor(MARGEN_MEDIO, SUBRAYADO, "ENTRENADOR:", BLANCO, entrenador->nombre);
+        imprimir_linea_partida(MARGEN_MEDIO, SUBRAYADO, "ENTRENADOR:", BLANCO, entrenador->nombre);
         imprimir_enter();
     }
 }
@@ -467,6 +491,48 @@ void eliminar_descripcion(char descripciones[MAX_OPC][MAX_STR], int pos, size_t 
     strcpy(descripciones[pos], descripciones[tope - 1]);
     strcpy(descripciones[tope - 1], aux);
 }
+/*
+*
+* Pre :
+* Post:
+*/
+void cargar_posicion_a_linea(char linea[], int pos, int lista, bool elegido){
+    if(elegido && lista == CAJA)
+        if (pos > 9)
+            sprintf(linea,"* %i", pos);
+        else
+            sprintf(linea,"* %i ", pos);
+    else
+        if (pos > 9)
+            sprintf(linea,"  %i", pos);
+        else
+            sprintf(linea,"  %i ", pos);
+}
+/*
+*
+* Pre :
+* Post:
+*/
+void cargar_nombre_a_linea(char linea[], char nombre[]){
+    char separador[INTERFAZ_LIM];
+    cargar_separacion(separador, ESP_2 - (int) strlen(nombre));
+    sprintf(linea, " -  %s%s", nombre, separador);
+}
+/*
+*
+* Pre :
+* Post:
+*/
+void cargar_magnitud_a_linea(char linea[], int magnitud, const char * id){
+    char separador[INTERFAZ_LIM];
+    cargar_separacion_magnitud(separador, ESP_3, magnitud);
+    char info[INTERFAZ_LIM];
+    if(magnitud == 0)
+        sprintf(info, "%s:  -%s", id, separador);
+    else
+        sprintf(info, "%s:  %i%s", id, magnitud, separador);
+    strcat(linea, info);
+}
 /* 
 * Muestra la posicion completa del pokemón en una línea
 * Pre : tipo de lista (PARTY, CAJA, o ENTRENADOR), pokemón cargado, 
@@ -475,29 +541,19 @@ void eliminar_descripcion(char descripciones[MAX_OPC][MAX_STR], int pos, size_t 
 */
 void mostrar_pokemon(int pos, int lista, pokemon_t* pkm){
     char linea_1[INTERFAZ_LIM];
+    cargar_posicion_a_linea(linea_1, pos, lista, pkm->elegido);
+    
     char linea_2[INTERFAZ_LIM];
-    char sep_pos[INTERFAZ_LIM];
-    cargar_separacion_magnitud(sep_pos, ESP_4, pos);
-    char sep_nom[INTERFAZ_LIM];
-    cargar_separacion(sep_nom, ESP_1 - (int) strlen(pkm->nombre));
-    char sep_mag_1[INTERFAZ_LIM];
-    cargar_separacion_magnitud(sep_mag_1, ESP_3, pkm->ataque);
-    char sep_mag_2[INTERFAZ_LIM];
-    cargar_separacion_magnitud(sep_mag_2, ESP_3, pkm->defensa);
-    if(pkm->elegido && lista == CAJA)
-        sprintf(linea_1,"* %i", pos);
-    else
-        sprintf(linea_1,"  %i", pos);
-    sprintf(linea_2,"%s -  %s%sATQ:    %i%sDEF:    %i%sVEL:    %i", sep_pos, 
-                                                                    pkm->nombre, sep_nom, 
-                                                                    pkm->ataque, sep_mag_1, 
-                                                                    pkm->defensa, sep_mag_2, 
-                                                                    pkm->velocidad);
+    cargar_nombre_a_linea(linea_2, pkm->nombre);
+    cargar_magnitud_a_linea(linea_2, pkm->nivel, NIVEL);
+    cargar_magnitud_a_linea(linea_2, pkm->ataque, ATAQUE);
+    cargar_magnitud_a_linea(linea_2, pkm->defensa, DEFENSA);
+    cargar_magnitud_a_linea(linea_2, pkm->velocidad, VELOCIDAD);
 
     if(pkm->elegido && lista == CAJA)
-        imprimir_linea_bicolor(MARGEN_CORTO, AMARILLO, linea_1, BLANCO, linea_2);
+        imprimir_linea_partida(MARGEN_CORTO, AMARILLO, linea_1, BLANCO, linea_2);
     else
-        imprimir_linea_bicolor(MARGEN_CORTO, BLANCO, linea_1, BLANCO, linea_2);
+        imprimir_linea_partida(MARGEN_CORTO, BLANCO, linea_1, BLANCO, linea_2);
 }
 /* 
 * Según el tipo de lista imprime un título identificador
@@ -524,7 +580,8 @@ void listar_pokemones(lista_t* pokemones, int lista){
     lista_iterador_t* iterador = lista_iterador_crear(pokemones);
     int pos = 1;
     while(lista_iterador_tiene_siguiente(iterador)){
-        mostrar_pokemon(pos, lista, (pokemon_t*)lista_iterador_elemento_actual(iterador));
+        pokemon_t* pkm_actual = (pokemon_t*)lista_iterador_elemento_actual(iterador);
+        mostrar_pokemon(pos, lista, pkm_actual);
         lista_iterador_avanzar(iterador);
         pos++;
     }
@@ -541,16 +598,32 @@ void cargar_opcion(interfaz_t* interfaz, size_t menu, char opcion, const char* d
     strcpy(interfaz->menus[menu].descripciones[tope], descripcion);
     interfaz->menus[menu].cant_opciones ++;
 }   
+/*
+* Imprime por pantalla la cantidad de medallas
+* Pre : Cantidad de medallas del entrenador principal
+* Post: Información por pantalla
+*/
+void imprimir_medallero(int medallas){
+    char str_medallas[INTERFAZ_LIM];
+    if(medallas == 0)
+        strcpy(str_medallas, " - ");
+    else{
+        for(int i=0; i < medallas;i++)
+            strcat(str_medallas, " -o- ");
+    }
+
+    imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "MEDALLAS:  ", AMARILLO, str_medallas);
+}
 /* 
 * Inicializa el menu inicio con sus opciones y descripciones
 * Pre : Interfaz creada
 * Post: Menú funcional para la interfaz
 */
 void inicializar_inicio(interfaz_t* interfaz){
-    cargar_opcion(interfaz, MENU_INICIO, PERSONAJE, "Ingresar personaje" );
-    cargar_opcion(interfaz, MENU_INICIO, AGREGAR_GYM, "Agregar gimnasio" );
-    cargar_opcion(interfaz, MENU_INICIO, INICIAR, "Iniciar partida" );
-    cargar_opcion(interfaz, MENU_INICIO, SIMULAR, "Simular partida" );
+    cargar_opcion(interfaz, MENU_INICIO, OPCION_PERSONAJE, "Ingresar personaje" );
+    cargar_opcion(interfaz, MENU_INICIO, OPCION_AGREGAR_GYM, "Agregar gimnasio" );
+    cargar_opcion(interfaz, MENU_INICIO, OPCION_INICIAR, "Iniciar partida" );
+    cargar_opcion(interfaz, MENU_INICIO, OPCION_SIMULAR, "Simular partida" );
 }
 /* 
 * Inicializa el menu gimnasio con sus opciones y descripciones
@@ -558,10 +631,10 @@ void inicializar_inicio(interfaz_t* interfaz){
 * Post: Menú funcional para la interfaz
 */
 void inicializar_gimnasio(interfaz_t* interfaz){
-    cargar_opcion(interfaz, MENU_GYM, PERSONAJE, "Informacion del personaje" );
-    cargar_opcion(interfaz, MENU_GYM, GIMNASIO, "Informacion del gimnasio" );
-    cargar_opcion(interfaz, MENU_GYM, CAMBIAR, "Cambiar pokemones de combate" );
-    cargar_opcion(interfaz, MENU_GYM, BATALLA, "Luchar primer batalla" );
+    cargar_opcion(interfaz, MENU_GYM, OPCION_PERSONAJE, "Informacion del personaje" );
+    cargar_opcion(interfaz, MENU_GYM, OPCION_GIMNASIO, "Informacion del gimnasio" );
+    cargar_opcion(interfaz, MENU_GYM, OPCION_CAMBIAR, "Cambiar pokemones de combate" );
+    cargar_opcion(interfaz, MENU_GYM, OPCION_BATALLA, "Luchar primer batalla" );
 }
 /* 
 * Inicializa el menu victoria con sus opciones y descripciones
@@ -569,9 +642,9 @@ void inicializar_gimnasio(interfaz_t* interfaz){
 * Post: Menú funcional para la interfaz
 */
 void inicializar_victoria(interfaz_t* interfaz){
-    cargar_opcion(interfaz, MENU_VICTORIA, TOMAR_PKM, "Tomar prestado un pokemon" );
-    cargar_opcion(interfaz, MENU_VICTORIA, CAMBIAR, "Cambiar pokemones de combate" );
-    cargar_opcion(interfaz, MENU_VICTORIA, AVANZAR, "Siguiente gimnasio" );
+    cargar_opcion(interfaz, MENU_VICTORIA, OPCION_TOMAR_PKM, "Tomar prestado un pokemon" );
+    cargar_opcion(interfaz, MENU_VICTORIA, OPCION_CAMBIAR, "Cambiar pokemones de combate" );
+    cargar_opcion(interfaz, MENU_VICTORIA, OPCION_AVANZAR, "Siguiente gimnasio" );
 }
 /* 
 * Inicializa el menu derrota con sus opciones y descripciones
@@ -579,9 +652,9 @@ void inicializar_victoria(interfaz_t* interfaz){
 * Post: Menú funcional para la interfaz
 */
 void inicializar_derrota(interfaz_t* interfaz){
-    cargar_opcion(interfaz, MENU_DERROTA, CAMBIAR, "Cambiar pokemones de combate" );
-    cargar_opcion(interfaz, MENU_DERROTA, REPETIR, "Repetir batalla / simulacion" );
-    cargar_opcion(interfaz, MENU_DERROTA, SALIR, "Finalizar partida" );
+    cargar_opcion(interfaz, MENU_DERROTA, OPCION_CAMBIAR, "Cambiar pokemones de combate" );
+    cargar_opcion(interfaz, MENU_DERROTA, OPCION_REPETIR, "Repetir batalla / simulacion" );
+    cargar_opcion(interfaz, MENU_DERROTA, OPCION_SALIR, "Finalizar partida" );
 }
 /* 
 * Inicializa todos los menus con sus opciones y descripciones
@@ -606,26 +679,21 @@ void gimnasio_informacion(gimnasio_t* gimnasio){
     imprimir_marco(INICIO);
     imprimir_linea(MARGEN_MEDIO_LARGO+4, SUBRAYADO, "INFORMACION DEL GIMNASIO");
     imprimir_enter();
-    imprimir_linea_bicolor(MARGEN_CORTO, AMARILLO, "NOMBRE:        ", BLANCO, gimnasio->nombre);
+    imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "NOMBRE:        ", BLANCO, gimnasio->nombre);
     imprimir_enter();
     char dificultad[MAX_STR];
     sprintf(dificultad, "NVL  %i", gimnasio->dificultad);
-    imprimir_linea_bicolor(MARGEN_CORTO, AMARILLO, "DIFICULTAD:    ", BLANCO, dificultad);
+    imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "DIFICULTAD:    ", BLANCO, dificultad);
     imprimir_enter();
     char entrenadores[MAX_STR];
     sprintf(entrenadores, "%li", gimnasio->cant_entrenadores);
-    imprimir_linea_bicolor(MARGEN_CORTO, AMARILLO, "ENTRENADORES RESTANTES:    ", BLANCO, entrenadores);
+    imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "ENTRENADORES RESTANTES:    ", BLANCO, entrenadores);
     entrenador_t aux = * (entrenador_t*) pila_tope(gimnasio->entrenadores);
     imprimir_enter();
-    imprimir_linea_bicolor(MARGEN_CORTO, AMARILLO, "PROXIMO RIVAL: ", BLANCO, aux.nombre);
+    imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "PROXIMO RIVAL: ", BLANCO, aux.nombre);
     listar_pokemones(aux.pokemones, ENTRENADOR);
     imprimir_enter();
-    imprimir_enter();
-    imprimir_opcion(AVANZAR, "Avanzar");
-    imprimir_marco(FIN);
-    char opciones[2];
-    sprintf(opciones, "%c", AVANZAR);
-    pedir_clave(opciones, UNIDAD);
+    pedir_opcion_avanzar();    
 }
 
 void personaje_informacion(personaje_t* personaje){
@@ -637,18 +705,15 @@ void personaje_informacion(personaje_t* personaje){
     imprimir_marco(INICIO);
     imprimir_linea(MARGEN_MEDIO_LARGO+4, SUBRAYADO, "INFORMACION DEL PERSONAJE");
     imprimir_enter();
-    imprimir_linea_bicolor(MARGEN_CORTO, AMARILLO, "NOMBRE:     ", BLANCO, personaje->nombre);
+    imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "NOMBRE:     ", BLANCO, personaje->nombre);
+    imprimir_enter();
+    imprimir_medallero(personaje->medallas);
     imprimir_enter();
     listar_pokemones(personaje->caja, CAJA);
     imprimir_enter();
     listar_pokemones(personaje->party, COMBATE);
     imprimir_enter();
-    imprimir_enter();
-    imprimir_opcion(AVANZAR, "Avanzar");
-    imprimir_marco(FIN);
-    char opciones[2];
-    sprintf(opciones, "%c", AVANZAR);
-    pedir_clave(opciones, UNIDAD);
+    pedir_opcion_avanzar();
 }
 
 void pedir_archivo(char ruta_archivo[MAX_STR]){
@@ -761,19 +826,14 @@ void menu_victoria(interfaz_t* interfaz){
     mostrar_opciones(interfaz, MENU_VICTORIA);
 }
 
-void menu_batalla(pokemon_t* pkm_1, pokemon_t* pkm_2, int estado){
-    if(!pkm_1 || !pkm_2){
+void menu_batalla(pokemon_t* pkm_propio, pokemon_t* pkm_rival, int estado){
+    if(!pkm_propio || !pkm_rival){
         warning("los pokemones de la batalla");
         return;
     }
     system(LIMPIAR);
-    informacion_batalla(pkm_1, pkm_2, estado);
-    imprimir_enter();
-    imprimir_opcion(AVANZAR, "Avanzar");
-    imprimir_marco(FIN);
-    char opciones[2];
-    sprintf(opciones, "%c", AVANZAR);
-    pedir_clave(opciones, UNIDAD);
+    informacion_batalla(pkm_propio, pkm_rival, estado);
+    pedir_opcion_avanzar();
 }
 
 void menu_gimnasio(interfaz_t* interfaz, gimnasio_t* gimnasio){
@@ -814,7 +874,7 @@ interfaz_t* interfaz_crear(){
     interfaz_t* inter_aux = malloc(sizeof(interfaz_t));
     if(!inter_aux) return NULL;
     inter_aux->cant_menus = MAX_MENU;
-    inter_aux->estado = ESTADO_NULO;
+    inter_aux->estado = INTERFAZ_INICIAL;
     menu_t* menus_aux = calloc(MAX_MENU, sizeof(menu_t));
     if(!menus_aux)return NULL;
     inter_aux->menus = menus_aux;

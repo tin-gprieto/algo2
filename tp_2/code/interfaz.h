@@ -7,7 +7,19 @@
 #include "../toolbox/tdas/heap.h"
 #include "juego.h"
 
-
+//Estados de la interfaz
+#define OPCION_PERSONAJE 'E'
+#define OPCION_AGREGAR_GYM 'A'
+#define OPCION_INICIAR 'I'
+#define OPCION_SIMULAR 'S'
+#define OPCION_GIMNASIO 'G'
+#define OPCION_CAMBIAR 'C'
+#define OPCION_BATALLA 'B'
+#define OPCION_AVANZAR 'N'
+#define OPCION_TOMAR_PKM 'T'
+#define OPCION_REPETIR 'R'
+#define OPCION_SALIR 'F'
+#define ESTADO_NULO ' '
 
 typedef struct menu{
     char opciones[MAX_OPC];
@@ -64,7 +76,7 @@ void menu_gimnasio(interfaz_t* interfaz, gimnasio_t* gimnasio);
 * (Costantes VICTORIA y DERROTA)
 * Post: Información por pantalla de la batalla
 */
-void menu_batalla(pokemon_t* pkm_1, pokemon_t* pkm_2, int estado);
+void menu_batalla(pokemon_t* pkm_propio, pokemon_t* pkm_rival, int estado);
 
 /* 
 * Muestra el menu victoria y sus opciones

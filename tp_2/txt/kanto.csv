@@ -1,4 +1,129 @@
-G;_;D;B
-L;_
-P;_;V;A;D;
-E;_
+G;Ciudad Plateada;4;3
+L;Brock
+P;Geodude;5;19;30
+P;Onix;20;50;32
+E;Belino
+P;Golem;5;30;25
+E;Jordan
+P;Rhydon;10;40;19
+G;Ciudad Celeste;6;5
+L;Misty
+P;Golduck;32;40;33
+P;Lapras;30;43;47
+E;Betty
+P;Azumarill;12;20;40
+P;Seaking;36;28;17
+E;Lourdes
+P;Cloyster;50;11;8
+E;Pascual
+P;Horsea;5;22;30
+G;Ciudad Carmin;7;3
+L;Lt.Surge
+P;Electrode;20;43;36
+P;Magneton;21;44;52
+P;Electabuzz;32;67;51
+E;Duque Greg
+P;Electrike;28;41;12
+P;Flaaffy;21;36;30
+E;Gino
+P;Electrode;16;33;26
+E;Vito
+P;Magnemite;14;28;21
+G;Ciudad Azulona;9;2
+L;Erika
+P;Bellossom;40;33;38
+P;Tangela;37;45;38
+P;Victreebel;20;52;57
+E;Danae
+P;Carnivine;21;55;32
+P;Parasect;28;42;44
+E;Tania
+P;Hoppip;30;47;22
+P;Exeggutor;14;47;44
+E;Paz y Pia
+P;Gloom;33;31;26
+P;Jumpluff;25;40;31
+G;Ciudad Fucsia;12;4
+L;Sachiko
+P;Koffing;36;60;12
+P;Venonat;33;45;36
+P;Crobat;67;37;37
+P;Draplon;20;60;70
+E;Linda
+P;Bulbasaur;25;45;47
+P;Ivysaur;52;41;33
+P;Venusaur;21;62;49
+E;Alicia
+P;Gloom;25;40;37
+P;Vileplume;39;55;20
+E;Benito
+P;Nidorino;51;25;29
+P;Nidoking;32;43;45
+E;Cindy
+P;Nidoqueen;37;43;31
+G;Ciudad Azafran;13;1
+L;Sabrina
+P;Espeon;43;63;38
+P;Mr. Mime;49;43;58
+P;Venomoth;51;76;32
+P;Alakazam;76;47;45
+E;Dora
+P;Slowpoke;25;48;35
+P;Abra;43;30;47
+P;Slowbro;33;46;53
+E;Ernesto
+P;Exeggcute;16;56;42
+P;Mr. Mime;49;27;53
+E;Febo
+P;Kadabra;30;34;62
+P;Girafarig;19;40;67
+E;Ruth
+P;Bronzor;38;25;54
+P;Hypno;24;54;45
+G;Isla Canela;15;5
+L;Blaine
+P;Magcargo;46;48;50
+P;Magmar;47;58;45
+P;Growlithe;62;56;32
+P;Rapldash;69;38;46
+P;Arcanine;51;67;50
+E;Alfredo
+P;Ponyta;39;47;43
+P;Growlithe;52;50;36
+P;Magcargo;32;71;50
+E;Abelardo
+P;Numel;38;46;48
+P;Vulpix;45;58;38
+P;Ninetales;65;33;49
+E;Seve
+P;Magmar;36;58;47
+P;Vulpix;53;57;34
+E;Fredo
+P;Charmander;40;51;38
+P;Torkoal;25;56;60
+G;Ciudad Verde;19;2
+L;Azul
+P;Pidgeot;52;63;50
+P;Exeggutor;28;73;70
+P;Arcanine;55;62;60
+P;Rhydon;24;78;78
+P;Gyarados;42;84;60
+P;Machamp;50;82;60
+E;Samuel
+P;Sandslash;55;67;31
+P;Rhyhorn;37;68;51
+P;Nidoking;36;61;62
+E;Hiro
+P;Porygon;38;41;65
+P;Slowking;21;74;52
+P;Machoke;40;68;45
+E;Atsushi
+P;Marowak;32;50;59
+P;Nidorina;30;68;46
+P;Nidorino;47;67;33
+E;Camilo
+P;Arbok;31;72;38
+P;Rhyhorn;18;60;63
+E;Takashi
+P;Dugtrio;20;37;75
+P;Persian;45;56;34
