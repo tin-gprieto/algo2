@@ -5,7 +5,7 @@
 #include "../toolbox/tdas/lista.h"
 #include "../toolbox/tdas/abb.h"
 #include "../toolbox/tdas/heap.h"
-#include "juego.h"
+#include "estructuras.h"
 
 //Estados de la interfaz
 #define OPCION_PERSONAJE 'E'
@@ -21,9 +21,18 @@
 #define OPCION_SALIR 'F'
 #define ESTADO_NULO ' '
 
+//tipo de listas para pedir
+#define LISTA_COMBATE 0
+#define LISTA_CAJA 1
+#define LISTA_ENTRENADOR 2
+
+//constantes
+#define MAX_MENU 5
+#define MAX_OPCIONES 4
+
 typedef struct menu{
-    char opciones[MAX_OPC];
-    char descripciones[MAX_OPC][MAX_STR];
+    char opciones[MAX_OPCIONES];
+    char descripciones[MAX_OPCIONES][MAX_STRING];
     size_t cant_opciones;
 }menu_t;
 
@@ -120,7 +129,7 @@ size_t pedir_pokemon(lista_t* pokemones, int lista);
 * Pre : -
 * Post: ruta válida del archivo (sin fallo de apertura)
 */
-void pedir_archivo(char ruta_archivo[MAX_STR]);
+void pedir_archivo(char ruta_archivo[MAX_STRING]);
 
 /* 
 * Muestra por pantalla la informacion de personaje

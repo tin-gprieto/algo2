@@ -1,0 +1,3 @@
+G;Ciudad Plateada;4;3
+L;Brock
+P;Onix;20;50;32

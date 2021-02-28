@@ -1,6 +1,6 @@
 #include "interfaz.h"
 
-#define FONDO "\e[44m"
+#define FONDO "\e[1;44m"
 #define FONDO_2 "\e[40m"
 #define SUBRAYADO "\e[4;37m"
 #define AMARILLO_SUB "\e[4;33m"
@@ -406,12 +406,12 @@ void informacion_batalla(pokemon_t* pkm_propio, pokemon_t* pkm_rival, int estado
     imprimir_linea(MARGEN_MEDIO, AMARILLO_SUB, "BATALLA");
     imprimir_enter();
     
-    if(estado == DERROTA){
+    if(estado == BATALLA_DERROTA){
         imprimir_barra(ROJO, INICIO);
         imprimir_linea(MARGEN_LARGO, ROJO, "      DERROTA");
         imprimir_barra(ROJO, INICIO);
     }
-    if(estado == VICTORIA){
+    if(estado == BATALLA_VICTORIA){
         imprimir_barra(VERDE, INICIO);
         imprimir_linea(MARGEN_LARGO, VERDE,"    VICTORIA");
         imprimir_barra(VERDE, INICIO);
@@ -485,8 +485,8 @@ void eliminar_letra(char opciones[], int pos, size_t tope){
 * Pre : posicion del string a eliminar
 * Post: string a eliminar al final del vector
 */
-void eliminar_descripcion(char descripciones[MAX_OPC][MAX_STR], int pos, size_t tope){
-    char aux[MAX_STR];
+void eliminar_descripcion(char descripciones[MAX_OPCIONES][MAX_STRING], int pos, size_t tope){
+    char aux[MAX_STRING];
     strcpy(aux, descripciones[pos]);
     strcpy(descripciones[pos], descripciones[tope - 1]);
     strcpy(descripciones[tope - 1], aux);
@@ -497,7 +497,7 @@ void eliminar_descripcion(char descripciones[MAX_OPC][MAX_STR], int pos, size_t 
 * Post:
 */
 void cargar_posicion_a_linea(char linea[], int pos, int lista, bool elegido){
-    if(elegido && lista == CAJA)
+    if(elegido && lista == LISTA_CAJA)
         if (pos > 9)
             sprintf(linea,"* %i", pos);
         else
@@ -550,7 +550,7 @@ void mostrar_pokemon(int pos, int lista, pokemon_t* pkm){
     cargar_magnitud_a_linea(linea_2, pkm->defensa, DEFENSA);
     cargar_magnitud_a_linea(linea_2, pkm->velocidad, VELOCIDAD);
 
-    if(pkm->elegido && lista == CAJA)
+    if(pkm->elegido && lista == LISTA_CAJA)
         imprimir_linea_partida(MARGEN_CORTO, AMARILLO, linea_1, BLANCO, linea_2);
     else
         imprimir_linea_partida(MARGEN_CORTO, BLANCO, linea_1, BLANCO, linea_2);
@@ -561,11 +561,11 @@ void mostrar_pokemon(int pos, int lista, pokemon_t* pkm){
 * Post: Título por pantalla
 */
 void imprimir_titulo_pokemones(int lista){
-    if(lista == CAJA){
+    if(lista == LISTA_CAJA){
         imprimir_linea(MARGEN_CORTO, AMARILLO_SUB, "POKEMONES");
-    }else if(lista == COMBATE){
+    }else if(lista == LISTA_COMBATE){
         imprimir_linea(MARGEN_CORTO, AMARILLO_SUB, "CONJUNTO DE COMBATE");
-    }else if(lista == ENTRENADOR){
+    }else if(lista == LISTA_ENTRENADOR){
         imprimir_linea(MARGEN_CORTO, AMARILLO_SUB, "POKEMONES DEL RIVAL");
     }
 }
@@ -681,17 +681,17 @@ void gimnasio_informacion(gimnasio_t* gimnasio){
     imprimir_enter();
     imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "NOMBRE:        ", BLANCO, gimnasio->nombre);
     imprimir_enter();
-    char dificultad[MAX_STR];
+    char dificultad[MAX_STRING];
     sprintf(dificultad, "NVL  %i", gimnasio->dificultad);
     imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "DIFICULTAD:    ", BLANCO, dificultad);
     imprimir_enter();
-    char entrenadores[MAX_STR];
+    char entrenadores[MAX_STRING];
     sprintf(entrenadores, "%li", gimnasio->cant_entrenadores);
     imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "ENTRENADORES RESTANTES:    ", BLANCO, entrenadores);
     entrenador_t aux = * (entrenador_t*) pila_tope(gimnasio->entrenadores);
     imprimir_enter();
     imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "PROXIMO RIVAL: ", BLANCO, aux.nombre);
-    listar_pokemones(aux.pokemones, ENTRENADOR);
+    listar_pokemones(aux.pokemones, LISTA_ENTRENADOR);
     imprimir_enter();
     pedir_opcion_avanzar();    
 }
@@ -709,14 +709,14 @@ void personaje_informacion(personaje_t* personaje){
     imprimir_enter();
     imprimir_medallero(personaje->medallas);
     imprimir_enter();
-    listar_pokemones(personaje->caja, CAJA);
+    listar_pokemones(personaje->caja, LISTA_CAJA);
     imprimir_enter();
-    listar_pokemones(personaje->party, COMBATE);
+    listar_pokemones(personaje->party, LISTA_COMBATE);
     imprimir_enter();
     pedir_opcion_avanzar();
 }
 
-void pedir_archivo(char ruta_archivo[MAX_STR]){
+void pedir_archivo(char ruta_archivo[MAX_STRING]){
     FILE* archivo;
     imprimir_espaciado(INTERFAZ_ESPACIO);
     printf("Ingrese la ruta del archivo:");

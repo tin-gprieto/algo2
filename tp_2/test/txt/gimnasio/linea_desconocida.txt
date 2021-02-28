@@ -1,0 +1,11 @@
+G;Ciudad Plateada;4;3
+L;Brock
+P;Onix;20;50;32
+E;Belino
+P;Golem;5;30;25
+asjkfdhaofsdhsdohfgidshgsaiajdsfh
+G;Ciudad Carmin;7;3
+L;Lt.Surge
+P;Electrode;20;43;36
+E;Duque Greg
+P;Electrike;28;41;12

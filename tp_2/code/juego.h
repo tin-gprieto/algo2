@@ -1,109 +1,95 @@
 #ifndef __JUEGO_H__
 #define __JUEGO_H__
 
-#include "../toolbox/tools.h"
-#include "../toolbox/tdas/lista.h"
-#include "../toolbox/tdas/abb.h"
-#include "../toolbox/tdas/heap.h"
 #include "batallas.h"
+#include "estructuras.h"
+#include "interfaz.h"
 
-//tipo de listas
-#define COMBATE 0
-#define CAJA 1
-#define ENTRENADOR 2
-
-//tipos de menus
-#define MENU_INICIO 0
-#define MENU_GYM 1
-#define MENU_BATALLA 2
-#define MENU_VICTORIA 3
-#define MENU_DERROTA 4
-
-//apertura de archivos
-#define LECTURA "r"
-#define ESCRITURA "w"
-
-//estado batalla
-#define DERROTA -1
-#define ESTADO_INICIAL 0
-#define VICTORIA 1
-#define PELEANDO 2
+//funciones batalla
+#define FUNCION_1 1
+#define FUNCION_2 2
+#define FUNCION_3 3
+#define FUNCION_4 4
+#define FUNCION_5 5
+//estado juego
+#define JUEGO_INICIO 0
+#define JUEGO_JUGANDO 1
+#define JUEGO_SIMULANDO 2
+#define JUEGO_PERDIDO 4
+#define JUEGO_GANADO 5
 
 //constantes
-#define MAX_MENU 5
-#define MAX_OPC 4
-#define MAX_STR 100
-#define MAX_NOMBRE 50
-
-typedef struct pokemon{
-    char nombre[MAX_NOMBRE];
-    int velocidad;
-    int ataque;
-    int defensa;
-    bool elegido;
-    int nivel;
-}pokemon_t;
-
-typedef struct entrenador{
-    char nombre[MAX_NOMBRE];
-    lista_t* pokemones;
-}entrenador_t;
-
-typedef struct personaje{
-    char nombre[MAX_NOMBRE];
-    int medallas;
-    lista_t* caja; 
-    lista_t* party; 
-}personaje_t;
-
-typedef struct gimnasio{
-    int estado;
-    char nombre[MAX_NOMBRE];
-    int dificultad;
-    int id_batalla;
-    pila_t* entrenadores; 
-    size_t cant_entrenadores;
-}gimnasio_t;
+#define MAX_FUNCIONES 5
+#define VACIO 0
 
 typedef void (*mostrar_batalla)(pokemon_t*, pokemon_t*, int);
 
 typedef int (*funcion_batalla)(void*, void*);
 
-/* Funciones para el funcionamiento del main y que requieran ser testeadas*/
+typedef struct archivos{
+    char ruta_personaje[MAX_STRING];
+    char ruta_gimnasios[MAX_STRING];
+}archivos_t;
 
-personaje_t* personaje_cargar(char ruta_archivo[MAX_STR]);
+typedef struct juego{
+    int estado;
+    personaje_t* personaje;
+    heap_t* gimnasios;
+    archivos_t archivos;
+    interfaz_t* interfaz;
+    funcion_batalla* funciones;
+}juego_t;
 
-/* 
-*  Dado un personaje, lo destruye junto a todas sus estructuras
-* Pre : Personaje creado
-* Post: Personaje destruido e innutilizable
-*/
-void personaje_destruir(personaje_t* personaje);
-
-
-heap_t* gimnasios_cargar(char ruta_archivo[MAX_STR]);
-
-/* 
-* Dado un gimansio y un estado, devuelve si el ambos coinciden
-* Pre : Gimnasio cargado
-* Post: Verdadero si el estado del gimnasio y el pasado coinciden
-*/
-bool gimnasio_estado(gimnasio_t* gimnasio, int estado);
 
 /* 
-* Dado un gimnasio y un nuevo estado, actualiza el estado del mismo
-* Pre : Gimnasio cargado
-* Post: Gimnasio con nuevo estado
+* Crea la estructura del juego
+* Pre : -
+* Post: Estructura del juego creada en memoria dinámica, listo para ser iniciado
 */
-void gimnasio_cambiar_estado(gimnasio_t* gimnasio, int nuevo_estado);
+juego_t* juego_crear();
 
 /* 
-* Dado un gimnasio devuelve el último entrenador que se encuentre en el mismo
-* (próximo a ser enfrentado)
-* Pre : Gimnasio cargado
-* Post: Puntero a entrenador en última posicion
+* Destruye la estructura del juego por completo
+* Pre : Juego creado
+* Post: Memoria ocupada por el juego liberada
 */
-entrenador_t* gimnasio_ultimo_entrenador(gimnasio_t* gimnasio);
+void destruir_juego(juego_t* juego);
+
+/* 
+* Determina si el juego cumple las condiciones para iniciarse
+* Pre : Juego creado
+* Post: Verdadero si se han cargado un personaje y los gimnasios
+*/
+bool juego_preparado(juego_t* juego);
+
+/* 
+* Determina si el estado del juego coincide con el estado pasado
+* Pre : Juego creado
+* Post: Verdadero si el estado del juego y el estado coindiden
+*/
+int juego_estado(juego_t* juego, int estado);
+
+/* 
+* Cambia el estado del juedo dado un nuevo estado
+* Pre : Juego creado
+* Post: Juego con un nuevo estado
+*/
+void juego_cambiar_estado(juego_t* juego, int nuevo_estado);
+
+/*
+*
+* Pre :
+* Post:
+*/
+void juego_agregar_personaje(juego_t* juego);
+
+/*
+*
+* Pre :
+* Post:
+*/
+void juego_agregar_gimnasios(juego_t* juego);
+
 
 /* 
 * Realiza una batalla del gimnasio
@@ -112,24 +98,23 @@ entrenador_t* gimnasio_ultimo_entrenador(gimnasio_t* gimnasio);
 * Post: Devuelve el estado que debe tener el gimnasio
 * (En caso de que gane, dejará el gimnasio con su lider)
 */
-int gimnasio_batalla(gimnasio_t* gimnasio, personaje_t* personaje, funcion_batalla batalla, mostrar_batalla menu);
-
+int jugar_gimnasio(gimnasio_t* gimnasio, personaje_t* personaje, funcion_batalla batalla);
 
 /* 
 * Se ejecuta la opción de tomar un pokemon del lider
 * (Muestra los pokemones del lider para que el usuario elija uno)
 * Pre : Gimnasio creado y unicamento con el último entrenador(lider), funcion para pedir pokemones al usuario 
-* Post: Caja del personaje con un nuevo pokemón
+* Post: Devuelve la caja del personaje con un nuevo pokemón y el estado del juego
 */
-void quitar_pokemon_lider(personaje_t* personaje, gimnasio_t* gimnasio, size_t (*pedir_pokemon)(lista_t*, int));
+int quitar_pokemon_lider(personaje_t* personaje, gimnasio_t* gimnasio, size_t (*pedir_pokemon)(lista_t*, int));
 
 /* 
 * Se ejecuta la opción de cambiar el party
 * (Muestra los pokemones del party 
 * y la caja para que el usuario elija cual intercambiar)
 * Pre : Personaje creado, funcion para pedir pokemones al usuario 
-* Post: Party modificado
+* Post: Devuelve el Party modificado y el estado del juego
 */
-void cambiar_party(personaje_t* personaje, size_t (*pedir_pokemon)(lista_t*, int));
+int cambiar_party(personaje_t* personaje, size_t (*pedir_pokemon)(lista_t*, int));
 
-#endif /* __AVENTURA_H__ */
+#endif /* __JUEGO_H__ */

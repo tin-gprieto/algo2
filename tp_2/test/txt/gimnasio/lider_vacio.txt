@@ -1,0 +1,4 @@
+G;Ciudad Plateada;4;3
+L;Brock
+E;Belino
+P;Golem;5;30;25

@@ -1,0 +1,4 @@
+E;Ash
+P;Pikachu;42;30;18
+P;Butterfree;31;32;27
+P;Pidgeotto;40;30;20

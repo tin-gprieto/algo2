@@ -1,0 +1,3 @@
+G;Ciudad Plateada;4;3
+E;Belino
+P;Golem;5;30;25
