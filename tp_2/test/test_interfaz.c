@@ -88,11 +88,11 @@ int main(){
     menu_gimnasio(interfaz, &gimnasio);
     personaje_informacion(&personaje);
     gimnasio_informacion(&gimnasio);
-    menu_batalla(&pokemones[0], &pokemones[2], DERROTA);
-    menu_batalla(&pokemones[1], &pokemones[0], VICTORIA);
-    pedir_pokemon(personaje.party, COMBATE);
-    pedir_pokemon(personaje.caja, CAJA);
-    pedir_pokemon(entrenador.pokemones, ENTRENADOR);
+    menu_batalla(&pokemones[0], &pokemones[2], BATALLA_DERROTA);
+    menu_batalla(&pokemones[1], &pokemones[0], BATALLA_VICTORIA);
+    pedir_pokemon(personaje.party, LISTA_COMBATE);
+    pedir_pokemon(personaje.caja, LISTA_CAJA);
+    pedir_pokemon(entrenador.pokemones, LISTA_ENTRENADOR);
 
     interfaz_destruir(interfaz);
     lista_destruir(personaje.caja);

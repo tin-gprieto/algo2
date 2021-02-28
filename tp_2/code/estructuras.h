@@ -5,7 +5,6 @@
 #include "../toolbox/tdas/lista.h"
 #include "../toolbox/tdas/abb.h"
 #include "../toolbox/tdas/heap.h"
-#include "batallas.h"
 
 //tipos de menus
 #define MENU_INICIO 0

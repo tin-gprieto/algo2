@@ -22,7 +22,6 @@
 #define MAX_FUNCIONES 5
 #define VACIO 0
 
-typedef void (*mostrar_batalla)(pokemon_t*, pokemon_t*, int);
 
 typedef int (*funcion_batalla)(void*, void*);
 
@@ -95,10 +94,10 @@ void juego_agregar_gimnasios(juego_t* juego);
 * Realiza una batalla del gimnasio
 * Pre : Gimnasio cargado y no vacío, personaje cargado, 
 * funcion batalla corriespondiente al gimnasio y un menú batalla que muestre los datos de la misma
-* Post: Devuelve el estado que debe tener el gimnasio
+* Post: Devuelve al gimnasio en su estado correspondiente
 * (En caso de que gane, dejará el gimnasio con su lider)
 */
-int jugar_gimnasio(gimnasio_t* gimnasio, personaje_t* personaje, funcion_batalla batalla);
+void jugar_gimnasio(gimnasio_t* gimnasio, personaje_t* personaje, funcion_batalla batalla);
 
 /* 
 * Se ejecuta la opción de tomar un pokemon del lider

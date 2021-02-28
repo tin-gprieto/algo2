@@ -79,8 +79,7 @@ void jugar_partida(juego_t* juego){
             cambiar_party(juego->personaje, pedir_pokemon);
         }else if(interfaz_estado(juego->interfaz, OPCION_BATALLA)){
             funcion_batalla batalla = obtener_funcion_batalla(juego, gimnasio_actual);
-            int estado = jugar_gimnasio(gimnasio_actual, juego->personaje, batalla);
-            gimnasio_cambiar_estado(gimnasio_actual, estado);
+            jugar_gimnasio(gimnasio_actual, juego->personaje, batalla);
             if(gimnasio_estado(gimnasio_actual, GIMNASIO_DERROTA))
                 gimnasio_perdido(juego, gimnasio_actual);
             if(gimnasio_estado(gimnasio_actual, GIMNASIO_VICTORIA))
@@ -116,8 +115,7 @@ void simular_partida(juego_t* juego){
     while(juego_estado(juego, JUEGO_SIMULANDO)){
         gimnasio_t* gimnasio_actual = (gimnasio_t*) heap_raiz(juego->gimnasios);
         funcion_batalla batalla = obtener_funcion_batalla(juego, gimnasio_actual);
-        int estado = jugar_gimnasio(gimnasio_actual, juego->personaje, batalla);
-        gimnasio_cambiar_estado(gimnasio_actual, estado);
+        jugar_gimnasio(gimnasio_actual, juego->personaje, batalla);
         if(gimnasio_estado(gimnasio_actual, JUEGO_GANADO))
             heap_borrar(juego->gimnasios);
         if(gimnasio_estado(gimnasio_actual, JUEGO_PERDIDO))

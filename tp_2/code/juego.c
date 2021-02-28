@@ -85,26 +85,46 @@ juego_t* juego_crear(){
 * Pre :
 * Post:
 */
-int batalla_luchar(personaje_t* personaje, entrenador_t* entrenador, funcion_batalla batalla, mostrar_batalla menu){
+int batalla_luchar(personaje_t* personaje, entrenador_t* rival, funcion_batalla batalla){
+    size_t tope_personaje = lista_elementos(personaje->party);
+    size_t tope_rival = lista_elementos(rival->pokemones);
+    int pos_lista_personaje = 0;
+    int pos_lista_rival = 0;
+    while (pos_lista_personaje < tope_personaje && pos_lista_rival < tope_rival){    
+        pokemon_t* pkm_personaje = lista_elemento_en_posicion(personaje->party, pos_lista_personaje);
+        pokemon_t* pkm_rival = lista_elemento_en_posicion(rival->pokemones, pos_lista_rival);
+        int estado = batalla(pkm_personaje, pkm_rival);
+        menu_batalla(pkm_personaje, pkm_rival, estado);
+        if(estado == BATALLA_VICTORIA)
+            pos_lista_rival++;
+        else if(estado == BATALLA_DERROTA)
+            pos_lista_personaje++;
+    }
+    
+    
+    if(tope_personaje > tope_rival)
+        return GIMNASIO_VICTORIA;
     return GIMNASIO_DERROTA;
 }
 //juego.h
-int jugar_gimnasio(gimnasio_t* gimnasio, personaje_t* personaje, funcion_batalla batalla){
-    if(!gimnasio)
+void jugar_gimnasio(gimnasio_t* gimnasio, personaje_t* personaje, funcion_batalla batalla){
+    if(!gimnasio || gimnasio_vacio(gimnasio) || !personaje || !batalla)
         return GIMNASIO_DERROTA;
-    entrenador_t* entrenador = gimnasio_ultimo_entrenador(gimnasio);
-    if(!entrenador)
-        return GIMNASIO_VICTORIA;
-    int resultado = batalla_luchar(personaje, entrenador, batalla, menu_batalla);
-    if(resultado == GIMNASIO_VICTORIA){
-        if(pila_elementos(gimnasio->entrenadores) == 1){
-            return GIMNASIO_VICTORIA; 
+    
+    while(gimnasio_estado(gimnasio, GIMNASIO_PELEANDO)){
+        entrenador_t* rival = gimnasio_ultimo_entrenador(gimnasio);
+        int resultado = batalla_luchar(personaje, rival, batalla);
+        if(resultado == BATALLA_VICTORIA){
+            if(pila_elementos(gimnasio->entrenadores) == 1){
+                gimnasio_cambiar_estado(gimnasio, GIMNASIO_VICTORIA); 
+            }else{
+                gimnasio_siguiente_entrenador(gimnasio);
+                gimnasio_cambiar_estado(gimnasio, GIMNASIO_PELEANDO);
+            }
         }else{
-            gimnasio_siguiente_entrenador(gimnasio);
-            return GIMNASIO_PELEANDO;
+            gimnasio_cambiar_estado(gimnasio, GIMNASIO_DERROTA);
         }
     }
-    return GIMNASIO_DERROTA;
 }
 
 /* 
@@ -140,10 +160,12 @@ int quitar_pokemon_lider(personaje_t* personaje, gimnasio_t* gimnasio, size_t (*
 * Post: Party con un intercambio de pokemones
 */
 int intercambiar_pokemones(personaje_t* personaje, size_t pkm_party, size_t pkm_box){
-    pokemon_t* saliente = lista_elemento_en_posicion(personaje->party, pkm_party);
-    if(!saliente) return ERROR;
+    int salida = lista_borrar_de_posicion(personaje->party, pkm_party);
+    if(salida == ERROR) return ERROR;
     pokemon_t* entrante = lista_elemento_en_posicion(personaje->caja, pkm_box);
     if(!entrante) return ERROR;
+    int entrada = lista_insertar_en_posicion(personaje->party, entrante, pkm_party);
+    if(entrada == ERROR) return ERROR;
     return JUEGO_JUGANDO;
 }
 //juego.h

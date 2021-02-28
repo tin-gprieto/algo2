@@ -362,7 +362,9 @@ int lider_leer(FILE* archivo, pila_t* gimnasios){
     if(!gimnasios || !pila_vacia(gimnasios))
         return LECTURA_ERROR;
     gimnasio_t* ultimo_gimnasio = (gimnasio_t*)pila_tope(gimnasios);
-    
+    if(!ultimo_gimnasio)
+        return LECTURA_ERROR;
+
     pila_t* aux = pila_crear();
     if(!aux)
         return LECTURA_ERROR;

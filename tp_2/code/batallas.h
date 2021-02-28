@@ -4,6 +4,8 @@
 #define GANO_PRIMERO 1
 #define GANO_SEGUNDO -1
 
+#include "estructuras.h"
+
 /*
  * Se deberan implementar las 5 funciones de batalla.
  * Las reglas para decidir al ganador las inventan ustedes
