@@ -4,6 +4,7 @@
 #include "batallas.h"
 #include "estructuras.h"
 #include "interfaz.h"
+#include "../toolbox/tools.h"
 
 //funciones batalla
 #define FUNCION_1 1

@@ -8,9 +8,7 @@ void personaje_creado(char * ruta_archivo, size_t caja, size_t party){
     test_afirmar(personaje != NULL, "Se crea correctamente el personaje");
     if(personaje){
         test_afirmar(lista_elementos(personaje->caja) == caja, "La caja tiene la cantidad de pokemones correcta");
-        //pedir_pokemon(personaje->caja, LISTA_CAJA);
         test_afirmar(lista_elementos(personaje->party) == party, "El party tiene la cantidad de pokemones correcta");
-        //pedir_pokemon(personaje->party, LISTA_COMBATE);
     }
     personaje_destruir(personaje);
 }

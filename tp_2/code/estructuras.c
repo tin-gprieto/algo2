@@ -95,7 +95,7 @@ bool gimnasio_condicion(void* padre, void* hijo){
 * Post:
 */
 bool gimnasio_vacio(gimnasio_t* gimnasio){
-    return (!gimnasio || !(gimnasio->entrenadores) || gimnasio->cant_entrenadores == 0);
+    return (!gimnasio || pila_vacia(gimnasio->entrenadores));
 }
 /*
 *
@@ -134,8 +134,6 @@ void personaje_insertar_pokemon(personaje_t* personaje, pokemon_t* pokemon){
     if(lista_elementos(personaje->party) < MAX_POKEMONES){
         pokemon->elegido = true;
         lista_insertar(personaje->party, (void*) pokemon);
-    }else{
-        pokemon->elegido = false;
     }
     lista_insertar(personaje->caja, (void*) pokemon);
 }
@@ -216,6 +214,7 @@ pokemon_t* linea_pokemon_leer(FILE * archivo){
         return NULL;
     }
     pokemon->nivel = 0;
+    pokemon->elegido = false;
     return pokemon;
 }
 /* 
@@ -359,7 +358,11 @@ int entrenador_leer(FILE* archivo, pila_t* gimnasios){
 * Post:
 */
 int lider_leer(FILE* archivo, pila_t* gimnasios){
+<<<<<<< Updated upstream
     if(!gimnasios || !pila_vacia(gimnasios))
+=======
+    if(pila_vacia(gimnasios))
+>>>>>>> Stashed changes
         return LECTURA_ERROR;
     gimnasio_t* ultimo_gimnasio = (gimnasio_t*)pila_tope(gimnasios);
     if(!ultimo_gimnasio)
@@ -399,7 +402,6 @@ gimnasio_t* linea_gimnasio_leer(FILE* archivo){
     (*gimnasio) = auxiliar;
     gimnasio->estado = GIMNASIO_PELEANDO;
     gimnasio->entrenadores = NULL;
-    gimnasio->cant_entrenadores = 0;
     return gimnasio;
 }
 /* 
@@ -449,10 +451,10 @@ heap_t* archivo_gimnasios_leer(FILE * archivo){
     int lectura = clave_leer(archivo, &clave);
     while(lectura == LECTURA_CONTINUAR){
         if(clave == CLAVE_GIMNASIO){
-            if(gimnasio_vacio((gimnasio_t*)pila_tope(gimnasios)))
-                lectura = LECTURA_ERROR;
-            else
+            if(pila_vacia(gimnasios) || !gimnasio_vacio((gimnasio_t*)pila_tope(gimnasios)))
                 lectura = gimnasio_leer(archivo, gimnasios);
+            else
+                lectura = LECTURA_ERROR;
         }else if(clave == CLAVE_LIDER){
             lectura = lider_leer(archivo, gimnasios);
         }else if(clave == CLAVE_ENTRENADOR){
@@ -520,5 +522,4 @@ void gimnasio_siguiente_entrenador(gimnasio_t* gimnasio){
     if(!gimnasio) return;
     entrenador_destruir(gimnasio_ultimo_entrenador(gimnasio));
     pila_desapilar(gimnasio->entrenadores);
-    gimnasio->cant_entrenadores --;
 }

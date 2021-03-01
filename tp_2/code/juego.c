@@ -1,5 +1,8 @@
 #include "juego.h"
 
+#define NVL_MAX 63
+#define NVL_AUMENTO 3
+
 //juego.h
 bool juego_preparado(juego_t* juego){
     return juego->personaje && juego->gimnasios;
@@ -79,7 +82,20 @@ juego_t* juego_crear(){
     if(!juego->funciones) return NULL;
     return juego;
 }
-
+/*
+* Bonifica a un pokemon, aumentando todas sus características en 1 
+* siempre y cuando tenga un nivel inferior a 63
+* Pre : Pokemon creado e inicializado, que haya ganado una batalla y sea de nivel menor a 63
+* Post: Pokemon bonificado y con un nuevo nivel (+3) 
+*/
+void bonificar_pokemon(pokemon_t * pokemon){
+    if(!pokemon || pokemon->nivel > NVL_MAX)
+        return;
+    pokemon->ataque ++;
+    pokemon->defensa ++;
+    pokemon->velocidad ++;
+    pokemon->nivel += NVL_AUMENTO;
+}
 /*
 *
 * Pre :
@@ -95,8 +111,10 @@ int batalla_luchar(personaje_t* personaje, entrenador_t* rival, funcion_batalla 
         pokemon_t* pkm_rival = lista_elemento_en_posicion(rival->pokemones, pos_lista_rival);
         int estado = batalla(pkm_personaje, pkm_rival);
         menu_batalla(pkm_personaje, pkm_rival, estado);
-        if(estado == BATALLA_VICTORIA)
+        if(estado == BATALLA_VICTORIA){
+            bonificar_pokemon(pkm_personaje);
             pos_lista_rival++;
+        }
         else if(estado == BATALLA_DERROTA)
             pos_lista_personaje++;
     }
@@ -150,7 +168,13 @@ int quitar_pokemon_lider(personaje_t* personaje, gimnasio_t* gimnasio, size_t (*
     entrenador_t* lider = gimnasio_ultimo_entrenador(gimnasio);
     if(!lider) return ERROR;
     size_t pokemon_robado = pedir_pokemon(lider->pokemones, LISTA_ENTRENADOR);
+<<<<<<< Updated upstream
     return tomar_pokemon(lider, pokemon_robado, personaje);
+=======
+    int estado = tomar_pokemon(lider, pokemon_robado, personaje);
+    juego_cambiar_estado(juego, estado);
+    eliminar_opcion(juego->interfaz, MENU_VICTORIA, OPCION_TOMAR_PKM);
+>>>>>>> Stashed changes
 }
 
 /* 

@@ -2,9 +2,6 @@
 #define __INTERFAZ_H__
 
 #include "../toolbox/tools.h"
-#include "../toolbox/tdas/lista.h"
-#include "../toolbox/tdas/abb.h"
-#include "../toolbox/tdas/heap.h"
 #include "estructuras.h"
 
 //Estados de la interfaz
@@ -20,7 +17,16 @@
 #define OPCION_REPETIR 'R'
 #define OPCION_SALIR 'F'
 #define ESTADO_NULO ' '
+<<<<<<< Updated upstream
 
+=======
+//tipos de menus
+#define MENU_INICIO 0
+#define MENU_GYM 1
+#define MENU_BATALLA 2
+#define MENU_VICTORIA 3
+#define MENU_DERROTA 4
+>>>>>>> Stashed changes
 //tipo de listas para pedir
 #define LISTA_COMBATE 0
 #define LISTA_CAJA 1
@@ -39,7 +45,6 @@ typedef struct menu{
 typedef struct interfaz{
     char estado;
     menu_t* menus;
-    size_t cant_menus;
 }interfaz_t;
 
 /* 
@@ -116,7 +121,19 @@ void menu_maestro_pokemon();
 */
 void eliminar_opcion(interfaz_t* interfaz, size_t menu, char opcion);
 
+<<<<<<< Updated upstream
 /* 
+=======
+/*
+* El menu victoria vuelve a su estado inicial 
+* (luego de quitar la opción tomar pokemon)
+* Pre : Haber quitado la opción tomar pokemon del menú victoria
+* Post: Menú victoria reestablecido
+*/
+void reiniciar_menu_victoria(interfaz_t* interfaz);
+
+/*
+>>>>>>> Stashed changes
 * Dada una lista de pokemones, la muestra completa por pantalla y
 * devuelve la posicion del pokemon elegido por el usuario
 * Pre : Recibe lista de pokemones cargada 

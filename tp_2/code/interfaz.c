@@ -7,6 +7,8 @@
 #define AMARILLO_PARP "\e[5;33m"
 #define LIMPIAR "clear"
 
+#define ASCII_NUM 48
+
 static const size_t MARCO_ESP          = 2;
 static const size_t INTERFAZ_LIM       = 80;
 static const size_t INTERFAZ_ESPACIO   = 10;
@@ -217,13 +219,16 @@ bool pos_valida(size_t pos, size_t tope){
 */
 size_t pedir_pos(size_t maximo){
     imprimir_espaciado(INTERFAZ_ESPACIO);
-    size_t numero;
     printf("Ingrese el n° del pokemón que desea : ");
-    scanf("%li", &numero);
+    size_t numero = (size_t)getc(stdin);
+    numero -= ASCII_NUM;
     while(!pos_valida(numero, maximo)){
+        getc(stdin);
         mostrar_advertencia();
-        scanf("%li", &numero);
+        numero = (size_t)getc(stdin);
+        numero -= ASCII_NUM;
     }
+    getc(stdin);
     return numero - 1;
 }
 /* 
@@ -492,9 +497,10 @@ void eliminar_descripcion(char descripciones[MAX_OPCIONES][MAX_STRING], int pos,
     strcpy(descripciones[tope - 1], aux);
 }
 /*
-*
-* Pre :
-* Post:
+* Dado un string, la posicion del pokemon, en qué lista se encuentra y si está elegido
+* Agrega al string dicha posicion según corresponda
+* Pre : Linea vacia, int lista válido según constantes
+* Post: Linea cargada con la posicion según corresponda
 */
 void cargar_posicion_a_linea(char linea[], int pos, int lista, bool elegido){
     if(elegido && lista == LISTA_CAJA)
@@ -542,7 +548,6 @@ void cargar_magnitud_a_linea(char linea[], int magnitud, const char * id){
 void mostrar_pokemon(int pos, int lista, pokemon_t* pkm){
     char linea_1[INTERFAZ_LIM];
     cargar_posicion_a_linea(linea_1, pos, lista, pkm->elegido);
-    
     char linea_2[INTERFAZ_LIM];
     cargar_nombre_a_linea(linea_2, pkm->nombre);
     cargar_magnitud_a_linea(linea_2, pkm->nivel, NIVEL);
@@ -686,7 +691,7 @@ void gimnasio_informacion(gimnasio_t* gimnasio){
     imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "DIFICULTAD:    ", BLANCO, dificultad);
     imprimir_enter();
     char entrenadores[MAX_STRING];
-    sprintf(entrenadores, "%li", gimnasio->cant_entrenadores);
+    sprintf(entrenadores, "%li", pila_elementos(gimnasio->entrenadores));
     imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "ENTRENADORES RESTANTES:    ", BLANCO, entrenadores);
     entrenador_t aux = * (entrenador_t*) pila_tope(gimnasio->entrenadores);
     imprimir_enter();
@@ -743,6 +748,8 @@ size_t pedir_pokemon(lista_t* pokemones, int lista){
 }
 
 void eliminar_opcion(interfaz_t* interfaz, size_t menu, char opcion){
+    if(!interfaz)
+        return;
     size_t cantidad = interfaz->menus[menu].cant_opciones;
     int pos = buscar_opcion(interfaz->menus[menu].opciones,cantidad, opcion);
     if(pos == ERROR)
@@ -750,6 +757,15 @@ void eliminar_opcion(interfaz_t* interfaz, size_t menu, char opcion){
     eliminar_letra(interfaz->menus[menu].opciones, pos, cantidad);
     eliminar_descripcion(interfaz->menus[menu].descripciones, pos, cantidad);
     interfaz->menus[menu].cant_opciones --;
+}
+
+void reiniciar_menu_victoria(interfaz_t* interfaz){
+    if(!interfaz)
+        return;
+    cargar_opcion(interfaz, MENU_VICTORIA, OPCION_TOMAR_PKM, "Tomar prestado un pokemon" );
+    size_t cantidad = interfaz->menus[MENU_VICTORIA].cant_opciones;
+    eliminar_letra(interfaz->menus[MENU_VICTORIA].opciones, 0, cantidad);
+    eliminar_descripcion(interfaz->menus[MENU_VICTORIA].descripciones, 0, cantidad);
 }
 
 void menu_maestro_pokemon(){
@@ -873,7 +889,6 @@ void interfaz_destruir(interfaz_t* interfaz){
 interfaz_t* interfaz_crear(){
     interfaz_t* inter_aux = malloc(sizeof(interfaz_t));
     if(!inter_aux) return NULL;
-    inter_aux->cant_menus = MAX_MENU;
     inter_aux->estado = INTERFAZ_INICIAL;
     menu_t* menus_aux = calloc(MAX_MENU, sizeof(menu_t));
     if(!menus_aux)return NULL;

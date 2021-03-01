@@ -31,7 +31,7 @@ void gimnasio_perdido(juego_t* juego, gimnasio_t* gimnasio){
     menu_derrota(juego->interfaz, gimnasio);
     while(gimnasio_estado(gimnasio, JUEGO_PERDIDO) && juego_estado(juego, JUEGO_JUGANDO)){
         if(interfaz_estado(juego->interfaz, OPCION_CAMBIAR))
-            cambiar_party(juego->personaje, pedir_pokemon); //chequear
+            cambiar_party(juego);
         if(interfaz_estado(juego->interfaz, OPCION_REPETIR))
             gimnasio_cambiar_estado(gimnasio, GIMNASIO_PELEANDO);
         if(interfaz_estado(juego->interfaz, OPCION_SALIR)){
@@ -57,6 +57,7 @@ void gimnasio_ganado(juego_t* juego, gimnasio_t* gimnasio){
             menu_victoria(juego->interfaz);
         }
     }
+    reiniciar_menu_victoria(juego->interfaz);
 }
 
 funcion_batalla obtener_funcion_batalla(juego_t *juego, gimnasio_t * gimnasio){
@@ -76,7 +77,7 @@ void jugar_partida(juego_t* juego){
         }else if(interfaz_estado(juego->interfaz, OPCION_GIMNASIO)){
             gimnasio_informacion(gimnasio_actual);
         }else if(interfaz_estado(juego->interfaz, OPCION_CAMBIAR)){
-            cambiar_party(juego->personaje, pedir_pokemon);
+            cambiar_party(juego);
         }else if(interfaz_estado(juego->interfaz, OPCION_BATALLA)){
             funcion_batalla batalla = obtener_funcion_batalla(juego, gimnasio_actual);
             jugar_gimnasio(gimnasio_actual, juego->personaje, batalla);
@@ -97,7 +98,7 @@ void simulacion_perdida(juego_t* juego, gimnasio_t* gimnasio){
     menu_derrota(juego->interfaz, gimnasio);
     while(!interfaz_estado(juego->interfaz, OPCION_REPETIR) || juego_estado(juego, JUEGO_PERDIDO)){
         if(interfaz_estado(juego->interfaz, OPCION_CAMBIAR))
-            cambiar_party(juego->personaje, pedir_pokemon);
+            cambiar_party(juego);
         if(interfaz_estado(juego->interfaz, OPCION_REPETIR)){
             heap_destruir(juego->gimnasios);
             juego->gimnasios = gimnasios_cargar(juego->archivos.ruta_gimnasios);

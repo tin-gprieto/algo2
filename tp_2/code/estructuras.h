@@ -2,6 +2,7 @@
 #define __ESTRUCTURAS_H__
 
 #include "../toolbox/tools.h"
+<<<<<<< Updated upstream
 #include "../toolbox/tdas/lista.h"
 #include "../toolbox/tdas/abb.h"
 #include "../toolbox/tdas/heap.h"
@@ -12,6 +13,8 @@
 #define MENU_BATALLA 2
 #define MENU_VICTORIA 3
 #define MENU_DERROTA 4
+=======
+>>>>>>> Stashed changes
 
 //apertura de archivos
 #define LECTURA "r"
@@ -56,8 +59,12 @@ typedef struct gimnasio{
     char nombre[MAX_NOMBRE];
     int dificultad;
     int id_batalla;
+<<<<<<< Updated upstream
     pila_t* entrenadores; 
     size_t cant_entrenadores;
+=======
+    pila_t* entrenadores;
+>>>>>>> Stashed changes
 }gimnasio_t;
 
 /* Funciones para el funcionamiento del main y que requieran ser testeadas*/

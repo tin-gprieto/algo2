@@ -8,6 +8,10 @@
 #include <math.h>
 #include <signal.h>
 
+#include "tdas/lista.h"
+#include "tdas/abb.h"
+#include "tdas/heap.h"
+
 #define ERROR -1
 #define EXITO 0
 
