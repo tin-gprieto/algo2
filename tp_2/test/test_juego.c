@@ -126,24 +126,8 @@ void pruebas_cargar_gimnasio(){
 }
 
 int main(){
-    /*
     pruebas_cargar_personaje();
     pruebas_cargar_gimnasio();
     test_mostrar_reporte();
-    */
-    juego_t* juego = juego_crear();
-    if(!juego)
-        return ERROR;
-    juego_agregar_personaje(juego);
-    juego_agregar_gimnasios(juego);
-    while(juego_estado(juego, JUEGO_JUGANDO)){
-        gimnasio_t* gimnasio_actual = (gimnasio_t*) heap_raiz(juego->gimnasios);
-        jugar_gimnasio(juego, gimnasio_actual);
-        if(gimnasio_estado(gimnasio_actual, GIMNASIO_DERROTA))
-            menu_victoria(juego->interfaz);
-        if(gimnasio_estado(gimnasio_actual, GIMNASIO_VICTORIA))
-            menu_derrota(juego->interfaz, gimnasio_actual);
-    }
-    juego_destruir(juego);
     return EXITO;
 }

@@ -467,9 +467,9 @@ void encabezado_derrota(gimnasio_t* gimnasio){
 * Pre : cantidad de opciones
 * Post: Devuelve la posicion de la letra dentro del vector
 */
-int buscar_opcion(char opciones[], size_t tope, char opcion){
+size_t buscar_opcion(char opciones[], size_t tope, char opcion){
     bool encontro = false;
-    int pos = 0;
+    size_t pos = 0;
     while( (pos < tope) && (!encontro)){
         if(opciones[pos]  == opcion)
             encontro = true;
@@ -477,15 +477,17 @@ int buscar_opcion(char opciones[], size_t tope, char opcion){
             pos++;
     }
     if(!encontro)
-        return ERROR;
+        return tope;
     return pos;
 }
 /* 
-* Swapea dos letras
+* Manda la letra de la posicion al final
 * Pre : posicion de la letra a eliminar
 * Post: letra a eliminar al final del vector
 */
-void eliminar_letra(char opciones[], int pos, size_t tope){
+void eliminar_letra(char opciones[], size_t pos, size_t tope){
+    if(pos >= tope - 1)
+        return;
     char aux = opciones[pos];
     opciones[pos] = opciones[tope - 1];
     opciones[tope - 1] = aux;
@@ -495,7 +497,9 @@ void eliminar_letra(char opciones[], int pos, size_t tope){
 * Pre : posicion del string a eliminar
 * Post: string a eliminar al final del vector
 */
-void eliminar_descripcion(char descripciones[MAX_OPCIONES][MAX_STRING], int pos, size_t tope){
+void eliminar_descripcion(char descripciones[MAX_OPCIONES][MAX_STRING], size_t pos, size_t tope){
+    if(pos >= tope - 1)
+        return;
     char aux[MAX_STRING];
     strcpy(aux, descripciones[pos]);
     strcpy(descripciones[pos], descripciones[tope - 1]);
@@ -634,7 +638,7 @@ void inicializar_inicio(interfaz_t* interfaz){
     cargar_opcion(interfaz, MENU_INICIO, OPCION_AGREGAR_GYM, "Agregar gimnasio" );
     cargar_opcion(interfaz, MENU_INICIO, OPCION_INICIAR, "Iniciar partida" );
     cargar_opcion(interfaz, MENU_INICIO, OPCION_SIMULAR, "Simular partida" );
-    cargar_opcion(interfaz, MENU_DERROTA, OPCION_SALIR, "Salir del juego" );
+    cargar_opcion(interfaz, MENU_INICIO, OPCION_SALIR, "Salir del juego" );
 }
 /* 
 * Inicializa el menu gimnasio con sus opciones y descripciones
@@ -646,7 +650,7 @@ void inicializar_gimnasio(interfaz_t* interfaz){
     cargar_opcion(interfaz, MENU_GYM, OPCION_GIMNASIO, "Informacion del gimnasio" );
     cargar_opcion(interfaz, MENU_GYM, OPCION_CAMBIAR, "Cambiar pokemones de combate" );
     cargar_opcion(interfaz, MENU_GYM, OPCION_BATALLA, "Luchar primer batalla" );
-    cargar_opcion(interfaz, MENU_DERROTA, OPCION_SALIR, "Finalizar partida" );
+    cargar_opcion(interfaz, MENU_GYM, OPCION_SALIR, "Finalizar partida" );
 }
 /* 
 * Inicializa el menu victoria con sus opciones y descripciones
@@ -657,7 +661,7 @@ void inicializar_victoria(interfaz_t* interfaz){
     cargar_opcion(interfaz, MENU_VICTORIA, OPCION_TOMAR_PKM, "Tomar prestado un pokemon" );
     cargar_opcion(interfaz, MENU_VICTORIA, OPCION_CAMBIAR, "Cambiar pokemones de combate" );
     cargar_opcion(interfaz, MENU_VICTORIA, OPCION_AVANZAR, "Siguiente gimnasio" );
-    cargar_opcion(interfaz, MENU_DERROTA, OPCION_SALIR, "Finalizar partida" );
+    cargar_opcion(interfaz, MENU_VICTORIA, OPCION_SALIR, "Finalizar partida" );
 }
 /* 
 * Inicializa el menu derrota con sus opciones y descripciones
@@ -771,7 +775,7 @@ void eliminar_opcion(interfaz_t* interfaz, size_t menu, char opcion){
     if(!interfaz)
         return;
     size_t cantidad = interfaz->menus[menu].cant_opciones;
-    int pos = buscar_opcion(interfaz->menus[menu].opciones,cantidad, opcion);
+    size_t pos = buscar_opcion(interfaz->menus[menu].opciones,cantidad, opcion);
     if(pos == ERROR)
         return;
     eliminar_letra(interfaz->menus[menu].opciones, pos, cantidad);
@@ -847,6 +851,8 @@ void menu_intercambio(interfaz_t* interfaz,  personaje_t* personaje){
         reportar_error("Hubo un problema con las listas del personaje");
         return;
     }
+    system(LIMPIAR);
+    imprimir_marco(INICIO);
     imprimir_enter();
     listar_pokemones(personaje->caja, LISTA_CAJA);
     imprimir_enter();
@@ -884,7 +890,12 @@ void menu_batalla(entrenador_t* rival, size_t pos_pkm_rival, pokemon_t* pkm_prop
     imprimir_enter();
     imprimir_linea(MARGEN_MEDIO, AMARILLO_SUB, "BATALLA");
     imprimir_enter();
-    imprimir_linea_partida(MARGEN_MEDIO, AMARILLO, "RIVAL:       ", BLANCO, rival->nombre);
+
+    if(rival->lider)
+        imprimir_linea_partida(MARGEN_MEDIO, AMARILLO_PARP, "LIDER:       ", BLANCO, rival->nombre);
+    else
+        imprimir_linea_partida(MARGEN_MEDIO, AMARILLO, "RIVAL:       ", BLANCO, rival->nombre);
+
     imprimir_enter();
     char cant_pokemones[MAX_STRING];
     sprintf(cant_pokemones, "%li", (lista_elementos(rival->pokemones) - pos_pkm_rival));

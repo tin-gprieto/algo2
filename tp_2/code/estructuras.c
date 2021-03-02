@@ -377,6 +377,7 @@ int entrenador_leer(FILE* archivo, pila_t* gimnasios){
         entrenador_destruir(entrenador);
         return LECTURA_ERROR;
     }
+    entrenador->lider = false;
     return LECTURA_CONTINUAR;
 }
 /* 
@@ -409,6 +410,7 @@ int lider_leer(FILE* archivo, pila_t* gimnasios){
     if(estado == ERROR)
         return LECTURA_ERROR;
 
+    lider->lider = true;
     return LECTURA_CONTINUAR;
     
 }

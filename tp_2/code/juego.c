@@ -175,7 +175,7 @@ void jugar_gimnasio(juego_t* juego, gimnasio_t* gimnasio){
         return;
     }
 
-    while(gimnasio_estado(gimnasio, GIMNASIO_PELEANDO)){
+    while(gimnasio_estado(gimnasio, GIMNASIO_PELEANDO) && !juego_estado(juego,JUEGO_SALIR)){
         if(juego_estado(juego, JUEGO_JUGANDO))
             menu_gimnasio(juego->interfaz, gimnasio);
         if(interfaz_estado(juego->interfaz, OPCION_PERSONAJE))
@@ -240,21 +240,21 @@ void quitar_pokemon_lider(juego_t* juego){
 * Post: Posicion del pokemon
 */
 size_t lista_buscar_posicion(lista_t * lista, pokemon_t * elegido){
-    size_t  posicion = 0;
-    bool encontrado = false;
+    size_t posicion = 0;
+    bool esta_en_lista = false;
     lista_iterador_t* iterador = lista_iterador_crear(lista);
-    while(lista_iterador_tiene_siguiente(iterador) && !encontrado){
+    while(lista_iterador_tiene_siguiente(iterador) && !esta_en_lista){
         pokemon_t* encontrado = (pokemon_t*)lista_iterador_elemento_actual(iterador);
         if(encontrado == elegido)
-            encontrado = true;
-        else    
+            esta_en_lista = true;
+        else{
+            lista_iterador_avanzar(iterador);
             posicion++;  
+        }   
 
     }
     lista_iterador_destruir(iterador);
-    if(encontrado)
-        return posicion;
-    return ERROR;
+    return posicion;
 }
 /* 
 * Dado el personaje y dos pokemones, los intercambia de lugar el party
@@ -263,13 +263,22 @@ size_t lista_buscar_posicion(lista_t * lista, pokemon_t * elegido){
 */
 int intercambiar_del_party(personaje_t* personaje, pokemon_t* saliente, size_t pos_saliente, pokemon_t* entrante){
     if(entrante == saliente) return JUEGO_JUGANDO;
+
+    int sacar_saliente = lista_borrar_de_posicion(personaje->party, pos_saliente);
+    if(sacar_saliente == ERROR) return ERROR;
+
     size_t pos_entrante = lista_buscar_posicion(personaje->party, entrante);
-    int cambio_1 = lista_borrar_de_posicion(personaje->party, pos_entrante);
-    if(cambio_1 == ERROR) return ERROR;
-    int cambio_2 = lista_insertar_en_posicion(personaje->party, entrante, pos_saliente);
-    if(cambio_2 == ERROR) return ERROR;
-    int cambio_3 = lista_insertar_en_posicion(personaje->party, saliente, pos_entrante);
-    if(cambio_3 == ERROR) return ERROR;
+
+    int sacar_entrante = lista_borrar_de_posicion(personaje->party, pos_entrante);
+    if(sacar_entrante == ERROR) return ERROR;
+
+    int meter_saliente = lista_insertar_en_posicion(personaje->party, saliente, pos_entrante);
+    if(meter_saliente == ERROR) return ERROR;
+    
+    int meter_entrante = lista_insertar_en_posicion(personaje->party, entrante, pos_saliente);
+    if(meter_entrante == ERROR) return ERROR;
+
+    return JUEGO_JUGANDO;
 }
 /* 
 * Dadas dos posicones, una de un pokemon en el party y otro en la caja,
@@ -279,17 +288,16 @@ int intercambiar_del_party(personaje_t* personaje, pokemon_t* saliente, size_t p
 */
 int intercambiar_pokemones(personaje_t* personaje, size_t pkm_party, size_t pkm_box){
     pokemon_t* saliente = lista_elemento_en_posicion(personaje->party, pkm_party);
-    saliente->elegido = false;
-
-    int salida = lista_borrar_de_posicion(personaje->party, pkm_party);
-    if(salida == ERROR) return ERROR;
-
+    if(!saliente) return ERROR;
     pokemon_t* entrante = lista_elemento_en_posicion(personaje->caja, pkm_box);
     if(!entrante) return ERROR;
     
     if(entrante->elegido)
         return intercambiar_del_party(personaje, saliente, pkm_party, entrante);
     
+    int salida = lista_borrar_de_posicion(personaje->party, pkm_party);
+    if(salida == ERROR) return ERROR;
+    saliente->elegido = false;
     entrante->elegido = true;
     int entrada = lista_insertar_en_posicion(personaje->party, entrante, pkm_party);
     if(entrada == ERROR) return ERROR;
@@ -301,7 +309,7 @@ void cambiar_party(juego_t* juego){
         juego_cambiar_estado(juego, ERROR);
         return;
     }       
-    while(estado_interafaz(juego->interfaz, OPCION_CAMBIAR) && !estado_juego(juego, ERROR)){
+    while(interfaz_estado(juego->interfaz, OPCION_CAMBIAR) && !juego_estado(juego, ERROR)){
         size_t pokemon_party = pedir_pokemon(juego->personaje->party, LISTA_COMBATE);
         size_t pokemon_caja = pedir_pokemon(juego->personaje->caja, LISTA_CAJA);
         int estado = intercambiar_pokemones(juego->personaje, pokemon_party, pokemon_caja);

@@ -28,6 +28,7 @@ typedef struct pokemon{
 
 typedef struct entrenador{
     char nombre[MAX_NOMBRE];
+    bool lider;
     lista_t* pokemones;
 }entrenador_t;
 

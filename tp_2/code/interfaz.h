@@ -33,7 +33,7 @@
 #define ARCHIVO_GIMNASIO 2
 //constantes
 #define MAX_MENU 5
-#define MAX_OPCIONES 4
+#define MAX_OPCIONES 5
 
 typedef struct menu{
     char opciones[MAX_OPCIONES];

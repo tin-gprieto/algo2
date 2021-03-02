@@ -12,14 +12,15 @@ void iniciar_partida(juego_t* juego){
             juego_agregar_personaje(juego);
         if(interfaz_estado(juego->interfaz, OPCION_AGREGAR_GYM))
             juego_agregar_gimnasios(juego);
+        if(interfaz_estado(juego->interfaz, OPCION_SALIR))
+            juego_cambiar_estado(juego, JUEGO_SALIR);
         if(interfaz_estado(juego->interfaz, OPCION_INICIAR)){
             if(juego_preparado(juego))
                 juego_cambiar_estado(juego, JUEGO_JUGANDO);
         }else if(interfaz_estado(juego->interfaz, OPCION_SIMULAR)){
             if(juego_preparado(juego))
                 juego_cambiar_estado(juego, JUEGO_SIMULANDO);
-        }else if(interfaz_estado(juego->interfaz, OPCION_SALIR))
-            juego_cambiar_estado(juego, JUEGO_SALIR);
+        }
     }
 }
 /* 
@@ -35,7 +36,7 @@ void gimnasio_perdido(juego_t* juego, gimnasio_t* gimnasio){
         if(interfaz_estado(juego->interfaz, OPCION_REPETIR))
             gimnasio_cambiar_estado(gimnasio, GIMNASIO_PELEANDO);
         if(interfaz_estado(juego->interfaz, OPCION_SALIR))
-            juego_cambiar_estado(juego, JUEGO_SALIR);
+            juego_cambiar_estado(juego, JUEGO_PERDIDO);
         
     }
 }
@@ -46,7 +47,7 @@ void gimnasio_perdido(juego_t* juego, gimnasio_t* gimnasio){
 */
 void gimnasio_ganado(juego_t* juego, gimnasio_t* gimnasio){
     bool bonificacion = false;
-    while(!interfaz_estado(juego->interfaz, OPCION_AVANZAR) && !juego_estado(juego, ERROR)){
+    while(!interfaz_estado(juego->interfaz, OPCION_AVANZAR) && !juego_estado(juego, ERROR) && !juego_estado(juego, JUEGO_SALIR)){
         menu_victoria(juego->interfaz);
         if(interfaz_estado(juego->interfaz, OPCION_AVANZAR))
             juego_eliminar_gimnasio(juego);
@@ -84,8 +85,8 @@ void jugar_partida(juego_t* juego){
 * Post:
 */
 void simulacion_perdida(juego_t* juego, gimnasio_t* gimnasio){
-    menu_derrota(juego->interfaz, gimnasio);
-    while(!interfaz_estado(juego->interfaz, OPCION_REPETIR) || juego_estado(juego, JUEGO_PERDIDO)){
+    while(!interfaz_estado(juego->interfaz, OPCION_REPETIR) && !juego_estado(juego, JUEGO_PERDIDO)){
+        menu_derrota(juego->interfaz, gimnasio);
         if(interfaz_estado(juego->interfaz, OPCION_CAMBIAR))
             cambiar_party(juego);
         if(interfaz_estado(juego->interfaz, OPCION_REPETIR)){
@@ -94,7 +95,7 @@ void simulacion_perdida(juego_t* juego, gimnasio_t* gimnasio){
             juego_cambiar_estado(juego, JUEGO_SIMULANDO);
         }
         if(interfaz_estado(juego->interfaz, OPCION_SALIR))
-            juego_cambiar_estado(juego, JUEGO_SALIR);
+            juego_cambiar_estado(juego, JUEGO_PERDIDO);
     }
 }
 /* 
