@@ -14,14 +14,13 @@ La implementación del juego está divida en varios archivos y carpetas que faci
 
 En esta carpeta se incluye los librerías exclusivas para éste juego. Entre ellas se encuentran:
       
-  -**estructuras.h**: Funciones de creación y utilización de las estructuras más generales del juego, pokemon_t, entrenador_t, personaje_t y gimnasio_t.(*1) Estas estructuras se utilizarán como base en los próximos archivos.
+  - **estructuras.h**: Funciones de creación y utilización de las estructuras más generales del juego, pokemon_t,entrenador_t, personaje_t y gimnasio_t.(*1) Estas estructuras se utilizarán como base en los próximos archivos.
+       
+  - **batallas.h**: Funciones de batalla entre pokemones para los enfrentamientos de los gimnasios
       
-  -**batallas.h**: Funciones de batalla entre pokemones para los enfrentamientos de los gimnasios
+  - **interfaz.h**: Funciones relacionadas con información visual (interacción del usuario por consola) y con la creación  y utilización de la estructura interfaz_t.(*1)
       
-  -**interfaz.h**: Funciones relacionadas con información visual (interacción del usuario por consola) y con la creación  y utilización de la estructura interfaz_t.(*1)
-      
-  -**juego.h**: Funciones relacionadas al funcionamiento interno del juego y con la creación y utilización de juego_t (*1)
-    y lectura de archivos.
+  - **juego.h**: Funciones relacionadas al funcionamiento interno del juego y con la creación y utilización de juego_t (*1)y lectura de archivos.
 
 (*1)Serán explicadas y desarrolladas más adelante, en el aparado Estructuras.
 
@@ -29,10 +28,10 @@ En esta carpeta se incluye los librerías exclusivas para éste juego. Entre ell
      
 Dentro de esta carpeta, se encuentran los códigos y archivos relacionados con las pruebas de toda la implementación y sus distintas partes:
 
-  -**pruebas_heap.c**: Pruebas del TDA heap.
-  -**pruebas_interfaz.c**: Pruebas de la interfaz (pruebas visuales).
-  -**pruebas_juego.c**: Pruebas del juego y de sus estructuras.
-  -**txt**: Carpeta que incluyen los archivos para testear para el juego
+  - **pruebas_heap.c**: Pruebas del TDA heap.
+  - **pruebas_interfaz.c**: Pruebas de la interfaz (pruebas visuales).
+  - **pruebas_juego.c**: Pruebas del juego y de sus estructuras.
+  - **txt**: Carpeta que incluyen los archivos para testear para el juego
 
 #### toolbox
      
@@ -46,11 +45,11 @@ y las funciones de testeo (tools.c), además de incluir las constantes de Colore
 ### Compilación y Ejecución
 
 Para compilar y ejecutar el programa, se hizo utilización de un archivo Makefile con los siguiente comandos:
-  -**make juego.exe**: Compila el archivo main.c junto a los archivos de code.
-  -**make play**: Ejecuta juego.exe (el juego).
-  -**make test**: Compila y ejecuta el archivo de testeo del juego en prueba.exe.
-  -**make interfaz**: Compila y ejecuta el archivo de testeo de la interfaz en interfaz.exe.
-  -**make heap**: Compila y ejecuta el archivo de testeo en heap.exe.
+  - **make juego.exe**: Compila el archivo main.c junto a los archivos de code.
+  - **make play**: Ejecuta juego.exe (el juego).
+  - **make test**: Compila y ejecuta el archivo de testeo del juego en prueba.exe.
+  - **make interfaz**: Compila y ejecuta el archivo de testeo de la interfaz en interfaz.exe.
+  - **make heap**: Compila y ejecuta el archivo de testeo en heap.exe.
 
 Una vez ejecutado el juego, la forma standard de jugarlo, es incluyendo el archivo de personaje "txt/personaje.txt" y el archivo de los gimnasios del kanto, "txt/kanto.txt". Sin embargo, siguiendo el formato de la consigna, cada uno puede agregar nuevo archivos o modificar los actuales. 
 
@@ -83,10 +82,10 @@ El juego contiene a todas las estructuras anteriormente nombraradas, tendrá un 
 
 ### Consideraciones finales
     
--**Cargar gimnasios**
+- **Cargar gimnasios**
 Por una cuestión de practicidad, consideré necesario que la carga de gimnasios no sea de
 manera individual, sino que el archivo contenga todos los gimnasios que requerirá el juego.
--**Casos limite de los archivos**
+- **Casos limite de los archivos**
 Al momento de leer los archivos, consideré que cualquier error en formato implicara no cargar ninguna estructura y devolver error, cortando con la ejecución del juego.
--**Derrota en la simulación**
+- **Derrota en la simulación**
 Por más que no especifique la consigna, me pareció oportuno que una vez se pierda, poder mandar el menú de derrota para que el jugador decida si quiere hacer un cambio de pokemones y volver a simular, o directamente salir del juego. Ya que si en el caso contrario, cortara el juego o lo mandara de nuevo al inicio, únicamente podria cambiar los pokemones modificando la formación del archivo.
