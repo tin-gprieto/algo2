@@ -2,3 +2,8 @@ G;Ciudad Plateada;4;3
 L;Brock
 P;Golem;5;30;25
 E;Belino
+G;Ciudad Dorada;4;3
+L;Misty
+P;Golem;5;30;25
+L;Carlos
+P;Pikachu;5;30;25

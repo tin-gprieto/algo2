@@ -4,7 +4,7 @@ int golpe(int magnitud, int resistencia){
     return magnitud - (resistencia / 2);
 }
 
-int golpes_debil(int magnitud, int resistencia){
+int golpe_debil(int magnitud, int resistencia){
     return magnitud - (resistencia * 2);
 }
 

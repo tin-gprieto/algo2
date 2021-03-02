@@ -51,7 +51,9 @@ Para compilar y ejecutar el programa, se hizo utilización de un archivo Makefil
   -**make test**: Compila y ejecuta el archivo de testeo del juego en prueba.exe.
   -**make interfaz**: Compila y ejecuta el archivo de testeo de la interfaz en interfaz.exe.
   -**make heap**: Compila y ejecuta el archivo de testeo en heap.exe.
-  
+
+Una vez ejecutado el juego, la forma standard de jugarlo, es incluyendo el archivo de personaje "txt/personaje.txt" y el archivo de los gimnasios del kanto, "txt/kanto.txt". Sin embargo, siguiendo el formato de la consigna, cada uno puede agregar nuevo archivos o modificar los actuales. 
+
 ### Estructuras
 
 #### pokemon_t

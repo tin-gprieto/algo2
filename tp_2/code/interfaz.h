@@ -3,6 +3,7 @@
 
 #include "../toolbox/tools.h"
 #include "estructuras.h"
+#include "batallas.h"
 
 //Estados de la interfaz
 #define OPCION_PERSONAJE 'E'
@@ -17,21 +18,19 @@
 #define OPCION_REPETIR 'R'
 #define OPCION_SALIR 'F'
 #define ESTADO_NULO ' '
-<<<<<<< Updated upstream
-
-=======
 //tipos de menus
 #define MENU_INICIO 0
 #define MENU_GYM 1
-#define MENU_BATALLA 2
+#define MENU_INTERCAMBIO 2
 #define MENU_VICTORIA 3
 #define MENU_DERROTA 4
->>>>>>> Stashed changes
 //tipo de listas para pedir
 #define LISTA_COMBATE 0
 #define LISTA_CAJA 1
 #define LISTA_ENTRENADOR 2
-
+//archivos
+#define ARCHIVO_PERSONAJE 1
+#define ARCHIVO_GIMNASIO 2
 //constantes
 #define MAX_MENU 5
 #define MAX_OPCIONES 4
@@ -86,11 +85,28 @@ void menu_gimnasio(interfaz_t* interfaz, gimnasio_t* gimnasio);
 
 /* 
 * Muestra el menu batalla con la informacion de los pokemones
-* Pre : Interfaz creada, los dos pokemones de la batalla y el resultado de la misma
-* (Costantes VICTORIA y DERROTA)
+* Pre : Rival creado, la posicion válida del pokemon del rival,
+* pokemon propio creado e inicializado y el resultado de la batalla
+* (Costantes GANO_PRIMERO y GANO_SEGUNDO)
 * Post: Información por pantalla de la batalla
 */
-void menu_batalla(pokemon_t* pkm_propio, pokemon_t* pkm_rival, int estado);
+void menu_batalla(entrenador_t* rival, size_t pos_pkm_rival, pokemon_t* pkm_propio, int estado);
+
+/* 
+* Muestra la información de la batalla para una simulacion
+* Pre : Rival creado, la posicion válida del pokemon del rival,
+* pokemon propio creado e inicializado y el resultado de la batalla
+* (Costantes GANO_PRIMERO y GANO_SEGUNDO)
+* Post: Información por pantalla de la batalla
+*/
+void menu_batalla_simulada(entrenador_t* rival, size_t pos_pkm_rival, pokemon_t* pkm_propio, int estado);
+
+/* 
+* Muestra el menu intercambio (información de las listas) y sus opciones
+* Pre : Interfaz creada, personaje creado, cambio de party realizado
+* Post: Información por pantalla e interfaz en el estado elegido por usuario
+*/
+void menu_intercambio(interfaz_t* interfaz, personaje_t* personaje);
 
 /* 
 * Muestra el menu victoria y sus opciones
@@ -121,9 +137,6 @@ void menu_maestro_pokemon();
 */
 void eliminar_opcion(interfaz_t* interfaz, size_t menu, char opcion);
 
-<<<<<<< Updated upstream
-/* 
-=======
 /*
 * El menu victoria vuelve a su estado inicial 
 * (luego de quitar la opción tomar pokemon)
@@ -133,20 +146,20 @@ void eliminar_opcion(interfaz_t* interfaz, size_t menu, char opcion);
 void reiniciar_menu_victoria(interfaz_t* interfaz);
 
 /*
->>>>>>> Stashed changes
 * Dada una lista de pokemones, la muestra completa por pantalla y
 * devuelve la posicion del pokemon elegido por el usuario
-* Pre : Recibe lista de pokemones cargada 
+* Pre : Recibe lista de pokemones cargada y ID de lista válido
+* (LISTA_CAJA, LISTA_COMBATE o LISTA_ENTRENADOR)
 * Post: Información por pantalla y posicion del pokemon seleccionado 
 */
-size_t pedir_pokemon(lista_t* pokemones, int lista);
+size_t pedir_pokemon(lista_t* pokemones, int id_lista);
 
 /* 
 * Pide una ruta de archivo al usuario y devuelve como parametro
-* Pre : -
+* Pre : ID de archivo válido (ARCHIVO_PERSONAJE o ARCHIVO_GIMNASIO)
 * Post: ruta válida del archivo (sin fallo de apertura)
 */
-void pedir_archivo(char ruta_archivo[MAX_STRING]);
+void pedir_archivo(char ruta_archivo[MAX_STRING], int id_archivo);
 
 /* 
 * Muestra por pantalla la informacion de personaje
@@ -163,5 +176,13 @@ void personaje_informacion(personaje_t* personaje);
 * Post: Información por pantalla
 */
 void gimnasio_informacion(gimnasio_t* gimnasio);
+
+/*
+* Dado un string constante, imprime por pantalla su mensaje de forma tal que
+* el usuario sepa que hay un error
+* Pre : Descripcion completa del problema
+* Post: Información por pantalla
+*/
+void reportar_error(const char *descripcion);
 
 #endif /* __INTERFAZ_H__ */

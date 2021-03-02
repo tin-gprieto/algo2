@@ -1,9 +1,4 @@
 #include "tools.h"
-#define MAX_BAR 10
-
-void warning(const char * descripcion){
-    printf(ROJO "   %s - Hubo un problema con %s" RESET "\n", CRUZ, descripcion);
-}
 
 int __test_cantidad_de_pruebas_corridas = 0;
 int __test_cantidad_de_pruebas_fallidas = 0;

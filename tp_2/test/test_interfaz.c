@@ -83,9 +83,7 @@ int main(){
 
     inicializar_estructuras(&gimnasio, &personaje, &entrenador, pokemones, cant_pkm);
     
-    pedir_pokemon(personaje.party, LISTA_COMBATE);
-    pedir_pokemon(personaje.caja, LISTA_CAJA);
-    pedir_pokemon(entrenador.pokemones, LISTA_ENTRENADOR);
+    menu_inicio(interfaz);
     menu_inicio(interfaz);
     eliminar_opcion(interfaz, MENU_INICIO, OPCION_AGREGAR_GYM);
     eliminar_opcion(interfaz, MENU_INICIO, OPCION_PERSONAJE);
@@ -93,14 +91,17 @@ int main(){
     menu_gimnasio(interfaz, &gimnasio);
     personaje_informacion(&personaje);
     gimnasio_informacion(&gimnasio);
-    menu_batalla(&pokemones[0], &pokemones[2], BATALLA_DERROTA);
-    menu_batalla(&pokemones[1], &pokemones[0], BATALLA_VICTORIA);
+    menu_batalla(&pokemones[0], &pokemones[2], GANO_PRIMERO);
+    menu_batalla(&pokemones[1], &pokemones[0], GANO_SEGUNDO);
     menu_victoria(interfaz);
     eliminar_opcion(interfaz, MENU_VICTORIA, OPCION_TOMAR_PKM);
     menu_victoria(interfaz);
     reiniciar_menu_victoria(interfaz);
     menu_victoria(interfaz);
     menu_derrota(interfaz, &gimnasio);
+    pedir_pokemon(personaje.party, LISTA_COMBATE);
+    pedir_pokemon(personaje.caja, LISTA_CAJA);
+    pedir_pokemon(entrenador.pokemones, LISTA_ENTRENADOR);
 
     interfaz_destruir(interfaz);
     lista_destruir(personaje.caja);

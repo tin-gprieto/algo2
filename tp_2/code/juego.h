@@ -7,18 +7,18 @@
 #include "../toolbox/tools.h"
 
 //funciones batalla
-#define FUNCION_1 1
-#define FUNCION_2 2
-#define FUNCION_3 3
-#define FUNCION_4 4
-#define FUNCION_5 5
+#define FUNCION_1 0
+#define FUNCION_2 1
+#define FUNCION_3 2
+#define FUNCION_4 3
+#define FUNCION_5 4
 //estado juego
 #define JUEGO_INICIO 0
 #define JUEGO_JUGANDO 1
 #define JUEGO_SIMULANDO 2
 #define JUEGO_PERDIDO 4
 #define JUEGO_GANADO 5
-
+#define JUEGO_SALIR 6
 //constantes
 #define MAX_FUNCIONES 5
 #define VACIO 0
@@ -53,7 +53,7 @@ juego_t* juego_crear();
 * Pre : Juego creado
 * Post: Memoria ocupada por el juego liberada
 */
-void destruir_juego(juego_t* juego);
+void juego_destruir(juego_t* juego);
 
 /* 
 * Determina si el juego cumple las condiciones para iniciarse
@@ -77,28 +77,36 @@ int juego_estado(juego_t* juego, int estado);
 void juego_cambiar_estado(juego_t* juego, int nuevo_estado);
 
 /*
-*
-* Pre :
-* Post:
+* Pide la ruta del archivo y agrega el personaje a la estructura del juego
+* Pre : Juego creado e inicializado
+* Post: Juego en el estado correspondiente
+* (ERROR si no pudo cargar al personaje o INICIO si cargó el personaje)
 */
 void juego_agregar_personaje(juego_t* juego);
 
 /*
-*
-* Pre :
-* Post:
+* Pide la ruta del archivo y agrega el personaje a la estructura del juego
+* Pre : Juego creado e inicializado
+* Post: Juego en el estado correspondiente
+* (ERROR si no pudo cargar al personaje o INICIO si cargó el personaje)
 */
 void juego_agregar_gimnasios(juego_t* juego);
 
+/*
+* Borra la raiz del heap de gimnasios y deja el juego en el estado correspondiente
+* Pre : Juego creado e inicializado y gimnasios creados
+* Post: Estado del juego que corresponda
+*/
+void juego_eliminar_gimnasio(juego_t* juego);
 
 /* 
-* Realiza una batalla del gimnasio
-* Pre : Gimnasio cargado y no vacío, personaje cargado, 
-* funcion batalla corriespondiente al gimnasio y un menú batalla que muestre los datos de la misma
+* Realiza todas las batalla de un gimnasio, informando al usuario de cada batalla, 
+* según si se juegue manual o simulado 
+* Pre : Gimnasio cargado y no vacío, personaje cargado, estado del juego correcto
 * Post: Devuelve al gimnasio en su estado correspondiente
 * (En caso de que gane, dejará el gimnasio con su lider)
 */
-void jugar_gimnasio(gimnasio_t* gimnasio, personaje_t* personaje, funcion_batalla batalla);
+void jugar_gimnasio(juego_t* juego, gimnasio_t* gimnasio);
 
 /* 
 * Se ejecuta la opción de tomar un pokemon del lider
@@ -106,7 +114,7 @@ void jugar_gimnasio(gimnasio_t* gimnasio, personaje_t* personaje, funcion_batall
 * Pre : Gimnasio creado y unicamento con el último entrenador(lider), funcion para pedir pokemones al usuario 
 * Post: Devuelve la caja del personaje con un nuevo pokemón y el estado del juego
 */
-int quitar_pokemon_lider(personaje_t* personaje, gimnasio_t* gimnasio, size_t (*pedir_pokemon)(lista_t*, int));
+void quitar_pokemon_lider(juego_t* juego);
 
 /* 
 * Se ejecuta la opción de cambiar el party
@@ -115,6 +123,6 @@ int quitar_pokemon_lider(personaje_t* personaje, gimnasio_t* gimnasio, size_t (*
 * Pre : Personaje creado, funcion para pedir pokemones al usuario 
 * Post: Devuelve el Party modificado y el estado del juego
 */
-int cambiar_party(personaje_t* personaje, size_t (*pedir_pokemon)(lista_t*, int));
+void cambiar_party(juego_t* juego);
 
 #endif /* __JUEGO_H__ */

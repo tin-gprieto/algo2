@@ -26,6 +26,7 @@ TDA_FILE=toolbox/tdas/*.c
 $(EXE): $(MAIN_FILE) $(CFILE) $(TOOL_FILE) $(TDA_FILE)
 	clear
 	$(CC) $(MAIN_FILE) $(LIB_FILE) $(TOOL_FILE) $(TDA_FILE) $(CFLAGS) $(WFLAGS) -o $(EXE)
+	
 play: $(EXE)
 	clear
 	./$(EXE)
