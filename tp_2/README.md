@@ -1,5 +1,3 @@
-[TOC]
-
 Trabajo Práctico 2
 =============
 
