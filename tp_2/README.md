@@ -1,12 +1,14 @@
 [TOC]
-# Trabajo Práctico 2
 
-### Descripción general
+Trabajo Práctico 2
+=============
+
+## Descripción general
 
 El trabajo consiste en la implementación del juego "Pokemon Journey", inspirado en la serie japonesa de televisión Pokémon.
 Dentro de este trabajo se emplean conocimientos sobre la utilización de Tipo de Datos Abstractos (TDA), tales como Pila, Cola, Lista, ABB y Heap, además del uso de estructuras propias creadas en memoria dinámica. El juego consiste en el recorrido de un personaje principal por varios gimnasios, donde luchando contra otros entrenadores y derrotando al líder de cada gimnasio, irá acumulando medallas para consagrarse como Maestro Pokémon. El juego tiene dos modos, un juego manual, donde se irá progresando batalla a batalla contra cada entrenador, y un juego simulado, donde éste proceso será automático, limitándose a mostrar si perdió, con la opción de hacer modificaciones e intentar simularlo simularlo, o si se convirtió en Maestro Pokémon.
 
-### Organización
+## Organización
 
 La implementación del juego está divida en varios archivos y carpetas que facilitan a la organización de la misma. Estas carpetas están organizadas según las distintas partes del trabajo: La implementación; Las pruebas realizadas a la misma; Las herramientas utilizadas (previamente implementadas en los anteriores trabajos); y los archivos en los cuales se encuentra la información necesaria para la ejecución del programa.
 
@@ -21,6 +23,7 @@ En esta carpeta se incluye los librerías exclusivas para éste juego. Entre ell
   - **interfaz.h**: Funciones relacionadas con información visual (interacción del usuario por consola) y con la creación  y utilización de la estructura interfaz_t.(*1)
       
   - **juego.h**: Funciones relacionadas al funcionamiento interno del juego y con la creación y utilización de juego_t (*1)y lectura de archivos.
+
 
 (*1)Serán explicadas y desarrolladas más adelante, en el aparado Estructuras.
 
@@ -42,7 +45,7 @@ y las funciones de testeo (tools.c), además de incluir las constantes de Colore
 
 Ésta carpeta está destinada a los archivos de textos requeridos para jugar el juego, es decir, los archivos de los gimnasios y el personaje. En este se puede agregar archivos, si el usuario los desea, siempre y cuando cumplan con los formatos predefinidos.
 
-### Compilación y Ejecución
+## Compilación y Ejecución
 
 Para compilar y ejecutar el programa, se hizo utilización de un archivo Makefile con los siguiente comandos:
   - **make juego.exe**: Compila el archivo main.c junto a los archivos de code.
@@ -53,7 +56,7 @@ Para compilar y ejecutar el programa, se hizo utilización de un archivo Makefil
 
 Una vez ejecutado el juego, la forma standard de jugarlo, es incluyendo el archivo de personaje "txt/personaje.txt" y el archivo de los gimnasios del kanto, "txt/kanto.txt". Sin embargo, siguiendo el formato de la consigna, cada uno puede agregar nuevo archivos o modificar los actuales. 
 
-### Estructuras
+## Estructuras
 
 #### pokemon_t
   
@@ -80,12 +83,17 @@ La interfaz es un tipo de dato que se utilizarán dentro del juego, y en la cual
 
 El juego contiene a todas las estructuras anteriormente nombraradas, tendrá un personaje_t, un heap minimal de gimnasios (contiene a todos los gimnasios_t del juego y por lo tanto a todos los entrenadores), para poder acceder directamente al gimnasio de menor dificulata (el próximo a luchar), la interfaz_t y finalmente un campo que indique el estado del juego, si está jugando, si ganó, perdió o hubo un error.
 
-### Consideraciones finales
+## Consideraciones finales
     
 - **Cargar gimnasios**
+
 Por una cuestión de practicidad, consideré necesario que la carga de gimnasios no sea de
 manera individual, sino que el archivo contenga todos los gimnasios que requerirá el juego.
+
 - **Casos limite de los archivos**
+
 Al momento de leer los archivos, consideré que cualquier error en formato implicara no cargar ninguna estructura y devolver error, cortando con la ejecución del juego.
+
 - **Derrota en la simulación**
+
 Por más que no especifique la consigna, me pareció oportuno que una vez se pierda, poder mandar el menú de derrota para que el jugador decida si quiere hacer un cambio de pokemones y volver a simular, o directamente salir del juego. Ya que si en el caso contrario, cortara el juego o lo mandara de nuevo al inicio, únicamente podria cambiar los pokemones modificando la formación del archivo.
