@@ -3,41 +3,42 @@ Trabajo Práctico 2
 
 ## Descripción general
 
-El trabajo consiste en la implementación del juego "Pokemon Journey", inspirado en la serie japonesa de televisión Pokémon.
-Dentro de este trabajo se emplean conocimientos sobre la utilización de Tipo de Datos Abstractos (TDA), tales como Pila, Cola, Lista, ABB y Heap, además del uso de estructuras propias creadas en memoria dinámica. El juego consiste en el recorrido de un personaje principal por varios gimnasios, donde luchando contra otros entrenadores y derrotando al líder de cada gimnasio, irá acumulando medallas para consagrarse como Maestro Pokémon. El juego tiene dos modos, un juego manual, donde se irá progresando batalla a batalla contra cada entrenador, y un juego simulado, donde éste proceso será automático, limitándose a mostrar si perdió, con la opción de hacer modificaciones e intentar simularlo simularlo, o si se convirtió en Maestro Pokémon.
+El trabajo consiste en la implementación del juego "Pokemon Journey", inspirado en la serie japonesa de televisión Pokémon. Dentro de este trabajo se emplean conocimientos sobre la utilización de Tipo de Datos Abstractos (TDA), tales como Pila, Cola, Lista, ABB y Heap, además del uso de estructuras personalizada (dónde se emplea la útilización de memoria dinámica). 
+
+El juego consiste en el recorrido de un personaje principal por varios gimnasios, dónde luchará contra otros entrenadores. Una vez derrotado el líder de cada gimnasio, hará acumulado todas las medallas, y por lo tanto se consagrará como Maestro Pokémon. El juego tiene dos modos, un juego manual, donde se irá progresando batalla a batalla contra cada entrenador, y un juego simulado, donde éste proceso será automático, limitándose a mostrar una información básica de cada batalla y culminando en la derrota o en la victoria de la partida.
 
 ## Organización
 
-La implementación del juego está divida en varios archivos y carpetas que facilitan a la organización de la misma. Estas carpetas están organizadas según las distintas partes del trabajo: La implementación; Las pruebas realizadas a la misma; Las herramientas utilizadas (previamente implementadas en los anteriores trabajos); y los archivos en los cuales se encuentra la información necesaria para la ejecución del programa.
+La implementación del juego está divida en varios archivos y carpetas que facilitan a la organización de la misma. Éstas carpetas están organizadas según las distintas partes del trabajo: La implementación; Las pruebas realizadas a la misma; Las herramientas utilizadas (previamente implementadas en los anteriores trabajos); y los archivos, en los cuales se encuentra la información necesaria para la ejecución del programa.
 
 #### code
 
 En esta carpeta se incluye los librerías exclusivas para éste juego. Entre ellas se encuentran:
       
-  - **estructuras.h**: Funciones de creación y utilización de las estructuras más generales del juego, pokemon_t,entrenador_t, personaje_t y gimnasio_t.(*1) Estas estructuras se utilizarán como base en los próximos archivos.
+  - **estructuras.h**: Funciones de creación y utilización de las estructuras más generales del juego, pokemon_t,entrenador_t, personaje_t y gimnasio_t.***1** Estas estructuras se utilizarán como base en los próximos archivos.
        
   - **batallas.h**: Funciones de batalla entre pokemones para los enfrentamientos de los gimnasios
       
-  - **interfaz.h**: Funciones relacionadas con información visual (interacción del usuario por consola) y con la creación  y utilización de la estructura interfaz_t.(*1)
+  - **interfaz.h**: Funciones relacionadas con información visual (interacción del usuario por consola) y con la creación  y utilización de la estructura interfaz_t.***1** 
       
-  - **juego.h**: Funciones relacionadas al funcionamiento interno del juego y con la creación y utilización de juego_t (*1)y lectura de archivos.
+  - **juego.h**: Funciones relacionadas al funcionamiento interno del juego y con la creación y utilización de juego_t ***1** y lectura de archivos.
 
 
-(*1)Serán explicadas y desarrolladas más adelante, en el aparado Estructuras.
+***1** - Serán explicadas y desarrolladas más adelante, en el aparado Estructuras.
 
 #### test
      
 Dentro de esta carpeta, se encuentran los códigos y archivos relacionados con las pruebas de toda la implementación y sus distintas partes:
 
-  - **pruebas_heap.c**: Pruebas del TDA heap.
+  - **pruebas_heap.c**: Pruebas unitarias del TDA heap.
   - **pruebas_interfaz.c**: Pruebas de la interfaz (pruebas visuales).
-  - **pruebas_juego.c**: Pruebas del juego y de sus estructuras.
+  - **pruebas_juego.c**: Pruebas unitarias del juego y de sus estructuras.
   - **txt**: Carpeta que incluyen los archivos para testear para el juego
 
 #### toolbox
      
-Dentro de esta carpeta se encuentran las diferentes herramientas utilizadas en el resto de archivos, como los TDA
-y las funciones de testeo (tools.c), además de incluir las constantes de Colores, ERROR, EXITO y las inclusiones de la libería standard.
+Dentro de ésta carpeta se encuentran las diferentes herramientas utilizadas en el resto de archivos, como los TDA
+y las funciones de testeo (tools.c), además de incluir las constantes como Colores (secuencia de escape ANSI), ERROR, EXITO y las inclusiones de la libería standard.
 
 #### txt
 
@@ -46,11 +47,16 @@ y las funciones de testeo (tools.c), además de incluir las constantes de Colore
 ## Compilación y Ejecución
 
 Para compilar y ejecutar el programa, se hizo utilización de un archivo Makefile con los siguiente comandos:
-  - **make juego**: Compila el archivo main.c junto a los archivos de code.
-  - **make play**: Ejecuta el juego. (./juego)
-  - **make test**: Compila y ejecuta el archivo de testeo del juego en prueba.exe.
-  - **make interfaz**: Compila y ejecuta el archivo de testeo de la interfaz en interfaz.exe.
-  - **make heap**: Compila y ejecuta el archivo de testeo en heap.exe.
+      
+      make juego     : Compila el archivo main.c junto a los archivos de code.
+      
+      make play      : Ejecuta el juego. (./juego)
+      
+      make test      : Compila y ejecuta el archivo de testeo del juego en prueba.exe.
+      
+      make interfaz  : Compila y ejecuta el archivo de testeo de la interfaz en interfaz.exe.
+      
+      make heap      : Compila y ejecuta el archivo de testeo en heap.exe.
 
 Una vez ejecutado el juego, la forma standard de jugarlo, es incluyendo el archivo de personaje "txt/personaje.txt" y el archivo de los gimnasios del kanto, "txt/kanto.txt". Sin embargo, siguiendo el formato de la consigna, cada uno puede agregar nuevo archivos o modificar los actuales. 
 
@@ -62,8 +68,7 @@ Una vez ejecutado el juego, la forma standard de jugarlo, es incluyendo el archi
 
 #### entrenador_t
   
-El entrenador unicamente tiene la información de su nombre y un lista de pokemones, donde se guardaran como máximo 6.
-Éste último campo, podría ser un vector, ya que la cantidad máxima es constante, sin embargo por una cuestión de facilitar la impresión por pantalla de la misma, ya que hay una función particular para eso que comparte con los campos del personaje. Así mismo, no podría no ser una lista o un vector, ya que se necesita poder acceder a todos los elementos sin tener que borrarlos, tanto para poder avanzar para cada batalla o mostrarlos por pantalla o para tomar un pokemon en caso de que sea un líder.
+El entrenador unicamente tiene la información de su nombre y un lista de pokemones, donde se guardaran como máximo 6 y deberá tener al menos uno para ser considerado válido. Éste último campo, el conjunto de pokemones, podría ser un vector, ya que la cantidad máxima es constante, sin embargo por una cuestión de facilitar la impresión por pantalla de la misma, ya que hay una función particular para eso que comparte con los campos del personaje. Así mismo, no podría no ser una lista o un vector, ya que se necesita poder acceder a todos los elementos sin tener que borrarlos, tanto para poder avanzar para cada batalla o mostrarlos por pantalla o para tomar un pokemon en caso de que sea un líder.
 
 #### personaje_t
 
@@ -71,7 +76,7 @@ El personaje contiene la información de su nombre, la cantidad de medallas (gim
 
 #### gimnasio_t
 
-El gimnasio contiene su propia información, es decir, su nombre, su dificultad y el id de la función batalla que se debe usar al momento de las batalla, y a su vez, tiene una pila de entrenadores, donde se iran almacenando los entrenadores, de forma tal que el primer elemento, y por ende el último a desapilarse, sea el Líder del gimnasio.
+El gimnasio contiene su propia información, es decir, su nombre, su dificultad y el id de la función batalla que se debe usar al momento de las batalla, y a su vez, tiene una pila de entrenadores, donde se iran almacenando los entrenadores, de forma tal que el primer elemento, y por ende el último a desapilarse, sea el Líder del gimnasio. Para que un gimnasio sea considerado válido, deberá contar con al menos un Líder y un entrenador, ambos con al menos un pokemon.
 
 #### interfaz_t
   
@@ -87,6 +92,17 @@ El juego contiene a todas las estructuras anteriormente nombraradas, tendrá un 
 
 Por una cuestión de practicidad, consideré necesario que la carga de gimnasios no sea de
 manera individual, sino que el archivo contenga todos los gimnasios que requerirá el juego.
+
+  El formato de las lineas de los archivos es el siguiente: 
+      
+      G;nombre_gimnasio; dificultad; id_funcion [valor entre 1 y 5]
+ 
+      L;nombre_lider
+ 
+      E;nombre_entrenador
+      
+      P;nombre_pokemon; velocidad; ataque; defensa
+
 
 - **Casos limite de los archivos**
 
