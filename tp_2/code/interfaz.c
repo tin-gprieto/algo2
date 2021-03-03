@@ -7,8 +7,6 @@
 #define AMARILLO_PARP "\e[5;33m"
 #define LIMPIAR "clear"
 
-#define ASCII_NUM 48
-
 static const size_t MARCO_ESP          = 2;
 static const size_t INTERFAZ_LIM       = 80;
 static const size_t INTERFAZ_ESPACIO   = 10;
@@ -21,6 +19,8 @@ static const int ESP_1  = 21;
 static const int ESP_2  = 15;
 static const int ESP_3  = 4;
 
+#define SEP_EXTENSION "."
+#define EXTENSION_ARCHIVO "txt"
 #define ATAQUE "ATQ"
 #define DEFENSA "DEF"
 #define VELOCIDAD "VEL"
@@ -33,7 +33,7 @@ static const size_t UNIDAD= 1;
 
 /* 
 * Imprime una serie de espacios por pantalla
-* Pre : 
+* Pre : -
 * Post: Espacios por pantalla
 */
 void imprimir_espaciado(size_t espacio){
@@ -129,10 +129,9 @@ void imprimir_linea_partida(size_t margen, const char* color_1, const char* line
 * (indica el inicio y fin la interfaz)
 */
 void imprimir_marco(int marco){
-    if(marco == FIN){
-        for(int i=0; i < MARCO_ESP; i++)
-            imprimir_enter();
-    }
+    if(marco == FIN)
+        imprimir_enter();
+    
     for(int i=0; i < INTERFAZ_ESPACIO; i++)
         printf(" ");
     for(int i=0; i< INTERFAZ_LIM; i++){
@@ -272,6 +271,7 @@ void mostrar_opciones(interfaz_t* interfaz, int tipo){
 */
 void pedir_opcion_avanzar(){
     imprimir_enter();
+    imprimir_barra(AMARILLO, INICIO);
     imprimir_opcion(OPCION_AVANZAR, "Avanzar");
     imprimir_marco(FIN);
     char opciones[2];
@@ -322,20 +322,25 @@ void dibujo_inicio(){
     printf(AMARILLO FONDO"          ~M!M                                             IMP        " RESET );
     imprimir_margen(FIN, MARGEN_CORTO);
     imprimir_enter();
-    imprimir_enter();
+    imprimir_barra(AMARILLO, INICIO);
     imprimir_linea(MARGEN_CORTO, BLANCO, "  Para iniciar hay que ingresar los archivos personaje y gimnasios");
-    imprimir_enter();
+    imprimir_barra(AMARILLO, INICIO);
 }
 /* 
 * Imprime por pantalla el encabezado del gimnasio
 * Pre : nombre del gimnasio
 * Post: Título impreso por pantalla
 */
-void encabezado_gimnasio(const char* gimnasio){
+void encabezado_gimnasio(const char* gimnasio, size_t gimnasios_restantes){
     imprimir_marco(INICIO);
     imprimir_barra(AMARILLO, INICIO);
     imprimir_linea_partida(MARGEN_MEDIO, AMARILLO, " GIMNASIO:  ", BLANCO, gimnasio);
     imprimir_barra(AMARILLO, FIN); 
+    char descripcion[INTERFAZ_LIM];
+    sprintf(descripcion, "GIMNASIOS RESTANTES:    %li", gimnasios_restantes);
+    imprimir_enter();
+    imprimir_linea(MARGEN_MEDIO, BLANCO, descripcion);
+    imprimir_enter();
 }
 /* 
 * Carga un string con espacios dada una longitud
@@ -481,6 +486,16 @@ size_t buscar_opcion(char opciones[], size_t tope, char opcion){
     return pos;
 }
 /* 
+* Intercambia las letras según sus posiciones en el array
+* Pre : posiciones válidas (menores al tope)
+* Post: letras intercambiadas
+*/
+void swap_letra(char opciones[MAX_OPCIONES], size_t letra_1, size_t letra_2){
+    char aux = opciones[letra_1];
+    opciones[letra_1] = opciones[letra_2];
+    opciones[letra_2] = aux;
+}
+/* 
 * Manda la letra de la posicion al final
 * Pre : posicion de la letra a eliminar
 * Post: letra a eliminar al final del vector
@@ -488,22 +503,31 @@ size_t buscar_opcion(char opciones[], size_t tope, char opcion){
 void eliminar_letra(char opciones[], size_t pos, size_t tope){
     if(pos >= tope - 1)
         return;
-    char aux = opciones[pos];
-    opciones[pos] = opciones[tope - 1];
-    opciones[tope - 1] = aux;
+    for(size_t i = pos; i < tope - 1; i++)
+        swap_letra(opciones, i, i + 1);
+        
 }
 /* 
-* Swapea dos strings
+* Intercambia los strings según sus posiciones en el array
+* Pre : posiciones válidas (menores al tope)
+* Post: strings intercambiadas
+*/
+void swap_string(char descripciones[MAX_OPCIONES][MAX_STRING], size_t str_1, size_t str_2){
+    char aux[MAX_STRING];
+    strcpy(aux, descripciones[str_1]);
+    strcpy(descripciones[str_1], descripciones[str_2]);
+    strcpy(descripciones[str_2], aux);
+}
+/* 
+* Manta el string de la posicion al final
 * Pre : posicion del string a eliminar
 * Post: string a eliminar al final del vector
 */
 void eliminar_descripcion(char descripciones[MAX_OPCIONES][MAX_STRING], size_t pos, size_t tope){
     if(pos >= tope - 1)
         return;
-    char aux[MAX_STRING];
-    strcpy(aux, descripciones[pos]);
-    strcpy(descripciones[pos], descripciones[tope - 1]);
-    strcpy(descripciones[tope - 1], aux);
+    for(size_t i = pos; i < tope - 1; i++)
+        swap_string(descripciones, i, i + 1);
 }
 /*
 * Dado un string, la posicion del pokemon, en qué lista se encuentra y si está elegido
@@ -628,6 +652,23 @@ void imprimir_medallero(int medallas){
 
     imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "MEDALLAS:  ", AMARILLO, str_medallas);
 }
+/*
+* Dado un string corrobora que sea un archivo txt y
+* Pre : String pedido al usuario y menor a MAX_STRING
+* Post: Verdadero si abre correctamente un archivo y es txt
+*/
+bool ruta_archivo_valida(char ruta[MAX_STRING]){
+    char* extension = strtok(ruta, SEP_EXTENSION);
+    extension = strtok(NULL, SEP_EXTENSION);
+    if(!extension || strcmp(extension, EXTENSION_ARCHIVO) != 0)
+        return false;
+    strcat(ruta, ".txt");
+    FILE* prueba = fopen(ruta, LECTURA);
+    if(!prueba)
+        return false;
+    fclose(prueba);
+    return true;
+}
 /* 
 * Inicializa el menu inicio con sus opciones y descripciones
 * Pre : Interfaz creada
@@ -649,7 +690,7 @@ void inicializar_gimnasio(interfaz_t* interfaz){
     cargar_opcion(interfaz, MENU_GYM, OPCION_PERSONAJE, "Informacion del personaje" );
     cargar_opcion(interfaz, MENU_GYM, OPCION_GIMNASIO, "Informacion del gimnasio" );
     cargar_opcion(interfaz, MENU_GYM, OPCION_CAMBIAR, "Cambiar pokemones de combate" );
-    cargar_opcion(interfaz, MENU_GYM, OPCION_BATALLA, "Luchar primer batalla" );
+    cargar_opcion(interfaz, MENU_GYM, OPCION_BATALLA, "Luchar proxima batalla" );
     cargar_opcion(interfaz, MENU_GYM, OPCION_SALIR, "Finalizar partida" );
 }
 /* 
@@ -695,14 +736,13 @@ void inicializar_interfaz(interfaz_t* interfaz){
     inicializar_intercambio(interfaz);
 }
 
-//FUNCIONES INTERFAZ.H
-
+//interfaz.h
 void reportar_error(const char *descripcion){
     imprimir_espaciado(INTERFAZ_ESPACIO);
     printf(ROJO "%s - ERROR - %s \n" RESET, CRUZ, descripcion);
-    imprimir_espaciado(INTERFAZ_ESPACIO);
+    system("sleep 2");
 }
-
+//interfaz.h
 void gimnasio_informacion(gimnasio_t* gimnasio){
     if(!gimnasio){
         reportar_error("Hubo un problema con el gimnasio");
@@ -729,7 +769,7 @@ void gimnasio_informacion(gimnasio_t* gimnasio){
     imprimir_enter();
     pedir_opcion_avanzar();    
 }
-
+//interfaz.h
 void personaje_informacion(personaje_t* personaje){
     if(!personaje){
         reportar_error("Hubo un problema con el personaje principal");
@@ -749,7 +789,7 @@ void personaje_informacion(personaje_t* personaje){
     imprimir_enter();
     pedir_opcion_avanzar();
 }
-
+//interfaz.h
 void pedir_archivo(char ruta_archivo[MAX_STRING], int id_archivo){
     imprimir_espaciado(INTERFAZ_ESPACIO);
     if(id_archivo == ARCHIVO_PERSONAJE)
@@ -757,8 +797,15 @@ void pedir_archivo(char ruta_archivo[MAX_STRING], int id_archivo){
     if(id_archivo == ARCHIVO_GIMNASIO)
         printf("Ingrese la ruta del archivo del" VERDE " gimnasio" RESET ":");
     scanf("%99[^\n]", ruta_archivo);
+    while(!ruta_archivo_valida(ruta_archivo)){
+        reportar_error("Hubo un problema con la ruta ingresada");
+        imprimir_espaciado(INTERFAZ_ESPACIO);
+        printf("Ingrese nuevamente : ");
+        limpiar_buffer();
+        scanf("%99[^\n]", ruta_archivo);
+    }
 }
-
+//interfaz.h
 size_t pedir_pokemon(lista_t* pokemones, int lista){
     if(!pokemones){
         reportar_error("Hubo un problema con la lista de pokemones");
@@ -770,7 +817,7 @@ size_t pedir_pokemon(lista_t* pokemones, int lista){
     imprimir_marco(FIN);
     return pedir_pos(lista_elementos(pokemones));
 }
-
+//interfaz.h
 void eliminar_opcion(interfaz_t* interfaz, size_t menu, char opcion){
     if(!interfaz)
         return;
@@ -782,16 +829,18 @@ void eliminar_opcion(interfaz_t* interfaz, size_t menu, char opcion){
     eliminar_descripcion(interfaz->menus[menu].descripciones, pos, cantidad);
     interfaz->menus[menu].cant_opciones --;
 }
-
+//interfaz.h
 void reiniciar_menu_victoria(interfaz_t* interfaz){
     if(!interfaz)
         return;
-    cargar_opcion(interfaz, MENU_VICTORIA, OPCION_TOMAR_PKM, "Tomar prestado un pokemon" );
+    interfaz->menus[MENU_VICTORIA].cant_opciones ++;
     size_t cantidad = interfaz->menus[MENU_VICTORIA].cant_opciones;
-    eliminar_letra(interfaz->menus[MENU_VICTORIA].opciones, 0, cantidad);
-    eliminar_descripcion(interfaz->menus[MENU_VICTORIA].descripciones, 0, cantidad);
+    for(size_t i = 0; i < cantidad; i++){
+        swap_letra(interfaz->menus[MENU_VICTORIA].opciones, i, cantidad - 1);
+        swap_string(interfaz->menus[MENU_VICTORIA].descripciones, i, cantidad - 1);
+    }
 }
-
+//interfaz.h
 void menu_maestro_pokemon(){
     system(LIMPIAR);
     imprimir_marco(INICIO);
@@ -835,13 +884,14 @@ void menu_maestro_pokemon(){
     imprimir_margen(INICIO, MARGEN_MEDIO);
     printf(FONDO BLANCO"            ▀█████████████▀             "RESET);
     imprimir_margen(FIN, MARGEN_MEDIO);
+    imprimir_enter();
     imprimir_barra(AMARILLO, INICIO);
     imprimir_linea(MARGEN_MEDIO, AMARILLO_PARP,"   TE HAS CONSAGRADO MAESTRO POKEMON!");
     imprimir_barra(AMARILLO, FIN);
-    imprimir_enter();;
+    imprimir_enter();
     imprimir_marco(FIN);
 }
-
+//interfaz.h
 void menu_intercambio(interfaz_t* interfaz,  personaje_t* personaje){
     if(!interfaz){
         reportar_error("Hubo un problema con la interfaz");
@@ -857,9 +907,11 @@ void menu_intercambio(interfaz_t* interfaz,  personaje_t* personaje){
     listar_pokemones(personaje->caja, LISTA_CAJA);
     imprimir_enter();
     listar_pokemones(personaje->party, LISTA_COMBATE);
+    imprimir_enter();
+    imprimir_barra(AMARILLO, INICIO);
     mostrar_opciones(interfaz, MENU_INTERCAMBIO);
 }
-
+//interfaz.h
 void menu_derrota(interfaz_t* interfaz, gimnasio_t* gimnasio){
     if(!interfaz){
         reportar_error("Hubo un problema con la interfaz");
@@ -873,7 +925,7 @@ void menu_derrota(interfaz_t* interfaz, gimnasio_t* gimnasio){
     encabezado_derrota(gimnasio);
     mostrar_opciones(interfaz, MENU_DERROTA);
 }
-
+//interfaz.h
 void menu_victoria(interfaz_t* interfaz){
     if(!interfaz){
         reportar_error("Hubo un problema con la interfaz");
@@ -883,7 +935,7 @@ void menu_victoria(interfaz_t* interfaz){
     encabezado_victoria();
     mostrar_opciones(interfaz, MENU_VICTORIA);
 }
-
+//interfaz.h
 void menu_batalla(entrenador_t* rival, size_t pos_pkm_rival, pokemon_t* pkm_propio, int estado){
     system(LIMPIAR);
     imprimir_marco(INICIO);
@@ -905,34 +957,60 @@ void menu_batalla(entrenador_t* rival, size_t pos_pkm_rival, pokemon_t* pkm_prop
     informacion_batalla(pkm_propio, pkm_rival, estado);
     pedir_opcion_avanzar();
 }
-
-void menu_batalla_simulada(entrenador_t* rival, size_t pos_pkm_rival, pokemon_t* pkm_propio, int estado){
-    if(pos_pkm_rival == 0 && estado == GANO_PRIMERO)
-        imprimir_marco(INICIO);
-    pokemon_t* pkm_rival = lista_elemento_en_posicion(rival->pokemones, pos_pkm_rival);
-    char informacion[MAX_STRING + 100];
+//interfaz.h
+void menu_batalla_simulada(pokemon_t* pkm_rival, pokemon_t* pkm_propio, int estado){
+    char informacion[MAX_STRING];
     sprintf(informacion, " - %s  VS  %s", pkm_propio->nombre, pkm_rival->nombre);
     if(estado == GANO_PRIMERO)
         imprimir_linea_partida(MARGEN_CORTO, VERDE, "V", BLANCO, informacion);
     if(estado == GANO_SEGUNDO)
         imprimir_linea_partida(MARGEN_CORTO, ROJO, "D", BLANCO, informacion);
+    imprimir_enter();
     system("sleep 1");
 }
-
-void menu_gimnasio(interfaz_t* interfaz, gimnasio_t* gimnasio){
-    if(!interfaz){
+//interfaz.h
+void menu_simulacion(int tipo_menu, gimnasio_t* gimnasio, entrenador_t* rival){
+    if(tipo_menu == SIMULACION_INICIO){
+        system(LIMPIAR);
+        imprimir_marco(INICIO);
+        imprimir_barra(AMARILLO, INICIO);
+        imprimir_linea(MARGEN_LARGO, AMARILLO, "SIMULACION DEL JUEGO");
+        imprimir_barra(AMARILLO, INICIO);
+    }else if(tipo_menu == SIMULACION_GIMNASIO){
+        if(gimnasio){
+            imprimir_enter();
+            imprimir_linea(MARGEN_MEDIO, AMARILLO, gimnasio->nombre);
+            imprimir_enter();
+        }else{
+            reportar_error(" Error con el gimnasio de la simulación");
+        }
+    }else if(tipo_menu == SIMULACION_ENTRENADOR){
+        if(rival){
+            imprimir_linea(MARGEN_CORTO, SUBRAYADO, rival->nombre);
+            imprimir_enter();
+        }else{
+            reportar_error(" Error con el gimnasio de la simulación");
+        }
+    }else if(tipo_menu == SIMULACION_FIN){
+        pedir_opcion_avanzar(); 
+    }
+}
+//interfaz.h
+void menu_gimnasio(interfaz_t* interfaz, heap_t* heap_gimnasios){
+    if(!interfaz || !heap_gimnasios || heap_vacio(heap_gimnasios)){
         reportar_error("Hubo un problema con la interfaz");
         return;
     }
+    gimnasio_t* gimnasio = (gimnasio_t*)heap_raiz(heap_gimnasios);
     if(!gimnasio){
         reportar_error("Hubo un problema con el gimnasio");
         return;
     }
     system(LIMPIAR);
-    encabezado_gimnasio(gimnasio->nombre);
+    encabezado_gimnasio(gimnasio->nombre, heap_elementos(heap_gimnasios));
     mostrar_opciones(interfaz, MENU_GYM);
 }
-
+//interfaz.h
 void menu_inicio(interfaz_t* interfaz){
     if(!interfaz){
         reportar_error("Hubo un problema con la interfaz");
@@ -942,17 +1020,23 @@ void menu_inicio(interfaz_t* interfaz){
     dibujo_inicio();
     mostrar_opciones(interfaz, MENU_INICIO);
 }
-
+//interfaz.h
 bool interfaz_estado(interfaz_t* interfaz, char estado){
     return interfaz->estado == estado;
 }
-
+//interfaz.h
+void interfaz_cambiar_estado(interfaz_t* interfaz, char nuevo_estado){
+    if(!interfaz)
+        return;
+    interfaz->estado = nuevo_estado;
+}
+//interfaz.h
 void interfaz_destruir(interfaz_t* interfaz){
     if(!interfaz) return;
     free(interfaz->menus);
     free(interfaz);
 }
-
+//interfaz.h
 interfaz_t* interfaz_crear(){
     interfaz_t* interfaz = malloc(sizeof(interfaz_t));
     if(!interfaz) return NULL;

@@ -14,8 +14,9 @@
 #define BATALLA_DERROTA -1
 #define BATALLA_VICTORIA 0
 //constantes
+#define MAX_FUNCIONES 5
 #define MAX_STRING 100
-#define MAX_NOMBRE 50
+#define MAX_NOMBRE 30
 
 typedef struct pokemon{
     char nombre[MAX_NOMBRE];

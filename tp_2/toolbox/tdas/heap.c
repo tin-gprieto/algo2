@@ -111,7 +111,6 @@ void sift_down(heap_t* heap, size_t posicion){
 }
 
 //heap.h
-
 heap_t* heap_crear(heap_condicion condicion, heap_destructor destructor){
     if(!condicion) return NULL;
     heap_t* aux = malloc(sizeof(heap_t));
@@ -122,12 +121,12 @@ heap_t* heap_crear(heap_condicion condicion, heap_destructor destructor){
     aux->tope = VACIO;
     return aux;
 }
-
+//heap.h
 bool heap_vacio(heap_t* heap){
     if(heap) return !(heap->tope);
     return true;
 }
-
+//heap.h
 void heap_destruir(heap_t* heap){
     if(!heap) return;
     if(!heap_vacio(heap)){
@@ -138,12 +137,12 @@ void heap_destruir(heap_t* heap){
     }
     free(heap);
 }
-
+//heap.h
 void* heap_raiz(heap_t* heap){
     if(heap && !heap_vacio(heap)) return heap->vector[RAIZ];
     return NULL;
 }
-
+//heap.h
 int heap_insertar(heap_t* heap, void* elemento){
     if(!heap) return ERROR;
     void** aux = realloc(heap->vector, (sizeof(void**) * (heap->tope + 1)));
@@ -154,7 +153,7 @@ int heap_insertar(heap_t* heap, void* elemento){
     sift_up(heap, heap->tope - 1);
     return EXITO;
 }
-
+//heap.h
 int heap_borrar(heap_t* heap){
     if(!heap || heap_vacio(heap))
         return ERROR;
@@ -173,7 +172,7 @@ int heap_borrar(heap_t* heap){
     }
     return EXITO;
 }
-
+//heap.h
 size_t heap_elementos(heap_t* heap){
     if(heap)
         return heap->tope;

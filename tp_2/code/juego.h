@@ -20,7 +20,6 @@
 #define JUEGO_GANADO 5
 #define JUEGO_SALIR 6
 //constantes
-#define MAX_FUNCIONES 5
 #define VACIO 0
 
 
@@ -101,12 +100,20 @@ void juego_eliminar_gimnasio(juego_t* juego);
 
 /* 
 * Realiza todas las batalla de un gimnasio, informando al usuario de cada batalla, 
-* según si se juegue manual o simulado 
+* jugando de forma manual
 * Pre : Gimnasio cargado y no vacío, personaje cargado, estado del juego correcto
 * Post: Devuelve al gimnasio en su estado correspondiente
 * (En caso de que gane, dejará el gimnasio con su lider)
 */
-void jugar_gimnasio(juego_t* juego, gimnasio_t* gimnasio);
+void jugar_gimnasio(juego_t* juego);
+
+/* 
+* Realiza todas las batalla de un gimnasio, informando al usuario de cada batalla, 
+* jugando de forma manual
+* Pre : Gimnasio cargado y no vacío, personaje cargado, estado del juego correcto
+* Post: Devuelve al gimnasio en su estado correspondiente
+*/
+void simular_gimnasio(juego_t* juego);
 
 /* 
 * Se ejecuta la opción de tomar un pokemon del lider

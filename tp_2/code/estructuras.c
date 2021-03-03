@@ -5,7 +5,6 @@ static const char CLAVE_LIDER      = 'L';
 static const char CLAVE_ENTRENADOR = 'E';
 static const char CLAVE_POKEMON    = 'P';
 
-//static const int LEIDOS_CLAVE      = 1;
 static const int LEIDOS_POKEMON    = 4;
 static const int LEIDOS_GIMNASIO   = 3;
 static const int LEIDOS_ENTRENADOR = 1;
@@ -14,9 +13,8 @@ static const int LECTURA_CONTINUAR = 1;
 static const int LECTURA_ERROR     = -1;
 static const int LECTURA_FIN       = 0;
 
-static const int MAX_POKEMONES         = 6;
+static const int MAX_POKEMONES     = 6;
 
-//#define FORMATO_CLAVE "%c;"
 #define FORMATO_ENTRENADOR ";%49[^\n]\n"
 #define FORMATO_GIMNASIO ";%49[^;];%i;%i\n"
 #define FORMATO_POKEMON ";%49[^;];%i;%i;%i\n"
@@ -423,6 +421,8 @@ gimnasio_t* linea_gimnasio_leer(FILE* archivo){
     gimnasio_t auxiliar;
     int leidos = fscanf(archivo, FORMATO_GIMNASIO, auxiliar.nombre, &(auxiliar.dificultad), &(auxiliar.id_batalla));
     if(leidos != LEIDOS_GIMNASIO)
+        return NULL;
+    if(auxiliar.id_batalla > MAX_FUNCIONES)
         return NULL;
     gimnasio_t* gimnasio = malloc(sizeof(gimnasio_t));
     if(!gimnasio)

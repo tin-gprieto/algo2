@@ -30,11 +30,6 @@
 #define CRUZ "✗"
 
 /*
-*Imprime por pantalla una advertencia según description
-*/
-void warning(const char * descripcion);
-
-/*
 *Imprime por pantalla una prueba con su descripcion
 *Si la afirmación no se cumple se considera un error
 */
@@ -52,7 +47,7 @@ void test_nuevo_grupo(const char *descripcion);
 void test_nuevo_sub_grupo(const char *descripcion);
 
 /*
-*Muestra por pantall la cantidad de pruebas corridas y errores
+*Muestra por pantalla la cantidad de pruebas corridas y errores
 */
 void test_mostrar_reporte();
 

@@ -28,6 +28,11 @@
 #define LISTA_COMBATE 0
 #define LISTA_CAJA 1
 #define LISTA_ENTRENADOR 2
+//estados simulacion
+#define SIMULACION_INICIO 0
+#define SIMULACION_FIN 1
+#define SIMULACION_ENTRENADOR 2
+#define SIMULACION_GIMNASIO 3
 //archivos
 #define ARCHIVO_PERSONAJE 1
 #define ARCHIVO_GIMNASIO 2
@@ -69,6 +74,13 @@ void interfaz_destruir(interfaz_t* interfaz);
 */
 bool interfaz_estado(interfaz_t* interfaz, char estado);
 
+/*
+* Dado un nuevo estado cambia el estado actual de la interfaz
+* Pre : Interfaz creada
+* Post: Interfaz con nuevo estado
+*/
+void interfaz_cambiar_estado(interfaz_t* interfaz, char nuevo_estado);
+
 /* 
 * Muestra el menu inicio y sus opciones
 * Pre : Interfaz creada
@@ -81,7 +93,7 @@ void menu_inicio(interfaz_t* interfaz);
 * Pre : Interfaz creada y nombre del gimnasio
 * Post: Interfaz en el estado elegido por usuario 
 */
-void menu_gimnasio(interfaz_t* interfaz, gimnasio_t* gimnasio);
+void menu_gimnasio(interfaz_t* interfaz, heap_t* gimnasio);
 
 /* 
 * Muestra el menu batalla con la informacion de los pokemones
@@ -99,7 +111,15 @@ void menu_batalla(entrenador_t* rival, size_t pos_pkm_rival, pokemon_t* pkm_prop
 * (Costantes GANO_PRIMERO y GANO_SEGUNDO)
 * Post: Información por pantalla de la batalla
 */
-void menu_batalla_simulada(entrenador_t* rival, size_t pos_pkm_rival, pokemon_t* pkm_propio, int estado);
+void menu_batalla_simulada(pokemon_t* pkm_rival, pokemon_t* pkm_propio, int estado);
+
+/* 
+* Según el momento del juego muestra información sobre la simulación
+* Pre : Tipo de menu válido (constantes SIMULACION) y gimnasio/entrendor 
+* existente si corresponde
+* Post: Información por pantalla de la simulación
+*/
+void menu_simulacion(int tipo_menu, gimnasio_t* gimnasio, entrenador_t* rival);
 
 /* 
 * Muestra el menu intercambio (información de las listas) y sus opciones

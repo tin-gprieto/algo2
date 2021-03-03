@@ -1,0 +1,8 @@
+G;Ciudad Plateada;4;3
+L;Brock
+P;Geodude;5;19;30
+P;Onix;20;32;22
+E;Belino
+P;Golem;5;30;25
+E;Jordan
+P;Rhydon;10;40;19

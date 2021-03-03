@@ -17,9 +17,13 @@ void iniciar_partida(juego_t* juego){
         if(interfaz_estado(juego->interfaz, OPCION_INICIAR)){
             if(juego_preparado(juego))
                 juego_cambiar_estado(juego, JUEGO_JUGANDO);
+            else
+                reportar_error("Deben ingresarse los archivos");
         }else if(interfaz_estado(juego->interfaz, OPCION_SIMULAR)){
             if(juego_preparado(juego))
                 juego_cambiar_estado(juego, JUEGO_SIMULANDO);
+            else
+                reportar_error("Deben ingresarse los archivos");
         }
     }
 }
@@ -71,11 +75,14 @@ void gimnasio_ganado(juego_t* juego, gimnasio_t* gimnasio){
 void jugar_partida(juego_t* juego){
     while(juego_estado(juego, JUEGO_JUGANDO)){
         gimnasio_t* gimnasio_actual = (gimnasio_t*) heap_raiz(juego->gimnasios);
-        jugar_gimnasio(juego, gimnasio_actual);
+        jugar_gimnasio(juego);
         if(gimnasio_estado(gimnasio_actual, GIMNASIO_DERROTA))
             gimnasio_perdido(juego, gimnasio_actual);
-        if(gimnasio_estado(gimnasio_actual, GIMNASIO_VICTORIA))
+        if(gimnasio_estado(gimnasio_actual, GIMNASIO_VICTORIA)){
             gimnasio_ganado(juego, gimnasio_actual);
+            if(heap_vacio(juego->gimnasios))
+                juego_cambiar_estado(juego,JUEGO_GANADO);
+        }
     }
 }
 
@@ -92,11 +99,18 @@ void simulacion_perdida(juego_t* juego, gimnasio_t* gimnasio){
         if(interfaz_estado(juego->interfaz, OPCION_REPETIR)){
             heap_destruir(juego->gimnasios);
             juego->gimnasios = gimnasios_cargar(juego->archivos.ruta_gimnasios);
-            juego_cambiar_estado(juego, JUEGO_SIMULANDO);
+            if(!juego->gimnasios)
+                juego_cambiar_estado(juego, ERROR);
+            else{
+                juego_cambiar_estado(juego, JUEGO_SIMULANDO);
+                menu_simulacion(SIMULACION_INICIO, NULL, NULL);
+            }
         }
         if(interfaz_estado(juego->interfaz, OPCION_SALIR))
             juego_cambiar_estado(juego, JUEGO_PERDIDO);
     }
+    if(interfaz_estado(juego->interfaz, OPCION_REPETIR))
+        interfaz_cambiar_estado(juego->interfaz, OPCION_AVANZAR);
 }
 /* 
 * Simula la partida completa
@@ -104,15 +118,22 @@ void simulacion_perdida(juego_t* juego, gimnasio_t* gimnasio){
 * Post: Juego perdido o ganado
 */
 void simular_partida(juego_t* juego){
+    
+    menu_simulacion(SIMULACION_INICIO, NULL, NULL);
+    
     while(juego_estado(juego, JUEGO_SIMULANDO)){
         gimnasio_t* gimnasio_actual = (gimnasio_t*) heap_raiz(juego->gimnasios);
-        jugar_gimnasio(juego, gimnasio_actual);
-        if(gimnasio_estado(gimnasio_actual, JUEGO_GANADO))
+        simular_gimnasio(juego);
+        if(gimnasio_estado(gimnasio_actual, GIMNASIO_VICTORIA))
             juego_eliminar_gimnasio(juego);
-        if(gimnasio_estado(gimnasio_actual, JUEGO_PERDIDO))
+        if(gimnasio_estado(gimnasio_actual, GIMNASIO_DERROTA)){
+            menu_simulacion(SIMULACION_FIN, NULL, NULL);
             simulacion_perdida(juego, gimnasio_actual);
-        if(heap_vacio(juego->gimnasios))
+        }
+        if(heap_vacio(juego->gimnasios)){
+            menu_simulacion(SIMULACION_FIN, NULL, NULL);
             juego_cambiar_estado(juego, JUEGO_GANADO); 
+        }
     }
 }
 

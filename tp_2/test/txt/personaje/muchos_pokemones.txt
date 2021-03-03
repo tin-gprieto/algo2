@@ -6,8 +6,4 @@ P;Bulbasaur;20;40;30
 P;Charmander;30;40;20
 P;Squirtle;28;22;40
 P;Krabby;31;35;24
-P;Raticate;39;27;24
-P;Haunter;33;38;19
-P;Primeape;48;30;12
-P;Muk;12;31;47
-P;Tauros;20;38;32
+

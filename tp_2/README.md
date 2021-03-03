@@ -46,8 +46,8 @@ y las funciones de testeo (tools.c), además de incluir las constantes de Colore
 ## Compilación y Ejecución
 
 Para compilar y ejecutar el programa, se hizo utilización de un archivo Makefile con los siguiente comandos:
-  - **make juego.exe**: Compila el archivo main.c junto a los archivos de code.
-  - **make play**: Ejecuta juego.exe (el juego).
+  - **make juego**: Compila el archivo main.c junto a los archivos de code.
+  - **make play**: Ejecuta el juego. (./juego)
   - **make test**: Compila y ejecuta el archivo de testeo del juego en prueba.exe.
   - **make interfaz**: Compila y ejecuta el archivo de testeo de la interfaz en interfaz.exe.
   - **make heap**: Compila y ejecuta el archivo de testeo en heap.exe.

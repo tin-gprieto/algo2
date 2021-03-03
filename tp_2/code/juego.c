@@ -123,7 +123,7 @@ int batalla_entrenador(juego_t* juego, entrenador_t* rival, funcion_batalla bata
         if(juego_estado(juego, JUEGO_JUGANDO))
             menu_batalla(rival, pos_lista_rival, pkm_personaje, estado);
         if(juego_estado(juego, JUEGO_SIMULANDO))
-            menu_batalla_simulada(rival, pos_lista_rival, pkm_personaje, estado);
+            menu_batalla_simulada(pkm_rival, pkm_personaje, estado);
         if(estado == GANO_PRIMERO){
             bonificar_pokemon(pkm_personaje);
             pos_lista_rival++;
@@ -160,24 +160,61 @@ void batalla_ganada(gimnasio_t * gimnasio, personaje_t* personaje){
         gimnasio_siguiente_entrenador(gimnasio);
     }
 }
-
 //juego.h
-void jugar_gimnasio(juego_t* juego, gimnasio_t* gimnasio){
-    if(!juego || !juego->personaje || gimnasio_vacio(gimnasio) ){
+void simular_gimnasio(juego_t* juego){
+
+    if(!juego || !juego->personaje || !juego->gimnasios || heap_vacio(juego->gimnasios)){
+        reportar_error("Hubo un problema con disputar el gimnasio");
         juego_cambiar_estado(juego, ERROR);
         return;
     }
+
+    gimnasio_t* gimnasio = (gimnasio_t*)heap_raiz(juego->gimnasios);
+
     funcion_batalla batalla = obtener_funcion_batalla(juego, gimnasio);
 
-    if(!batalla){
+    if(!batalla || !gimnasio || gimnasio_vacio(gimnasio)){
         reportar_error("Hubo un problema con la función de un gimnasio");
         juego_cambiar_estado(juego, ERROR);
         return;
     }
 
+    menu_simulacion(SIMULACION_GIMNASIO, gimnasio, NULL);
+
+    while(gimnasio_estado(gimnasio, GIMNASIO_PELEANDO)){
+        entrenador_t* rival = gimnasio_ultimo_entrenador(gimnasio);
+        menu_simulacion(SIMULACION_ENTRENADOR, NULL, rival);
+        int resultado = batalla_entrenador(juego, rival, batalla);
+        if(resultado == BATALLA_VICTORIA)
+            batalla_ganada(gimnasio, juego->personaje);
+        else
+            gimnasio_cambiar_estado(gimnasio, GIMNASIO_DERROTA);
+    }
+}
+//juego.h
+void jugar_gimnasio(juego_t* juego){
+
+    if(!juego || !juego->personaje || !juego->gimnasios || heap_vacio(juego->gimnasios)){
+        reportar_error("Hubo un problema con disputar el gimnasio");
+        juego_cambiar_estado(juego, ERROR);
+        return;
+    }
+
+    gimnasio_t* gimnasio = (gimnasio_t*)heap_raiz(juego->gimnasios);
+
+    funcion_batalla batalla = obtener_funcion_batalla(juego, gimnasio);
+
+    if(!batalla || !gimnasio){
+        reportar_error("Hubo un problema con la función de un gimnasio");
+        juego_cambiar_estado(juego, ERROR);
+        return;
+    }
+
+    if(juego_estado(juego, JUEGO_SIMULANDO))
+        menu_simulacion(SIMULACION_GIMNASIO, gimnasio, NULL);
+
     while(gimnasio_estado(gimnasio, GIMNASIO_PELEANDO) && !juego_estado(juego,JUEGO_SALIR)){
-        if(juego_estado(juego, JUEGO_JUGANDO))
-            menu_gimnasio(juego->interfaz, gimnasio);
+        menu_gimnasio(juego->interfaz, juego->gimnasios);
         if(interfaz_estado(juego->interfaz, OPCION_PERSONAJE))
             personaje_informacion(juego->personaje);
         if(interfaz_estado(juego->interfaz, OPCION_GIMNASIO))
@@ -196,7 +233,6 @@ void jugar_gimnasio(juego_t* juego, gimnasio_t* gimnasio){
         }
     }
 }
-
 /* 
 * Dada la posicion de un pokemon del conjunto del lider,
 * lo transfiere a la caja del personaje
@@ -274,7 +310,7 @@ int intercambiar_del_party(personaje_t* personaje, pokemon_t* saliente, size_t p
 
     int meter_saliente = lista_insertar_en_posicion(personaje->party, saliente, pos_entrante);
     if(meter_saliente == ERROR) return ERROR;
-    
+
     int meter_entrante = lista_insertar_en_posicion(personaje->party, entrante, pos_saliente);
     if(meter_entrante == ERROR) return ERROR;
 

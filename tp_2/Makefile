@@ -1,57 +1,40 @@
-CC= gcc
-V= valgrind
-GDB= gdb
 CFLAGS= -std=c99 -g -O0
-GFLAGS= -tui
 WFLAGS= -Wall -Wconversion -Werror
 VFLAGS= --leak-check=full --track-origins=yes --show-reachable=yes
 
-MAIN_FILE=main.c
-EXE= juego.exe
-
-TEST_FILE=test/test_juego.c 
-TEST_EXE= test/prueba.exe
-
-HEAP_FILE=test/test_heap.c
-HEAP_EXE= test/heap.exe
-
-INTERFAZ_FILE=test/test_interfaz.c 
-INTERFAZ_EXE= test/interfaz.exe
-
-LIB_FILE=code/*.c
+LIB_FILE= code/*.c
 TOOL_FILE= toolbox/tools.c 
-TDA_FILE=toolbox/tdas/*.c
+TDA_FILE= toolbox/tdas/*.c
 
-
-$(EXE): $(MAIN_FILE) $(CFILE) $(TOOL_FILE) $(TDA_FILE)
+juego: main.c $(CFILE) $(TOOL_FILE) $(TDA_FILE)
 	clear
-	$(CC) $(MAIN_FILE) $(LIB_FILE) $(TOOL_FILE) $(TDA_FILE) $(CFLAGS) $(WFLAGS) -o $(EXE)
+	$(CC) main.c $(LIB_FILE) $(TOOL_FILE) $(TDA_FILE) $(CFLAGS) $(WFLAGS) -o juego
 	
-play: $(EXE)
+play: juego
 	clear
-	./$(EXE)
+	./juego
 
-$(TEST_EXE): $(TEST_FILE) $(TOOL_FILE) $(TDA_FILE) $(LIB_FILE) 
+test/test.exe: test/test_juego.c $(TOOL_FILE) $(TDA_FILE) $(LIB_FILE) 
 	clear
-	$(CC) $(TEST_FILE) $(LIB_FILE) $(TOOL_FILE) $(TDA_FILE) $(CFLAGS) $(WFLAGS) -o $(TEST_EXE)
+	$(CC) test/test_juego.c  $(LIB_FILE) $(TOOL_FILE) $(TDA_FILE) $(CFLAGS) $(WFLAGS) -o test/test.exe
 
-test: $(TEST_EXE)
+test: test/test.exe
 	clear
-	$(V) $(VFLAGS) ./$(TEST_EXE)
+	$(V) $(VFLAGS) ./test/test.exe
 
-$(INTERFAZ_EXE): $(INTERFAZ_FILE) $(TOOL_FILE) $(TDA_FILE) $(LIB_FILE) 
+test/interfaz.exe: test/test_interfaz.c $(TOOL_FILE) $(TDA_FILE) $(LIB_FILE) 
 	clear
-	$(CC) $(INTERFAZ_FILE) $(LIB_FILE) $(TOOL_FILE) $(TDA_FILE) $(CFLAGS) $(WFLAGS) -o $(INTERFAZ_EXE)
+	$(CC) test/test_interfaz.c $(LIB_FILE) $(TOOL_FILE) $(TDA_FILE) $(CFLAGS) $(WFLAGS) -o  test/interfaz.exe
 
-interfaz: $(INTERFAZ_EXE)
+interfaz:  test/interfaz.exe
 	clear
-	./$(INTERFAZ_EXE)
+	./ test/interfaz.exe
 
-$(HEAP_EXE): $(HEAP_TEST) $(TDA_FILE)
+test/heap.exe: test/test_heap.c $(TDA_FILE)
 	clear
-	$(CC) $(HEAP_TEST) $(TDA_FILE) $(CFLAGS) $(WFLAGS) -o $(HEAP_EXE)
+	$(CC) test/test_heap.c $(TDA_FILE) $(CFLAGS) $(WFLAGS) -o test/heap.exe
 
-heap: $(HEAP_EXE)
+heap: test/heap.exe
 	clear
-	$(V) $(VFLAGS) ./$(HEAP_EXE)
+	$(V) $(VFLAGS) ./test/heap.exe
 

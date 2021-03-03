@@ -24,7 +24,7 @@ void pruebas_cargar_personaje(){
     test_nuevo_sub_grupo("1.1.Archivo correcto, menos de 6 pokemones");
     personaje_creado("test/txt/personaje/pocos_pokemones.txt", 3, 3);
     test_nuevo_sub_grupo("1.2.Archivo correcto, más de 6 pokemones");
-    personaje_creado("test/txt/personaje/muchos_pokemones.txt", 12, 6);
+    personaje_creado("test/txt/personaje/muchos_pokemones.txt", 7, 6);
     test_nuevo_sub_grupo("1.3.Dos personajes");
     personaje_no_creado("test/txt/personaje/personaje_doble.txt");
     test_nuevo_sub_grupo("1.4.Personaje sin pokemon");
@@ -115,13 +115,15 @@ void pruebas_cargar_gimnasio(){
     gimnasio_no_creado("test/txt/gimnasio/entrenador_max_pkm.txt");
     test_nuevo_sub_grupo("2.10. Gimnasio vacío");
     gimnasio_no_creado("test/txt/gimnasio/gimnasio_vacio.txt");
-    test_nuevo_sub_grupo("2.11. Línea desconocida");
+    test_nuevo_sub_grupo("2.11. Gimnasio batalla incorrecta");
+    gimnasio_no_creado("test/txt/gimnasio/gimnasio_batalla.txt");
+    test_nuevo_sub_grupo("2.12. Línea desconocida");
     gimnasio_no_creado("test/txt/gimnasio/linea_desconocida.txt");
-    test_nuevo_sub_grupo("2.12. Orden incorrecto de las lineas");
+    test_nuevo_sub_grupo("2.13. Orden incorrecto de las lineas");
     gimnasio_no_creado("test/txt/gimnasio/orden_incorrecto.txt");
-    test_nuevo_sub_grupo("2.13.Archivo vacio");
+    test_nuevo_sub_grupo("2.14.Archivo vacio");
     gimnasio_no_creado("test/txt/archivo_vacio.txt");
-    test_nuevo_sub_grupo("2.14.Sobrecarga en la lectura");
+    test_nuevo_sub_grupo("2.15.Sobrecarga en la lectura");
     gimnasio_no_creado("test/txt/overflow.txt");
 }
 

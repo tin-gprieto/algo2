@@ -1,0 +1,12 @@
+G;Ciudad Carmin;7;3
+L;Lt.Surge
+P;Electrode;20;43;36
+P;Magneton;21;44;52
+P;Electabuzz;32;67;51
+E;Duque Greg
+P;Electrike;28;41;12
+P;Flaaffy;21;36;30
+E;Gino
+P;Electrode;16;33;26
+E;Vito
+P;Magnemite;14;28;21
