@@ -24,7 +24,7 @@ En esta carpeta se incluye los librerías exclusivas para éste juego. Entre ell
   - **juego.h**: Funciones relacionadas al funcionamiento interno del juego y con la creación y utilización de juego_t ***1** y lectura de archivos.
 
 
-***1** - Serán explicadas y desarrolladas más adelante, en el aparado Estructuras.
+***1** - Serán explicadas y desarrolladas más adelante en el aparado Estructuras.
 
 #### test
      
