@@ -15,9 +15,9 @@ static const int LECTURA_FIN       = 0;
 
 static const int MAX_POKEMONES     = 6;
 
-#define FORMATO_ENTRENADOR ";%49[^\n]\n"
-#define FORMATO_GIMNASIO ";%49[^;];%i;%i\n"
-#define FORMATO_POKEMON ";%49[^;];%i;%i;%i\n"
+#define FORMATO_ENTRENADOR ";%29[^\n]\n"
+#define FORMATO_GIMNASIO ";%29[^;];%i;%i\n"
+#define FORMATO_POKEMON ";%29[^;];%i;%i;%i\n"
 
 /*
 * Destruye un pokemon (funcion para la lista_con_cada_elemento)

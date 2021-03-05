@@ -55,12 +55,12 @@ void gimnasio_ganado(juego_t* juego, gimnasio_t* gimnasio){
         menu_victoria(juego->interfaz);
         if(interfaz_estado(juego->interfaz, OPCION_AVANZAR))
             juego_eliminar_gimnasio(juego);
+        if(interfaz_estado(juego->interfaz, OPCION_CAMBIAR))
+            cambiar_party(juego);
         if(interfaz_estado(juego->interfaz, OPCION_TOMAR_PKM)){
             quitar_pokemon_lider(juego);
             bonificacion = true;
-        }if(interfaz_estado(juego->interfaz, OPCION_CAMBIAR))
-            cambiar_party(juego);
-        if(interfaz_estado(juego->interfaz, OPCION_SALIR))
+        }if(interfaz_estado(juego->interfaz, OPCION_SALIR))
             juego_cambiar_estado(juego, JUEGO_SALIR);
     }
     if(bonificacion)

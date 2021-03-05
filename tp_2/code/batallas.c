@@ -5,7 +5,7 @@ int golpe(int magnitud, int resistencia){
 }
 
 int golpe_debil(int magnitud, int resistencia){
-    return magnitud - (resistencia * 2);
+    return magnitud - resistencia;
 }
 
 int determinar_ganador(int pkm_1, int pkm_2){

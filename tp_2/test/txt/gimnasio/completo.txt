@@ -1,22 +1,22 @@
 G;Ciudad Celeste;6;5
 L;Misty
-P;Golduck;32;40;33
-P;Lapras;30;43;47
+P;Golduck;22;20;23
+P;Lapras;20;23;27
 E;Betty
-P;Azumarill;12;20;40
-P;Seaking;36;28;17
+P;Azumarill;12;20;20
+P;Seaking;26;28;17
 E;Lourdes
-P;Cloyster;50;11;8
+P;Cloyster;20;11;8
 E;Pascual
-P;Horsea;5;22;30
+P;Horsea;5;22;20
 G;Ciudad Plateada;4;3
 L;Brock
 P;Geodude;5;19;30
-P;Onix;20;50;32
+P;Onix;20;20;32
 E;Belino
-P;Golem;5;30;25
+P;Golem;5;20;25
 E;Jordan
-P;Rhydon;10;40;19
+P;Rhydon;10;20;19
 G;Ciudad Carmin;7;3
 L;Lt.Surge
 P;Electrode;20;43;36

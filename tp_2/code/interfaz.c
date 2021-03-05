@@ -19,6 +19,12 @@ static const int ESP_1  = 21;
 static const int ESP_2  = 15;
 static const int ESP_3  = 4;
 
+static const int FUNCION_1  = 1;
+static const int FUNCION_2  = 2;
+static const int FUNCION_3  = 3;
+static const int FUNCION_4  = 4;
+static const int FUNCION_5  = 5;
+
 #define SEP_EXTENSION "."
 #define EXTENSION_ARCHIVO "txt"
 #define ATAQUE "ATQ"
@@ -437,6 +443,38 @@ void informacion_batalla(pokemon_t* pkm_propio, pokemon_t* pkm_rival, int estado
     mostrar_pokemones_batalla(pkm_propio, pkm_rival);
 }
 /* 
+* Imprime por pantalla la información del tipo de batalla de un gimnasio
+* Pre : Tipo de funcion entre 1 a 5
+* Post: Información por pantalla
+*/
+void informacion_batalla_gimnasio(int tipo_funcion){
+    if(tipo_funcion == FUNCION_1){
+        imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "BATALLA:        ", BLANCO, "Golpes basicos");
+        imprimir_enter();
+        imprimir_linea_partida(MARGEN_CORTO, VERDE, "ATACA:   ATQ     ", ROJO, "DEFIENDE:  DEF");
+
+    }else if(tipo_funcion == FUNCION_2){
+        imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "BATALLA:        ", BLANCO, "Golpes veloces");
+        imprimir_enter();
+        imprimir_linea_partida(MARGEN_CORTO, VERDE, "ATACA:   ATQ+VEL     ", ROJO, "DEFIENDE:  DEF");
+
+    }else if(tipo_funcion == FUNCION_3){
+        imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "BATALLA:        ", BLANCO, "Golpes defendidos");
+        imprimir_enter();
+        imprimir_linea_partida(MARGEN_CORTO, VERDE, "ATACA:   ATQ     ", ROJO, "DEFIENDE:  DEF x 2");
+    
+    }else if(tipo_funcion == FUNCION_4){
+        imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "BATALLA:        ", BLANCO, "Golpes esquivados");
+        imprimir_enter();
+        imprimir_linea_partida(MARGEN_CORTO, VERDE, "ATACA:   ATQ     ", ROJO, "DEFIENDE:  DEF+VEL");
+    
+    }else if(tipo_funcion == FUNCION_5){
+        imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "BATALLA:        ", BLANCO, "Golpes mixtos");
+        imprimir_enter();
+        imprimir_linea_partida(MARGEN_CORTO, VERDE, "ATACA:   ATQ+VEL     ", ROJO, "DEFIENDE:  DEF x 2");
+    }
+}
+/* 
 * Imprime por pantalla el encabezado de victoria
 * Pre : -
 * Post: Información por pantalla
@@ -757,6 +795,8 @@ void gimnasio_informacion(gimnasio_t* gimnasio){
     char dificultad[MAX_STRING];
     sprintf(dificultad, "NVL  %i", gimnasio->dificultad);
     imprimir_linea_partida(MARGEN_CORTO, AMARILLO, "DIFICULTAD:    ", BLANCO, dificultad);
+    imprimir_enter();
+    informacion_batalla_gimnasio(gimnasio->id_batalla);
     imprimir_enter();
     char entrenadores[MAX_STRING];
     sprintf(entrenadores, "%li", pila_elementos(gimnasio->entrenadores));

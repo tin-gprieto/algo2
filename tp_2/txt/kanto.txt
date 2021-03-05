@@ -1,4 +1,4 @@
-G;Ciudad Plateada;4;3
+G;Ciudad Plateada;4;1
 L;Brock
 P;Geodude;5;19;30
 P;Onix;20;32;22
@@ -6,10 +6,10 @@ E;Belino
 P;Golem;5;30;25
 E;Jordan
 P;Rhydon;10;40;19
-G;Ciudad Celeste;6;5
+G;Ciudad Celeste;6;1
 L;Misty
 P;Golduck;32;40;33
-P;Lapras;30;43;47
+P;Lapras;30;33;41
 E;Betty
 P;Azumarill;12;20;40
 P;Seaking;36;28;17
@@ -17,10 +17,10 @@ E;Lourdes
 P;Cloyster;50;11;8
 E;Pascual
 P;Horsea;5;22;30
-G;Ciudad Carmin;7;3
+G;Ciudad Carmin;7;2
 L;Lt.Surge
-P;Electrode;20;43;36
-P;Magneton;21;44;52
+P;Electrode;20;33;36
+P;Magneton;21;44;32
 P;Electabuzz;32;67;51
 E;Duque Greg
 P;Electrike;28;41;12
@@ -43,7 +43,7 @@ P;Exeggutor;14;47;44
 E;Paz y Pia
 P;Gloom;33;31;26
 P;Jumpluff;25;40;31
-G;Ciudad Fucsia;12;4
+G;Ciudad Fucsia;12;3
 L;Sachiko
 P;Koffing;36;60;12
 P;Venonat;33;45;36
@@ -61,7 +61,7 @@ P;Nidorino;51;25;29
 P;Nidoking;32;43;45
 E;Cindy
 P;Nidoqueen;37;43;31
-G;Ciudad Azafran;13;1
+G;Ciudad Azafran;13;4
 L;Sabrina
 P;Espeon;43;63;38
 P;Mr. Mime;49;43;58
@@ -101,7 +101,7 @@ P;Vulpix;53;57;34
 E;Fredo
 P;Charmander;40;51;38
 P;Torkoal;25;56;60
-G;Ciudad Verde;19;2
+G;Ciudad Verde;19;5
 L;Azul
 P;Pidgeot;52;63;50
 P;Exeggutor;28;73;70
