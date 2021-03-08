@@ -352,5 +352,6 @@ void cambiar_party(juego_t* juego){
         if(estado == ERROR)
             juego_cambiar_estado(juego, estado);
         menu_intercambio(juego->interfaz, juego->personaje);
-    }     
+    } 
+    interfaz_cambiar_estado(juego->interfaz, OPCION_CAMBIAR);   
 }

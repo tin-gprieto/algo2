@@ -737,7 +737,7 @@ void inicializar_gimnasio(interfaz_t* interfaz){
 * Post: Menú funcional para la interfaz
 */
 void inicializar_victoria(interfaz_t* interfaz){
-    cargar_opcion(interfaz, MENU_VICTORIA, OPCION_TOMAR_PKM, "Tomar prestado un pokemon" );
+    cargar_opcion(interfaz, MENU_VICTORIA, OPCION_TOMAR_PKM, "Tomar un pokemon prestado" );
     cargar_opcion(interfaz, MENU_VICTORIA, OPCION_CAMBIAR, "Cambiar pokemones de combate" );
     cargar_opcion(interfaz, MENU_VICTORIA, OPCION_AVANZAR, "Siguiente gimnasio" );
     cargar_opcion(interfaz, MENU_VICTORIA, OPCION_SALIR, "Finalizar partida" );

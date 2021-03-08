@@ -1,3 +1,4 @@
+V = valgrind
 CFLAGS= -std=c99 -g -O0
 WFLAGS= -Wall -Wconversion -Werror
 VFLAGS= --leak-check=full --track-origins=yes --show-reachable=yes
@@ -11,8 +12,10 @@ juego: main.c $(CFILE) $(TOOL_FILE) $(TDA_FILE)
 	$(CC) main.c $(LIB_FILE) $(TOOL_FILE) $(TDA_FILE) $(CFLAGS) $(WFLAGS) -o juego
 	
 play: juego
-	clear
 	./juego
+
+val: juego
+	$(V)./juego $(VFLAGS)
 
 test/test.exe: test/test_juego.c $(TOOL_FILE) $(TDA_FILE) $(LIB_FILE) 
 	clear
