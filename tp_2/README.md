@@ -38,11 +38,22 @@ Dentro de esta carpeta, se encuentran los códigos y archivos relacionados con l
 #### toolbox
      
 Dentro de ésta carpeta se encuentran las diferentes herramientas utilizadas en el resto de archivos, como los TDA
-y las funciones de testeo (tools.c), además de incluir las constantes como Colores (secuencia de escape ANSI), ERROR, EXITO y las inclusiones de la libería standard.
+y las funciones de testeo (tools.c), además de incluir las constantes como colores (secuencia de escape ANSI), ERROR, EXITO y las inclusiones de la libería standard.
 
 #### txt
 
 Ésta carpeta está destinada a los archivos de textos requeridos para jugar el juego, es decir, los archivos de los gimnasios y el personaje. En este se puede agregar archivos, si el usuario los desea, siempre y cuando cumplan con los formatos predefinidos.
+
+  El formato de las lineas de los archivos es el siguiente: 
+      
+      G;nombre_gimnasio; dificultad; id_funcion [valor entre 1 y 5]
+ 
+      L;nombre_lider
+ 
+      E;nombre_entrenador
+      
+      P;nombre_pokemon; velocidad; ataque; defensa
+
 
 ## Compilación y Ejecución
 
@@ -52,13 +63,13 @@ Para compilar y ejecutar el programa, se hizo utilización de un archivo Makefil
       
       make play      : Ejecuta el juego. (./juego)
       
-      make test      : Compila y ejecuta el archivo de testeo del juego en prueba.exe.
+      make test      : Compila y ejecuta el archivo de testeo del juego.
       
-      make interfaz  : Compila y ejecuta el archivo de testeo de la interfaz en interfaz.exe.
+      make interfaz  : Compila y ejecuta el archivo de testeo de la interfaz.
       
-      make heap      : Compila y ejecuta el archivo de testeo en heap.exe.
+      make heap      : Compila y ejecuta el archivo de testeo del heap.
 
-Una vez ejecutado el juego, la forma standard de jugarlo, es incluyendo el archivo de personaje "txt/personaje.txt" y el archivo de los gimnasios del kanto, "txt/kanto.txt". Sin embargo, siguiendo el formato de la consigna, cada uno puede agregar nuevo archivos o modificar los actuales. 
+Una vez ejecutado el juego, la forma standard de jugarlo, es incluyendo el archivo de personaje "txt/personaje.txt" y el archivo de los gimnasios del kanto, "txt/kanto.txt". Sin embargo, siguiendo el formato de la consigna, cada uno puede agregar nuevos archivos o modificar los actuales. 
 
 ## Estructuras
 
@@ -90,19 +101,7 @@ El juego contiene a todas las estructuras anteriormente nombraradas, tendrá un 
     
 - **Cargar gimnasios**
 
-Por una cuestión de practicidad, consideré necesario que la carga de gimnasios no sea de
-manera individual, sino que el archivo contenga todos los gimnasios que requerirá el juego.
-
-  El formato de las lineas de los archivos es el siguiente: 
-      
-      G;nombre_gimnasio; dificultad; id_funcion [valor entre 1 y 5]
- 
-      L;nombre_lider
- 
-      E;nombre_entrenador
-      
-      P;nombre_pokemon; velocidad; ataque; defensa
-
+Por una cuestión de practicidad, consideré necesario que la carga de gimnasios no sea de manera individual, sino que el archivo contenga todos los gimnasios que requerirá el juego. Por lo tanto, para incluir gimnasios, se podrian escribir dentro del archivo actual o realizar un nuevo archivo con todos los gimnasios del juego.
 
 - **Casos limite de los archivos**
 
@@ -114,4 +113,4 @@ Por más que no especifique la consigna, me pareció oportuno que una vez se pie
 
 - **Menú Gimnasio**
 
-Al no especificarse exactamente el momento en el que se usa, si exclusivamente al principio de cada gimnasio, o en el caso que lo usé, como un separador entre cada batalla con un entrenador, me decanté por ésto último por varios motivos. Debido a que si unicamente se utilizara este menú para el inicio de un gimnasio, ésta seria la única vez en todo el gimnasio para poder modificar el party, y a su vez, éste menú, por la forma en que lo implementé, solo muestra como información del gimnasio al entrenador siguiente para combatir. Por estos motivos, consideré oportuno darle al jugador la posibilidad de cambiar de pokemones de combate entre cada enfrentamiento con un entrenador y al comienzo del gimnasio, y así mismo, poder brindarle la información del gimnasio (y por ende la del próximo entrenador). 
+Al no especificarse exactamente el momento en el que se usa, si exclusivamente al principio de cada gimnasio, o en el caso que lo usé, como un separador entre cada batalla con un entrenador, me decanté por ésto último por varios motivos. En el caso de que unicamente se utilizara este menú para el inicio de un gimnasio, ésta seria la única vez en todo el gimnasio para poder modificar el party, y a su vez, éste menú, por la forma en que lo implementé, solo muestra como información del gimnasio al entrenador siguiente para combatir. Por éstos motivos, consideré oportuno darle al jugador la posibilidad de cambiar de pokemones de combate entre cada enfrentamiento con un entrenador y al comienzo del gimnasio, y así mismo, poder brindarle la información del gimnasio (y por ende la del próximo entrenador). 
