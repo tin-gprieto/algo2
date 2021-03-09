@@ -103,13 +103,12 @@ void juego_eliminar_gimnasio(juego_t* juego);
 * jugando de forma manual
 * Pre : Gimnasio cargado y no vacío, personaje cargado, estado del juego correcto
 * Post: Devuelve al gimnasio en su estado correspondiente
-* (En caso de que gane, dejará el gimnasio con su lider)
+* (En caso de que gane, dejará el gimnasio con su líder)
 */
 void jugar_gimnasio(juego_t* juego);
 
 /* 
-* Realiza todas las batalla de un gimnasio, informando al usuario de cada batalla, 
-* jugando de forma manual
+* Realiza todas las batalla de un gimnasio, informando al usuario de cada batalla (unicamente el resultado)
 * Pre : Gimnasio cargado y no vacío, personaje cargado, estado del juego correcto
 * Post: Devuelve al gimnasio en su estado correspondiente
 */
@@ -118,8 +117,9 @@ void simular_gimnasio(juego_t* juego);
 /* 
 * Se ejecuta la opción de tomar un pokemon del lider
 * (Muestra los pokemones del lider para que el usuario elija uno)
-* Pre : Gimnasio creado y unicamento con el último entrenador(lider), funcion para pedir pokemones al usuario 
-* Post: Devuelve la caja del personaje con un nuevo pokemón y el estado del juego
+* Pre : Gimnasio creado y unicamente con el último entrenador(líder), funcion para pedir pokemones al usuario 
+* Post: Devuelve la caja del personaje con un nuevo pokemón y el juego en su estado correspondiente
+* (ERROR si no existe alguna estructura o si el gimnasio tiene más de un entrenador)
 */
 void quitar_pokemon_lider(juego_t* juego);
 

@@ -32,7 +32,7 @@ Dentro de esta carpeta, se encuentran los códigos y archivos relacionados con l
 
   - **pruebas_heap.c**: Pruebas unitarias del TDA heap.
   - **pruebas_interfaz.c**: Pruebas de la interfaz (pruebas visuales).
-  - **pruebas_juego.c**: Pruebas unitarias del juego y de sus estructuras.
+  - **pruebas_juego.c**: Pruebas unitarias del juego y de sus estructuras.(cargar y destruir personaje y gimnasios)
   - **txt**: Carpeta que incluyen los archivos para testear para el juego
 
 #### toolbox
@@ -106,8 +106,12 @@ manera individual, sino que el archivo contenga todos los gimnasios que requerir
 
 - **Casos limite de los archivos**
 
-Al momento de leer los archivos, consideré que cualquier error en formato implicara no cargar ninguna estructura y devolver error, cortando con la ejecución del juego.
+Al momento de leer los archivos, consideré que cualquier error en formato implicara no cargar ninguna estructura y devolver error, cortando con la ejecución del juego. El motivo es para no suponer nunca que el usuario haya querido poner un entrenador sin pokemones o un gimnasio sin entrenadores a propósito, sino dar la posibilidad de que sea un equivocación, y por lo tanto no tener en cuenta el archivo completo.
 
 - **Derrota en la simulación**
 
 Por más que no especifique la consigna, me pareció oportuno que una vez se pierda, poder mandar el menú de derrota para que el jugador decida si quiere hacer un cambio de pokemones y volver a simular, o directamente salir del juego. Ya que si en el caso contrario, cortara el juego o lo mandara de nuevo al inicio, únicamente podria cambiar los pokemones modificando la formación del archivo.
+
+- **Menú Gimnasio**
+
+Al no especificarse exactamente el momento en el que se usa, si exclusivamente al principio de cada gimnasio, o en el caso que lo usé, como un separador entre cada batalla con un entrenador, me decanté por ésto último por varios motivos. Debido a que si unicamente se utilizara este menú para el inicio de un gimnasio, ésta seria la única vez en todo el gimnasio para poder modificar el party, y a su vez, éste menú, por la forma en que lo implementé, solo muestra como información del gimnasio al entrenador siguiente para combatir. Por estos motivos, consideré oportuno darle al jugador la posibilidad de cambiar de pokemones de combate entre cada enfrentamiento con un entrenador y al comienzo del gimnasio, y así mismo, poder brindarle la información del gimnasio (y por ende la del próximo entrenador). 

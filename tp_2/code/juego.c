@@ -3,6 +3,8 @@
 #define NVL_MAX 63
 #define NVL_AUMENTO 3
 
+/*********************************      FUNCIONES DE JUEGO     **********************************/
+
 //juego.h
 bool juego_preparado(juego_t* juego){
     return juego->personaje && juego->gimnasios;
@@ -63,10 +65,9 @@ void juego_destruir(juego_t* juego){
 }
 
 /* 
-* Inicializa la liga de los gimnasios (excluyendo la carga de los mismos)
-* (Estructura y funciones)
-* Pre : Estructura del juego creada para almacenar a la liga
-* Post: Liga con las distintas funciones de batallas
+* Inicializa el vector de funciones de batalla 
+* Pre : Interfaz creada para almacenar dicho puntero
+* Post: Puntero a vector de funciones batalla
 */
 funcion_batalla*  funciones_crear(){
     funcion_batalla* aux = calloc(MAX_FUNCIONES, sizeof(funcion_batalla));
@@ -91,11 +92,14 @@ juego_t* juego_crear(){
     if(!juego->funciones) return NULL;
     return juego;
 }
+
+/*********************************      FUNCIONES DE BATALLA     **********************************/
+
 /*
 * Bonifica a un pokemon, aumentando todas sus características en 1 
 * siempre y cuando tenga un nivel inferior a 63
-* Pre : Pokemon creado e inicializado, que haya ganado una batalla y sea de nivel menor a 63
-* Post: Pokemon bonificado y con un nuevo nivel (+3) 
+* Pre : Pokemon creado e inicializado, que haya ganado una batalla 
+* Post: Pokemon bonificado (si es de nivel menor a NVL_MAX(63)) y con un nuevo nivel (+3) 
 */
 void bonificar_pokemon(pokemon_t * pokemon){
     if(!pokemon || pokemon->nivel > NVL_MAX)
@@ -138,7 +142,7 @@ int batalla_entrenador(juego_t* juego, entrenador_t* rival, funcion_batalla bata
 /*
 * Según el gimnasio y las funciones del juego, devuelve la funcion correspondiente al gimnasio
 * Pre : Gimnsaio leido del juego y con id válida (1 a 5) y juego creado
-* Post: Funcion batalla del gimnasio pasado por parametro
+* Post: Función batalla del gimnasio pasado por parametro
 */
 funcion_batalla obtener_funcion_batalla(juego_t *juego, gimnasio_t * gimnasio){
     if(!juego || !juego->funciones || !gimnasio)
@@ -146,8 +150,8 @@ funcion_batalla obtener_funcion_batalla(juego_t *juego, gimnasio_t * gimnasio){
     return  juego->funciones[gimnasio->id_batalla - 1];
 }
 /*
-* Determina el estado del gimnasio ganado, si ya se ganó definitivamente o si requiere seguir luchando
-* Pre : Batalla del gimnasio ganado
+* Determina el estado del gimnasio ganado, si ya se ganó definitivamente o si debe seguir luchando
+* Pre : Batalla del gimnasio ganada
 * Post: GIMNASIO_VICTORIA si se le ganó al lider (+1 medallas) 
 *       GIMNASIO_PELEANDO si debe seguir luchando (avanza al siguiente entrenador)
 */
@@ -210,9 +214,6 @@ void jugar_gimnasio(juego_t* juego){
         return;
     }
 
-    if(juego_estado(juego, JUEGO_SIMULANDO))
-        menu_simulacion(SIMULACION_GIMNASIO, gimnasio, NULL);
-
     while(gimnasio_estado(gimnasio, GIMNASIO_PELEANDO) && !juego_estado(juego,JUEGO_SALIR)){
         menu_gimnasio(juego->interfaz, juego->gimnasios);
         if(interfaz_estado(juego->interfaz, OPCION_PERSONAJE))
@@ -233,10 +234,13 @@ void jugar_gimnasio(juego_t* juego){
         }
     }
 }
+
+/*********************************      FUNCIONES DE LISTA POKEMON     **********************************/
+
 /* 
-* Dada la posicion de un pokemon del conjunto del lider,
+* Dada la posición de un pokemon del conjunto del líder,
 * lo transfiere a la caja del personaje
-* Pre : Posicion del pokemon válida para la lista del lider, entrenador y personajes cargados
+* Pre : Posición del pokemon válida para la lista del lider, entrenador y personajes cargados
 * Post: 0 si la caja del personaje tiene al nuevo pokemon o 
 * -1 en caso de que no haya podido hacer alguna operación
 */
@@ -256,7 +260,7 @@ void quitar_pokemon_lider(juego_t* juego){
         return;
     }
     gimnasio_t* gimnasio = (gimnasio_t*) heap_raiz(juego->gimnasios);
-    if(!gimnasio){
+    if(!gimnasio || pila_elementos(gimnasio->entrenadores) > 1){
         juego_cambiar_estado(juego, ERROR);
         return;
     }
@@ -271,9 +275,9 @@ void quitar_pokemon_lider(juego_t* juego){
     eliminar_opcion(juego->interfaz, MENU_VICTORIA, OPCION_TOMAR_PKM);
 }
 /* 
-* Dada una lista y un pokemon busca su posicion en la misma
+* Dada una lista y un pokemon busca su posición en la misma
 * Pre : Pokemon perteneciente a la lista
-* Post: Posicion del pokemon
+* Post: Posición del pokemon
 */
 size_t lista_buscar_posicion(lista_t * lista, pokemon_t * elegido){
     size_t posicion = 0;
@@ -293,7 +297,7 @@ size_t lista_buscar_posicion(lista_t * lista, pokemon_t * elegido){
     return posicion;
 }
 /* 
-* Dado el personaje y dos pokemones, los intercambia de lugar el party
+* Dado el personaje y dos pokemones (que sean del party), los intercambia de lugar en la lista
 * Pre : Personaje creado, saliente y entrante no nulos y pertenecientes al party, pos_saliente en el party
 * Post: Pokemones intercambiados de lugar en el party
 */
@@ -317,7 +321,7 @@ int intercambiar_del_party(personaje_t* personaje, pokemon_t* saliente, size_t p
     return JUEGO_JUGANDO;
 }
 /* 
-* Dadas dos posicones, una de un pokemon en el party y otro en la caja,
+* Dadas dos posiciones, una de un pokemon en el party y otro en la caja,
 * Quita el pokemon del party para agregar el de la caja.
 * Pre : Ambas posiciones de los pokemones que sean válidas, personaje cargado
 * Post: Party con un intercambio de pokemones

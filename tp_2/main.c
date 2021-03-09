@@ -3,7 +3,8 @@
 /* 
 * Deja al juego en estado correspondiente para la partida
 * Pre : Juego creado
-* Post: Juego preaparado para ser jugado (sea para Jugar o Simular)
+* Post: Juego preaparado para ser jugado 
+* (sea para jugar manual (JUGANDO) o simular (SIMULANDO))
 */
 void iniciar_partida(juego_t* juego){
      while(juego_estado(juego, JUEGO_INICIO)){
@@ -69,8 +70,8 @@ void gimnasio_ganado(juego_t* juego, gimnasio_t* gimnasio){
 
 /* 
 * Juega una partida completa
-* Pre : Juego creado e iniciado (con gimansio y personajes cargados)
-* Post: JUego perdido o ganado
+* Pre : Juego creado, iniciado (con gimansio y personajes cargados), y en modo jugando (manual)
+* Post: Juego perdido, ganado, ERROR o salir
 */
 void jugar_partida(juego_t* juego){
     while(juego_estado(juego, JUEGO_JUGANDO)){
@@ -87,9 +88,10 @@ void jugar_partida(juego_t* juego){
 }
 
 /* 
-* Ejecuta el menu_derrota y sus opciones para una simulación
-* Pre : Juego simulado y perdido, previamente iniciado
-* Post:
+* Ejecuta el menu_derrota para la simulación y sus opciones, 
+* dejando el juego en el estado que decida el jugador 
+* Pre : Juego simulado y perdido
+* Post: Estado del juego según la decisión del jugador
 */
 void simulacion_perdida(juego_t* juego, gimnasio_t* gimnasio){
     while(!interfaz_estado(juego->interfaz, OPCION_REPETIR) && !juego_estado(juego, JUEGO_PERDIDO)){
@@ -114,8 +116,8 @@ void simulacion_perdida(juego_t* juego, gimnasio_t* gimnasio){
 }
 /* 
 * Simula la partida completa
-* Pre : Juego en estado de simulación
-* Post: Juego perdido o ganado
+* Pre : Juego creado, iniciado (con gimansio y personajes cargados), y en modo simulación
+* Post: Juego perdido, ganado, o ERROR 
 */
 void simular_partida(juego_t* juego){
     
@@ -126,7 +128,7 @@ void simular_partida(juego_t* juego){
         simular_gimnasio(juego);
         if(gimnasio_estado(gimnasio_actual, GIMNASIO_VICTORIA))
             juego_eliminar_gimnasio(juego);
-        if(gimnasio_estado(gimnasio_actual, GIMNASIO_DERROTA)){
+        else if(gimnasio_estado(gimnasio_actual, GIMNASIO_DERROTA)){
             menu_simulacion(SIMULACION_FIN, NULL, NULL);
             simulacion_perdida(juego, gimnasio_actual);
         }

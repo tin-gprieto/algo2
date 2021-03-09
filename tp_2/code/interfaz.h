@@ -105,8 +105,8 @@ void menu_gimnasio(interfaz_t* interfaz, heap_t* gimnasio);
 void menu_batalla(entrenador_t* rival, size_t pos_pkm_rival, pokemon_t* pkm_propio, int estado);
 
 /* 
-* Muestra la información de la batalla para una simulacion
-* Pre : Rival creado, la posicion válida del pokemon del rival,
+* Muestra la información de la batalla para una simulación
+* Pre : Rival creado, la posición válida del pokemon del rival,
 * pokemon propio creado e inicializado y el resultado de la batalla
 * (Costantes GANO_PRIMERO y GANO_SEGUNDO)
 * Post: Información por pantalla de la batalla
@@ -114,29 +114,29 @@ void menu_batalla(entrenador_t* rival, size_t pos_pkm_rival, pokemon_t* pkm_prop
 void menu_batalla_simulada(pokemon_t* pkm_rival, pokemon_t* pkm_propio, int estado);
 
 /* 
-* Según el momento del juego muestra información sobre la simulación
+* Según el momento de la simulación muestra información sobre la misma
 * Pre : Tipo de menu válido (constantes SIMULACION) y gimnasio/entrendor 
 * existente si corresponde
 * Post: Información por pantalla de la simulación
 */
-void menu_simulacion(int tipo_menu, gimnasio_t* gimnasio, entrenador_t* rival);
+void menu_simulacion(int tipo_menu_simulacion, gimnasio_t* gimnasio, entrenador_t* rival);
 
 /* 
-* Muestra el menu intercambio (información de las listas) y sus opciones
+* Muestra el menu intercambio (información de las listas) y sus opciones (Cambiar de nuevo o avanzar)
 * Pre : Interfaz creada, personaje creado, cambio de party realizado
 * Post: Información por pantalla e interfaz en el estado elegido por usuario
 */
 void menu_intercambio(interfaz_t* interfaz, personaje_t* personaje);
 
 /* 
-* Muestra el menu victoria y sus opciones
+* Muestra el menu victoria para un gimnasio y sus opciones
 * Pre : Interfaz creada
 * Post: Información por pantalla e interfaz en el estado elegido por usuario
 */
 void menu_victoria(interfaz_t* interfaz);
 
 /* 
-* Muestra el menu derrota y sus opciones
+* Muestra el menu derrota para un gimnasio y sus opciones
 * Pre : Interfaz creada y nombre del gimnasio en donde fue derrotado
 * Post: Información por pantalla e interfaz en el estado elegido por usuario 
 */
@@ -151,9 +151,9 @@ void menu_maestro_pokemon();
 
 /* 
 * Elimina una de las opciones del menu;
-* Pre : Recibe un vector de menús, el tipo de menú en el que se encuetra
+* Pre : Recibe una interfaz no nula, el tipo de menú en el que se encuetra
 * y la opcion que se desea eliminar
-* Post: Eliminar del vector opciones (dentro del menu) a la opcion deseada
+* Post: Eliminar del vector opciones (dentro del menu) a la opción deseada
 */
 void eliminar_opcion(interfaz_t* interfaz, size_t menu, char opcion);
 
@@ -170,7 +170,7 @@ void reiniciar_menu_victoria(interfaz_t* interfaz);
 * devuelve la posicion del pokemon elegido por el usuario
 * Pre : Recibe lista de pokemones cargada y ID de lista válido
 * (LISTA_CAJA, LISTA_COMBATE o LISTA_ENTRENADOR)
-* Post: Información por pantalla y posicion del pokemon seleccionado 
+* Post: Información por pantalla y posición del pokemon seleccionado 
 */
 size_t pedir_pokemon(lista_t* pokemones, int id_lista);
 
@@ -182,7 +182,7 @@ size_t pedir_pokemon(lista_t* pokemones, int id_lista);
 void pedir_archivo(char ruta_archivo[MAX_STRING], int id_archivo);
 
 /* 
-* Muestra por pantalla la informacion de personaje
+* Muestra por pantalla la información de personaje
 * (nombre, caja de pokemones, party de pokemones)
 * Pre : Personaje previamente cargado
 * Post: Información por pantalla
@@ -190,8 +190,8 @@ void pedir_archivo(char ruta_archivo[MAX_STRING], int id_archivo);
 void personaje_informacion(personaje_t* personaje);
 
 /* 
-* Muestra por pantalla la informacion de gimnasio
-* (nombre, dificultad, entrenadores restantes, informacion del entrenador siguiente)
+* Muestra por pantalla la información de gimnasio
+* (nombre, dificultad, tipo de batalla, entrenadores restantes, información del siguietnte entrenador)
 * Pre : Gimnasio previamente cargado
 * Post: Información por pantalla
 */

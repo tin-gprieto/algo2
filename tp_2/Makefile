@@ -15,7 +15,7 @@ play: juego
 	./juego
 
 val: juego
-	$(V)./juego $(VFLAGS)
+	$(V) ./juego $(VFLAGS)
 
 test/test.exe: test/test_juego.c $(TOOL_FILE) $(TDA_FILE) $(LIB_FILE) 
 	clear

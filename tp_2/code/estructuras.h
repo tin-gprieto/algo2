@@ -48,10 +48,8 @@ typedef struct gimnasio{
     pila_t* entrenadores;
 }gimnasio_t;
 
-/* Funciones para el funcionamiento del main y que requieran ser testeadas*/
-
 /*
-* Recibe una ruta de archivo válida para abrir los datos de un personaje
+* Recibe una ruta de archivo para abrir los datos de un personaje
 * Pre : El archivo debe contar solo un entrenador que encabece la lista
 * y que cuente con al menos un pokemon
 * Post: Personaje creado según el archivo
@@ -67,9 +65,9 @@ personaje_t* personaje_cargar(char ruta_archivo[MAX_STRING]);
 void personaje_destruir(personaje_t* personaje);
 
 /*
-* Recibe una ruta de archivo válida para abrir los datos de un personaje
-* Pre : El archivo debe contar con al menos un gimnasio, que cuente con un único lider y
-* como mínimo con un entrendaor
+* Recibe una ruta de archivo para abrir los datos de un personaje
+* Pre : El archivo debe contar con al menos un gimnasio, que cuente con un único líder y
+* como mínimo con un entrenador
 * Post: Heap de gimnasios creado según el archivo
 * o NULL en caso de error de creación o formato del archivo
 */
@@ -107,7 +105,7 @@ void gimnasio_siguiente_entrenador(gimnasio_t* gimnasio);
 
 /*
 * Devuelve verdadero si el gimnasio no tiene entrenadores
-* Pre : -
+* Pre : Puntero a gimnasio_t
 * Post: Verdadero si no hay entrenadores o no existe el gimnasio
 */
 bool gimnasio_vacio(gimnasio_t* gimnasio);
