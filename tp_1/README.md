@@ -40,6 +40,8 @@ así se sabe cuales fueron esos problemas. Para la implementacion de las funcion
 
 //Algo que me gustaria modificar es considerar que si la cantidad que ingresa para el traslado es mayor a los pokemones trasladables, avise de esto y no termine la función de traslado con error, sino que pueda seguir haciendo otro traslado y cierre el programa al guardar.
 
+------------------------------------------------------------------------
+
 ## Como compilar y ejecutar
 
 Para este aspecto hice uso de un archivo Makefile con ciertas instrucciones.
@@ -52,6 +54,8 @@ Para este aspecto hice uso de un archivo Makefile con ciertas instrucciones.
 en el caso de querer usar otros archivos.
 
 - **make val" y make gdb** : se ejecutan valgrind y gdb respectivamente en caso de querer hacer pruebas. 
+
+------------------------------------------------------------------------
 
 ## Conceptos utilizados
 
