@@ -1,13 +1,13 @@
 Trabajo Práctico 1
 =============
 
-### Introducción sobre el funcionamiento del trabajo presentado.
+## Introducción sobre el funcionamiento del trabajo presentado
 
 El trabajo práctico aplica conocimientos de la utilización de archivos y memoria dinámica, y consta de un programa con temática de Pokemon, dónde un usuario, cargando un archivo de origen, en este caso un arrefice, elige ciertos párametros para que la infomación dentro (Pokemones), se pase a un nuevo archivo (Acuario) si cumple con la pauta ingresada. Para más detalles, se encuentra explicado en la consigna.
 
 La implementación consiste de 2 partes, la biblioteca personalizada "evento_pesca.c" y el código del main.c, el cual opté por una implementación interactiva.
 
-#### evento_pesca.c
+### evento_pesca.c
 
 - **crear_arrecife**
 
@@ -33,14 +33,14 @@ Abre para escritura el nuevo archivo, si no puede, sale, sino escribe en formato
 
 Primero libera el bloque de pokemones, luego el bloque del acuario o el arrecife
 
-#### main.c
+### main.c
 
 Para la implementación queria contar mejor la idea general que tiene el programa. Tanto el archivo del arrecife como donde guarda el acuario, se pasan por argumentos de comando, en caso de no tener alguno, el programa no corre. Luego es todo interactivo con el usuario, decidí hacerlo así para que pueda elegir qué funciones de selección o de mostrar por pantalla utilizar, y tambien para determinar la cantidad en cada traslado. Para esto, antes de un traslado, se pregunta al usuario si quiere seguir haciendo otro, por lo que si acepta, elige que funciones usar, y sino sale del programa liberando la memoria dinámica y guardando los datos. En caso de que haya algún error con los archivos o malloc/realloc, intenté expresar por pantalla los errores puntualmente
 así se sabe cuales fueron esos problemas. Para la implementacion de las funciones personalizables, usé una estructura con un array de punteros a funciones, sus topes, y un string que explique la funcion, así dentro de la iteracion while sea posible utilizar otras funciones solamente ingresando un número. Para cargar dichas funciones hay que hacer uso de cargar_funciones, función que ingresando este struct, la funcion, y su nombre o explicacion, se agrega al struct.
 
 //Algo que me gustaria modificar es considerar que si la cantidad que ingresa para el traslado es mayor a los pokemones trasladables, avise de esto y no termine la función de traslado con error, sino que pueda seguir haciendo otro traslado y cierre el programa al guardar.
 
-### Como compilarlo (línea de compilación) y como ejecutarlo (línea de ejecución).
+## Como compilar y ejecutar
 
 Para este aspecto hice uso de un archivo Makefile con ciertas instrucciones.
 
@@ -53,7 +53,7 @@ en el caso de querer usar otros archivos.
 
 - **make val" y make gdb** : se ejecutan valgrind y gdb respectivamente en caso de querer hacer pruebas. 
 
-### Conceptos utilizados:
+## Conceptos utilizados
 
 1. **Punteros**:
 
