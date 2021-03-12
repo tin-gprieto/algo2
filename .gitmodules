@@ -1,0 +1,3 @@
+[submodule "tda_hash/toolbox"]
+	path = tda_hash/toolbox
+	url = https://github.com/tin-gprieto/toolbox
