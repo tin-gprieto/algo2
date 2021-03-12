@@ -5,6 +5,8 @@ Tipo de Dato Abstracto Lista, Cola y Pila
 
 El trabajo consta de la implementación de un TDA lista con sus propias funciones para su utilización, tanto como para la creación,destrucción y estado de la lista (si está vacia o con  cuantos elementos cuenta) como para la inserción y eliminación de elementos. A su vez, cuenta con funciones para la utilización del mismo como una pila o una cola, con funciones para apilar, encolar, desapilar y desencolar.
 
+------------------------------------------------------------------------
+
 ## Funcionamiento del TDA
 	
 Para la implementación de las funciones intenté modularizar acciones básicas para la **inserción, eliminación, y búsqueda/recorrido**, ésta última con funciones recursivas. Básicamente para insertar y para borrar  hay tres casos: entre dos elementos, al inicio y al final. Estos dos últimos son sencillos ya que solamente tiene que actualizar nodo_inicio y nodo_final de la lista (funciones "anclar"). En cambio para insertar entre dos elementos, además de buscar al elemento en la posición que hay que insertar o eliminar, hay que saber su anterior para poder reemplazar los nodos. Es por eso que primero hay que buscar en la posición anterior (función nodo_en_posicion),conseguir el siguiente (el buscado) y con el mismo, su sucesor. Para la búsqueda, utilizo una función recursiva que recibe el nodo de inicio (nodo_incio para este caso), un contador inicializado a 0, el cual se utiliza para saber cuantas veces se iteró; y una posición, que será el valor del contador para que devuelva el elemento. En caso de insertar, el nuevo elemento ocupará el lugar en posicion desplazando al que se encontraba anteriormente allí y siendo el sucesor del que se encuentra en la posicion anterior. Es por esto que si se inserta al inicio, no tiene un antecesor, o si se inserta al final (o en una posicion arbitraria) no tiene un sucesor, y en ambos caso se debe actualizar los nodos inicio y fin de la lista. En caso de eliminar, el siguiente del buscado será el siguiente del antecesor y el buscado será eliminado, si se borra el último elemento, el anterior pasa a ser el último, o si se borra el primer elemento, el siguiente pasará a ser el primero.
@@ -15,6 +17,8 @@ Por último lugar, quedan los **iteradores**, para crear el iterador externo ún
 
 Para la creación de las pruebas intenté crear entornos particulares para cada tipo de funciones que forman parte del TDA, así podia asegurarme el funcionamiento básico de las mismas, tanto como lista, cola o pila. Para cada operación, traté de chequear mediante las mismas funciones del TDA, que las condiciones de la lista se cumplan una vez se haya realizado una modificación con la función que esté probando. Esto implicó cierta confianza en funciones como lista_último, lista_primero, o lista_elemento_en_posicion para chequear inserciones en el lugar correcto o que elementos borrados no se encuentren en la lista.
 	
+------------------------------------------------------------------------	
+	
 ## Compilación y Ejecución
 
 Tanto para compilar como para ejecutar hice uso de un Makefile.
@@ -24,6 +28,8 @@ Tanto para compilar como para ejecutar hice uso de un Makefile.
 - **Make test**: Ejecuta lista_se (ejecutable de lista_pruebas.c) con Valgrind, en el caso de no contar con el archivo previamente compilado o actualizado, ejecuta Make para compilarlo.
 	
 - **Make debug**: Ejecutar lista_se con GDB en caso de querer debuguear
+
+------------------------------------------------------------------------
 
 ## Conceptos teóricos
 
