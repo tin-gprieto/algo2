@@ -7,6 +7,8 @@ El trabajo consiste en la implementación del juego "Pokemon Journey", inspirado
 
 El juego consiste en el recorrido de un personaje principal por varios gimnasios, dónde luchará contra otros entrenadores. Una vez derrotado el líder de cada gimnasio, hará acumulado todas las medallas, y por lo tanto se consagrará como Maestro Pokémon. El juego tiene dos modos, un juego manual, donde se irá progresando batalla a batalla contra cada entrenador, y un juego simulado, donde éste proceso será automático, limitándose a mostrar una información básica de cada batalla y culminando en la derrota o en la victoria de la partida.
 
+------------------------------------------------------------------------
+
 ## Organización
 
 La implementación del juego está divida en varios archivos y carpetas que facilitan a la organización de la misma. Éstas carpetas están organizadas según las distintas partes del trabajo: La implementación; Las pruebas realizadas a la misma; Las herramientas utilizadas (previamente implementadas en los anteriores trabajos); y los archivos, en los cuales se encuentra la información necesaria para la ejecución del programa.
@@ -54,6 +56,7 @@ y las funciones de testeo (tools.c), además de incluir las constantes como colo
       
       P;nombre_pokemon; velocidad; ataque; defensa
 
+------------------------------------------------------------------------
 
 ## Compilación y Ejecución
 
@@ -70,6 +73,8 @@ Para compilar y ejecutar el programa, se hizo utilización de un archivo Makefil
       make heap      : Compila y ejecuta el archivo de testeo del heap.
 
 Una vez ejecutado el juego, la forma standard de jugarlo, es incluyendo el archivo de personaje "txt/personaje.txt" y el archivo de los gimnasios del kanto, "txt/kanto.txt". Sin embargo, siguiendo el formato de la consigna, cada uno puede agregar nuevos archivos o modificar los actuales. 
+
+------------------------------------------------------------------------
 
 ## Estructuras
 
@@ -96,6 +101,8 @@ La interfaz es un tipo de dato que se utilizarán dentro del juego, y en la cual
 #### juego_t
 
 El juego contiene a todas las estructuras anteriormente nombraradas, tendrá un personaje_t, un heap minimal de gimnasios (contiene a todos los gimnasios_t del juego y por lo tanto a todos los entrenadores), para poder acceder directamente al gimnasio de menor dificulata (el próximo a luchar), la interfaz_t y finalmente un campo que indique el estado del juego, si está jugando, si ganó, perdió o hubo un error.
+
+------------------------------------------------------------------------
 
 ## Consideraciones finales
     
