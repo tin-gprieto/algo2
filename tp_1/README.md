@@ -75,9 +75,9 @@ Los punteros a funciones funcionan con la misma lógica que los punteros tradici
 
 Malloc y Realloc son dos funciones de stdlib.h que funcionan como herramienta para manejar la memoria dinámica pertenciente al heap. Siempre que se crea un bloque en la memoria dinámica hay que "liberarlo" luego de su uso, sino todo lo que se reserve va a seguir ocupado. Para ésto, se hace uso de "void free (void* ptr)" para liberar la memoria utilizada en la dirección "ptr" de memoria (puntero).
 	
-La función **void* malloc (size_t size)** es la encargada de crear un bloque de memoria de tamaño size y devuelve la dirección de memoria del mismo como un puntero "void*", en caso de no poder crear el bloque, devuelve un puntero NULL.
+La función void* malloc (size_t size) es la encargada de crear un bloque de memoria de tamaño size y devuelve la dirección de memoria del mismo como un puntero "void*", en caso de no poder crear el bloque, devuelve un puntero NULL.
 
-En cambio, la funcion **void* realloc (void* ptr, size_t size)** lo que hace es modificar el tamaño a "size" de un bloque (de dirección "ptr") previamente creado por un malloc. Ésta función puede tener varias alternativas:
+En cambio, la funcion void* realloc (void* ptr, size_t size) lo que hace es modificar el tamaño a "size" de un bloque (de dirección "ptr") previamente creado por un malloc. Ésta función puede tener varias alternativas:
 
 - Primero, modificar el tamaño correctamente y devolver la misma dirección que se le ingresó; 
 
