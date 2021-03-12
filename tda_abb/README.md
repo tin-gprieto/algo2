@@ -3,7 +3,7 @@ Tipo de Dato Abstracto Lista, Cola y Pila
 
 	El trabajo consiste en la implementación de un TDA ABB con las respectivas funciones para su funcionamiento. 
 
-### Funcionamiento del TDA
+## Funcionamiento del TDA
 
 En primer lugar, las funciones de menos complejidad son : **crear, vacio y raiz**. Para crear el árbol basta con crear su espacio en la memoria dinámica e inicializar los punteros. A su vez se requiere como obligación tener un comparador (imprescindible para la búsqueda), y como opcional un destructor(ya que pueden ser elementos en el stack). Por otro lado, vacio y raiz, evaluan practicamente las mismas cosas, que exista el árbol y que existala raiz, si no existe la raiz , como también si no existe el árbol, está vacio y si existe la raíz, se devuelve su elemento. 
 
@@ -22,7 +22,7 @@ Para la realización de las pruebas me basé en un estilo de TDD hasta dónde pu
 
 ------------------------------------------------------------------------
 
-### Compilación y ejecución:
+## Compilación y ejecución:
 
 Para la compilación y ejecución del trabajo hice uso de un Makefile dónde:
 
@@ -34,17 +34,17 @@ Para la compilación y ejecución del trabajo hice uso de un Makefile dónde:
 	
 -----------------------------------------------------------------------
 
-### Teoría
+## Teoría
 
-#### Qué es un ABB y cómo se diferencia de un Árbol Binario
+### Qué es un ABB y cómo se diferencia de un Árbol Binario
 	
 Un árbol binario cumple con la única condicion de que cada nodo tiene dos hijos, en cambio un ABB cumple con ciertar premisas que fácilita la búsqueda de elementos. Estas premisas consisten en un orden dentro de árbol, el hijo derecho es mayor al padre y el hijo izquierdo es menor. De está forma, todos los predecesor izquierdos son menores a la raiz mientras que los derechos serán mayores, y por lo cual, dado un elemento, se puede buscar restringiendo los elementos.
 	
-#### Cuál es el objetivo de tener una función de destrucción en el TDA y qué implicaría para el usuario no tenerla.
+### Cuál es el objetivo de tener una función de destrucción en el TDA y qué implicaría para el usuario no tenerla.
 	
 El objetivo de tener una función de destrucción es facilitar el borrado de elementos, ya que si se destruye el nodo y no el elemento, el usuario deberia haber guardado la referencia al mismo para poder destruirlo por su cuenta. En caso de que el elemento viva en el stack, no hace falta esta función, pero si uno quiere usar elementos en el heap, es imprescindible que dicho elemento se libere de la memoria al terminar con su uso.
 	
-#### Cuál es la complejidad de las diferentes operaciones del ABB 
+### Cuál es la complejidad de las diferentes operaciones del ABB 
 	
 - **Crear** :  **O(1)** | Unicamente se crea la estructura abb_t en el heap.
 
