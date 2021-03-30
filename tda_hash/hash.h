@@ -1,17 +1,33 @@
 #ifndef __HASH_H__
 #define __HASH_H__
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <string.h>
 
-typedef struct hash hash_t;
+#include "toolbox/code/TDAs/lista/lista.h"
 
 /* 
  * Destructor de los datos almacenados en el hash.  Cada vez que un
  * elemento abandone el hash, debe invocarse al destructor pasandole
  * como parámetro dicho elemento.
 */
-typedef void (*hash_destruir_dato_t)(void*);
+typedef void (*hash_destructor_t)(void*);
+
+typedef struct hash{
+    lista_t** tabla;
+    size_t tamanio;
+    size_t ocupado;
+    size_t elementos;
+    hash_destructor_t destructor;
+}hash_t;
+
+typedef struct dato{
+    void* elemento;
+    const char* clave;
+}dato_t;
 
 /*
  * Crea el hash reservando la memoria necesaria para el.
@@ -24,7 +40,7 @@ typedef void (*hash_destruir_dato_t)(void*);
  * Devuelve un puntero al hash creado o NULL en caso de no poder
  * crearlo.
  */
-hash_t* hash_crear(hash_destruir_dato_t destruir_elemento, size_t capacidad);
+hash_t* hash_crear(hash_destructor_t destruir_elemento, size_t capacidad);
 
 /*
  * Inserta un elemento en el hash asociado a la clave dada.
@@ -71,6 +87,7 @@ void hash_destruir(hash_t* hash);
 
 
 /*
+ * ITERADOR INTERNO
  * Recorre cada una de las claves almacenadas en la tabla de hash e
  * invoca a la función funcion, pasandole como parámetros el hash, la
  * clave en cuestión y el puntero auxiliar.
