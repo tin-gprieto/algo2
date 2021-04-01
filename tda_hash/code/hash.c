@@ -159,7 +159,7 @@ dato_t* buscar_dato_repetido(lista_t* colisiones, const char* clave){
 * Pre : Tabla creada, posicion calculada y dato creado
 * Post: -1 en caso de ERROR o el tipo de insercion (constantes INSERCION)
 */
-int insertar_dato_en_tabla(lista_t** tabla, size_t pos, dato_t* dato){
+int insertar_dato_en_tabla(lista_t** tabla, size_t pos, dato_t* dato, hash_destructor_t destructor){
     int estado;
     if(!tabla[pos]){
         lista_t* lista = lista_crear();
@@ -171,6 +171,8 @@ int insertar_dato_en_tabla(lista_t** tabla, size_t pos, dato_t* dato){
     }
     dato_t* repetido = buscar_dato_repetido(tabla[pos], dato->clave);
     if(repetido){
+        if(repetido->elemento && destructor) 
+            destructor(repetido->elemento);
         repetido->elemento = dato->elemento;
         free(dato);
         return INSERCION_REPETIDA;
@@ -224,7 +226,7 @@ lista_t* tabla_copiar(lista_t** tabla, size_t tamanio){
 * lista creada con todos los datos copiados
 * Post: cantidad de espacios ocupados en la nueva tabla o -1 en caso de error
 */
-int reinsertar_datos(lista_t** tabla, size_t tamanio, lista_t* datos){
+int reinsertar_datos(lista_t** tabla, size_t tamanio, lista_t* datos, hash_destructor_t destructor){
     lista_iterador_t * iterador = lista_iterador_crear(datos);
     if(!iterador) return ERROR;
     int insercion = EXITO;
@@ -232,7 +234,7 @@ int reinsertar_datos(lista_t** tabla, size_t tamanio, lista_t* datos){
     while(lista_iterador_tiene_siguiente(iterador) && insercion != ERROR){
         dato_t* dato = lista_iterador_elemento_actual(iterador);
         size_t pos = valor_hash(dato->clave) % tamanio;
-        insercion = insertar_dato_en_tabla(tabla, pos, dato);
+        insercion = insertar_dato_en_tabla(tabla, pos, dato, destructor);
         if(insercion == INSERCION_NUEVA)
             ocupado ++;
         lista_iterador_avanzar(iterador);
@@ -257,7 +259,7 @@ int rehashear_tabla(hash_t* hash){
         lista_destruir(datos);
         return ERROR;
     } 
-    int estado = reinsertar_datos(nueva_tabla, nuevo_tamanio, datos);
+    int estado = reinsertar_datos(nueva_tabla, nuevo_tamanio, datos, hash->destructor);
     if(estado == ERROR){
         lista_destruir(datos);
         return ERROR;
@@ -280,7 +282,7 @@ int hash_insertar(hash_t* hash, const char* clave, void* elemento){
     dato->clave = clave;
     dato->elemento = elemento;
     size_t pos = valor_hash(clave) % hash->tamanio;
-    int insercion = insertar_dato_en_tabla(hash->tabla, pos, dato);
+    int insercion = insertar_dato_en_tabla(hash->tabla, pos, dato, hash->destructor);
     if(insercion == ERROR) return ERROR;
     if(insercion == INSERCION_NUEVA)
         hash->ocupado++;

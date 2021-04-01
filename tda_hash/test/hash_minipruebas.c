@@ -1,5 +1,4 @@
-#include "hash.h"
-#include "hash_iterador.h"
+#include "../code/hash.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -73,7 +72,6 @@ int main(){
   verificar_vehiculo(garage, "QDM443", true);
   verificar_vehiculo(garage, "PQO697", true);
 
-  
   quitar_vehiculo(garage, "QDM443");
   quitar_vehiculo(garage, "PQO697");
 
